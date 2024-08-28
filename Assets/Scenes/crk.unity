@@ -6623,7 +6623,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -4.5115666, y: -0.034684382, z: -0.28716332}
+  m_ConnectedAnchor: {x: -4.5115666, y: 0.026419833, z: -0.28716332}
   m_UseSpring: 1
   m_Spring:
     spring: 0
@@ -10074,7 +10074,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -4.5115666, y: -0.04890182, z: -0.005913351}
+  m_ConnectedAnchor: {x: -4.5115666, y: 0.012202397, z: -0.005913351}
   m_UseSpring: 1
   m_Spring:
     spring: 0
@@ -11253,7 +11253,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &691728125
 Transform:
   m_ObjectHideFlags: 0
@@ -13971,7 +13971,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -4.5115666, y: -0.045347568, z: -0.6121633}
+  m_ConnectedAnchor: {x: -4.5115666, y: 0.015756646, z: -0.6121633}
   m_UseSpring: 1
   m_Spring:
     spring: 0
@@ -19643,7 +19643,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f6df3fbecd26348a28e2cc388b90351b, type: 2}
+  - {fileID: 2100000, guid: c33bb2986314d4a7c88dfc0fec50462c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
