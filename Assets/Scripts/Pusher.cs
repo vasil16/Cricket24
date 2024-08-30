@@ -25,6 +25,9 @@ public class Pusher : MonoBehaviour
     bool isPaused;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Transform activeCamTrans;
+    [SerializeField] Vector3[] pitchPoints, ppT;
+    [SerializeField] int randPitch;
+    [SerializeField] Vector3 ballLaunchPos;
 
     public bool isGameOver = false;
 
@@ -42,26 +45,23 @@ public class Pusher : MonoBehaviour
         activeCamTrans = GameObject.FindObjectOfType<Camera>().transform;
     }
 
-    private void Update()
-    {
-        //if(currentBall != null)
-        //    batTrans.position = new Vector3(batTrans.position.x, batTrans.position.y, currentBall.position.z);
-        if (Input.touchCount > 0)
-
-        {
-            touch = Input.GetTouch(0);
-            if (RectTransformUtility.RectangleContainsScreenPoint(dragRect, touch.position))
-            {
-                if (touch.phase == TouchPhase.Moved)
-                {
-                    if (touch.deltaPosition.x > 0)
-                        activeCamTrans.Rotate(Vector3.up);
-                    else
-                        activeCamTrans.Rotate(Vector3.up * -1);
-                }
-            }
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.touchCount > 0)
+    //    {
+    //        touch = Input.GetTouch(0);
+    //        if (RectTransformUtility.RectangleContainsScreenPoint(dragRect, touch.position))
+    //        {
+    //            if (touch.phase == TouchPhase.Moved)
+    //            {
+    //                if (touch.deltaPosition.x > 0)
+    //                    activeCamTrans.Rotate(Vector3.up);
+    //                else
+    //                    activeCamTrans.Rotate(Vector3.up * -1);
+    //            }
+    //        }
+    //    }
+    //}
 
     IEnumerator LaunchBallsWithDelay()
     {
@@ -76,10 +76,39 @@ public class Pusher : MonoBehaviour
             {
                 machineAnim.SetTrigger("Restart");
                 yield return new WaitForSeconds(0.2f);
-                LaunchBall(launchSpeeds[Random.Range(0, launchSpeeds.Count)]);
+                //LaunchBall(launchSpeeds[Random.Range(0, launchSpeeds.Count)]);
+
+
+                randPitch = Random.Range(0, 20);
+                mark.transform.position = pitchPoints[randPitch];
+                yield return new WaitForSeconds(1f);
+                float cc = xArr[Random.Range(1, 2)];
+                ballLaunchPos.z = cc;
+                GameObject newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
+                currentBall = newBall.transform;
+                newBall.GetComponent<Rigidbody>().isKinematic = false;
+                newBall.SetActive(true);
+
+                rb = newBall.GetComponent<Rigidbody>();
+                Vector3 initialPosition = newBall.transform.position;
+                Vector3 direction = (pitchPoints[randPitch] - initialPosition).normalized;
+
+                rb.WakeUp();
+
+                rb.AddForce(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), ForceMode.Impulse);
+
+                yield return new WaitForSeconds(.3f);
+
+                if (CameraLookAt.instance != null)
+                {
+                    CameraLookAt.instance.ball = newBall;
+                }
+
+                Destroy(newBall, 4f);
                 ballsLaunched++;
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(5f);
             }
+            yield return null;
         }
     }
 
@@ -88,15 +117,12 @@ public class Pusher : MonoBehaviour
 
     void LaunchBall(float launchSpeed)
     {
-        //GameObject newBall = Instantiate(Ball, new Vector3(42.7f, 1.61f, -0.37f), Quaternion.Euler(-90,0,0));
-        float cc = xArr[Random.Range(0, 2)];
-        GameObject newBall = Instantiate(Ball, new Vector3(42.7f, 1.61f, cc), Quaternion.Euler(-90, 0, 0));
-        //GameObject newBall = ObjectPool.instance.GetPooledObjects(Ball);
+        float cc = xArr[Random.Range(0, 1)];
+        //GameObject newBall = Instantiate(Ball, new Vector3(42.7f, 1.61f, cc), Quaternion.Euler(-90, 0, 0));
+        GameObject newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
         currentBall = newBall.transform;
         newBall.GetComponent<Rigidbody>().isKinematic = false;
         newBall.SetActive(true);
-        //newBall.transform.position = new Vector3(22.6f, 0.61f, -0.37f);
-        //newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
         if (CameraLookAt.instance != null)
         {
             CameraLookAt.instance.ball = newBall;
@@ -107,7 +133,9 @@ public class Pusher : MonoBehaviour
         {
             Vector3 initialPosition = newBall.transform.position;
 
-            Vector3 direction = (bails.transform.position - initialPosition).normalized;
+            randPitch = Random.Range(0, 20);
+            mark.transform.position = pitchPoints[randPitch];
+            Vector3 direction = (pitchPoints[randPitch] - initialPosition).normalized;
 
             randomAngle = Random.Range(miRand, maRand);
             Vector3 axis = Vector3.down; 
@@ -118,9 +146,11 @@ public class Pusher : MonoBehaviour
             Vector3 acDir = new Vector3(newDirection.x, newDirection.y, 0);
 
             acDir = new Vector3(acDir.x, acDir.y + randomAngle, acDir.z);
-            //mark.transform.position = new Vector3(acDir.x, -3f, acDir.z);
+            
 
             rb.WakeUp();
+
+            //rb.AddForce(direction * (launchSpeed * speedMult), ForceMode.Impulse);
 
             rb.AddForce(acDir * (launchSpeed * speedMult), ForceMode.Impulse);
 

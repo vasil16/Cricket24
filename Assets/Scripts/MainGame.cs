@@ -74,41 +74,19 @@ public class MainGame : MonoBehaviour
         batMovement.started = true;
     }
 
-    public void BlockBall()
+    public void PlayShot(string shot)
     {
         if (swingAnim.enabled)
         {
-            swingAnim.Play("block");
+            swingAnim.Play(shot);
         }
         else
         {
-            StartCoroutine(DelayBlockAnim("block"));
+            StartCoroutine(DelayBlockAnim(shot));
         }
     }
 
-    public void Cut()
-    {
-        if (swingAnim.enabled)
-        {
-            swingAnim.Play("cut");
-        }
-        else
-        {
-            StartCoroutine(DelayBlockAnim("cut"));
-        }
-    }
-
-    public void offDrive()
-    {
-        if (swingAnim.enabled)
-        {
-            swingAnim.Play("offDrive");
-        }
-        else
-        {
-            StartCoroutine(DelayBlockAnim("offDrive"));
-        }
-    }
+  
 
     public void Pull()
     {     
@@ -127,9 +105,9 @@ public class MainGame : MonoBehaviour
 
     IEnumerator DelayBlockAnim(string animName)
     {
-        swingAnim.enabled = true;
+        //swingAnim.enabled = true;
         swingAnim.Play(animName);
-        yield return new WaitForSeconds(blockAnim.length);
-        swingAnim.enabled = false;
+        yield return new WaitForSeconds(blockAnim.length +0.12f);
+        //swingAnim.enabled = false;
     }
 }
