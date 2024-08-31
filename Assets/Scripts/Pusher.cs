@@ -99,7 +99,7 @@ public class Pusher : MonoBehaviour
 
                 yield return new WaitForSeconds(.3f);
 
-                if (CameraLookAt.instance != null)
+                if (CameraLookAt.instance != null && MainGame.camIndex==3)
                 {
                     CameraLookAt.instance.ball = newBall;
                 }

@@ -29,7 +29,9 @@ public class BallHit : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Bat"))
         {
-            if(secondTouch)
+            StartCoroutine(waitAndLook());
+
+            if (secondTouch)
             {
                 return;
             }
@@ -63,6 +65,15 @@ public class BallHit : MonoBehaviour
 
     }
     bool groundShot;
+
+    IEnumerator waitAndLook()
+    {
+        yield return new WaitForSeconds(0.2f);
+        if (CameraLookAt.instance != null && MainGame.camIndex == 1)
+        {
+            CameraLookAt.instance.ball = this.gameObject;
+        }
+    }
 
     IEnumerator Score()
     {

@@ -1,9 +1,11 @@
 using UnityEngine;
 
+[ExecuteAlways]
 public class MatchCameraToFit : MonoBehaviour
 {
     public float targetAspectRatio = 16f / 9f; // Aspect ratio of your reference resolution (1920x1080)
-    public float orthoSize;
+    public float orthoSize; // For orthographic cameras
+    public float fieldOfView; // For perspective cameras
 
     private Camera cam;
 
@@ -24,21 +26,37 @@ public class MatchCameraToFit : MonoBehaviour
 
         float currentAspectRatio = (float)Screen.width / Screen.height;
 
-        float matchSize = orthoSize;
-
-        if (currentAspectRatio > targetAspectRatio)
+        if (cam.orthographic)
         {
-            // Pillarbox (add bars on the sides)
-            float scale = targetAspectRatio / currentAspectRatio;
-            matchSize *= scale;
+            float matchSize = orthoSize;
+
+            if (currentAspectRatio > targetAspectRatio)
+            {
+                // Pillarbox (add bars on the sides)
+                float scale = targetAspectRatio / currentAspectRatio;
+                matchSize *= scale;
+            }
+            else
+            {
+                // Letterbox (add bars on the top and bottom)
+                float scale = currentAspectRatio / targetAspectRatio;
+                matchSize /= scale;
+            }
+
+            cam.orthographicSize = matchSize;
         }
         else
         {
-            // Letterbox (add bars on the top and bottom)
-            float scale = currentAspectRatio / targetAspectRatio;
-            matchSize /= scale;
-        }
+            float matchFOV = fieldOfView;
 
-        cam.orthographicSize = matchSize;
+            if (currentAspectRatio > targetAspectRatio)
+            {
+                // Adjust the field of view to maintain the width
+                float scale = targetAspectRatio / currentAspectRatio;
+                matchFOV = Mathf.Atan(Mathf.Tan(fieldOfView * Mathf.Deg2Rad * 0.5f) / scale) * 2f * Mathf.Rad2Deg;
+            }
+
+            cam.fieldOfView = matchFOV;
+        }
     }
 }

@@ -10,9 +10,11 @@ public class MainGame : MonoBehaviour
     [SerializeField] Animator swingAnim;
     [SerializeField] AnimationClip blockAnim;
     [SerializeField] Material day, Night;
+    public static int camIndex;
 
     private void Start()
     {
+        camIndex = 1;
     }
 
     private void Update()
@@ -40,6 +42,7 @@ public class MainGame : MonoBehaviour
 
     public void CameraSelection(int index)
     {
+        camIndex = index;
         for(int i =0; i<cams.Length;i++)
         {
             if(i == index)

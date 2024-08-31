@@ -5,11 +5,12 @@ Shader "Custom/PitchShader"
         _MainTex ("Grass Texture", 2D) = "white" {} // Main grass texture
         _Color ("Tint Color", Color) = (1, 1, 1, 1) // Tint color for the grass
         _Tiling ("Tiling", Vector) = (1, 1, 0, 0) // Tiling for the texture
-        _EdgeFade ("Edge Fade", Range(0, 1)) = 0.1 // Edge fade amount
+        _EdgeFadeLR ("Left/Right Edge Fade", Range(0, 1)) = 0.1 // Edge fade amount for left and right
+        _EdgeFadeTB ("Top/Bottom Edge Fade", Range(0, 1)) = 0.1 // Edge fade amount for top and bottom
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" }
+        Tags { "RenderType"="Opaque" }
         LOD 200
 
         Blend SrcAlpha OneMinusSrcAlpha // Enable alpha blending
@@ -39,18 +40,14 @@ Shader "Custom/PitchShader"
             sampler2D _MainTex;
             fixed4 _Color;
             float4 _Tiling;
-            float _EdgeFade;
+            float _EdgeFadeLR; // Left/Right edge fade amount
+            float _EdgeFadeTB; // Top/Bottom edge fade amount
 
             v2f vert (appdata_t v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv * _Tiling.xy; // Apply tiling
-
-                // Calculate edge distance based on UV coordinates
-                float edgeDistX = min(o.uv.x, 1.0 - o.uv.x);
-                float edgeDistY = min(o.uv.y, 1.0 - o.uv.y);
-                o.edgeDistance = min(edgeDistX, edgeDistY); // Get the minimum distance to the edge
 
                 return o;
             }
@@ -60,9 +57,30 @@ Shader "Custom/PitchShader"
                 // Sample the grass texture
                 fixed4 texColor = tex2D(_MainTex, i.uv) * _Color; // Combine texture color with tint
 
-                // Apply edge fading
-                float alpha = smoothstep(0.0, _EdgeFade, i.edgeDistance); // Smooth transition based on edge distance
-                texColor.a *= alpha; // Apply the alpha to the texture color
+                // Calculate alpha based on edge distances and corresponding edge fade values
+                float alpha = 1.0; // Start with full alpha
+
+                // Apply left and right edge fading
+                if (i.uv.x < _EdgeFadeLR) // Left edge
+                {
+                    alpha *= smoothstep(0.0, _EdgeFadeLR, i.uv.x);
+                }
+                if (i.uv.x > 1.0 - _EdgeFadeLR) // Right edge
+                {
+                    alpha *= smoothstep(0.0, _EdgeFadeLR, 1.0 - i.uv.x);
+                }
+
+                // Apply top and bottom edge fading
+                if (i.uv.y < _EdgeFadeTB) // Bottom edge
+                {
+                    alpha *= smoothstep(0.0, _EdgeFadeTB, i.uv.y);
+                }
+                if (i.uv.y > 1.0 - _EdgeFadeTB) // Top edge
+                {
+                    alpha *= smoothstep(0.0, _EdgeFadeTB, 1.0 - i.uv.y);
+                }
+
+                texColor.a *= alpha; // Apply the calculated alpha to the texture color
 
                 return texColor;
             }
