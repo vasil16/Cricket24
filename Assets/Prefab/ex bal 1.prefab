@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4336010719489944294}
   - component: {fileID: 398230716899075407}
   - component: {fileID: 8919785117099984907}
-  - component: {fileID: 2476827634435386821}
   - component: {fileID: 8862282711267893124}
+  - component: {fileID: 2476827634435386821}
   m_Layer: 0
   m_Name: ex bal 1
   m_TagString: Ball
@@ -31,7 +31,7 @@ Transform:
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -7.81, y: -2.26, z: -0.81000006}
   m_LocalScale: {x: 22, y: 22, z: 22}
-  m_ConstrainProportionsScale: 1
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8506234943018889420}
   m_Father: {fileID: 0}
@@ -95,27 +95,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3278323730372544780}
   serializedVersion: 2
-  m_Mass: 0.21
+  m_Mass: 0.2
   m_Drag: 0.06
   m_AngularDrag: 0.01
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
---- !u!114 &2476827634435386821
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3278323730372544780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea6b93aa845d24305a07ed9d1223b204, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shotFx: {fileID: 2789221374750539489}
+  m_CollisionDetection: 2
 --- !u!135 &8862282711267893124
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -129,6 +116,19 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.010003417
   m_Center: {x: 0, y: 0, z: 4.6566134e-10}
+--- !u!114 &2476827634435386821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3278323730372544780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea6b93aa845d24305a07ed9d1223b204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shotFx: {fileID: 2789221374750539489}
 --- !u!1 &6674142098606654707
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,9 +156,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6674142098606654707}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0095, y: -0.0022, z: 0}
-  m_LocalScale: {x: 0.988, y: 0.988, z: 0.988}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: -0.0095, y: -0.0019967, z: -2.1166e-11}
+  m_LocalScale: {x: 0.988, y: 0.8890617, z: 0.988}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4044528847752272487}
   m_RootOrder: 0

@@ -14,18 +14,29 @@ public class BallHit : MonoBehaviour
 
     [SerializeField] AudioSource shotFx;
 
-    private void Update()
+    private void Start()
     {
-        //transform.position = new Vector3(transform.position.x, transform.position.y, -0.37f);
-        //transform.position = new Vector3(transform.position.x, transform.position.y, Pusher.instance.batTrans.position.z);
-        touchVelocity = gameObject.GetComponent<Rigidbody>().velocity;
+        rb = GetComponent<Rigidbody>();
     }
+
+    //private void Update()
+    //{
+    //    //transform.position = new Vector3(transform.position.x, transform.position.y, -0.37f);
+    //    //transform.position = new Vector3(transform.position.x, transform.position.y, Pusher.instance.batTrans.position.z);
+    //    touchVelocity = gameObject.GetComponent<Rigidbody>().velocity;
+        
+    //}
 
     void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Wicket"))
         {
             Pusher.instance.Out();
+        }
+        else if(collision.gameObject.CompareTag("pitch"))
+        {
+            if(secondTouch)
+                rb.velocity =  new Vector3(rb.velocity.x, 0.04f, rb.velocity.z);
         }
         else if (collision.gameObject.CompareTag("Bat"))
         {
@@ -38,7 +49,7 @@ public class BallHit : MonoBehaviour
             Rigidbody ballRigidbody = gameObject.GetComponent<Rigidbody>();
             if (ballRigidbody != null)
             {
-                Vector2 direction = collision.contacts[0].point - transform.position;
+                //Vector2 direction = collision.contacts[0].point - transform.position;
                 hitVelocity = ballRigidbody.velocity;
 
                 StartCoroutine(Score());
@@ -58,13 +69,22 @@ public class BallHit : MonoBehaviour
             if (secondTouch)
             {
                 groundShot = true;
-                Vector3 vel = gameObject.GetComponent<Rigidbody>().velocity;
-                gameObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, vel.y * 1 / 4, vel.z);
+                //Vector3 vel = gameObject.GetComponent<Rigidbody>().velocity;
+                //gameObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, vel.y * 1 / 4, vel.z);
             }
         }
 
     }
     bool groundShot;
+
+    public void Reset()
+    {
+        GetComponent<Rigidbody>().isKinematic = true;
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;        
+        secondTouch = false;
+        groundShot = false;
+    }
 
     IEnumerator waitAndLook()
     {

@@ -9,12 +9,17 @@ public class MainGame : MonoBehaviour
     [SerializeField] GameObject homePanel, startObj, lights, sun;
     [SerializeField] Animator swingAnim;
     [SerializeField] AnimationClip blockAnim;
-    [SerializeField] Material day, Night;
+    [SerializeField] Material day, Night, floodLight;
     public static int camIndex;
 
     private void Start()
     {
         camIndex = 1;
+    }
+
+    private void OnApplicationQuit()
+    {
+        floodLight.EnableKeyword("_EMISSION");
     }
 
     private void Update()
@@ -27,7 +32,8 @@ public class MainGame : MonoBehaviour
         if(index==0)
         {
             RenderSettings.skybox = day;
-            lights.SetActive(false);
+            //lights.SetActive(false);
+            floodLight.DisableKeyword("_EMISSION");
             sun.SetActive(true);
             Debug.Log("day");
         }

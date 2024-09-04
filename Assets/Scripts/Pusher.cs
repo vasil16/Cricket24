@@ -28,6 +28,7 @@ public class Pusher : MonoBehaviour
     [SerializeField] Vector3[] pitchPoints, ppT;
     [SerializeField] int randPitch;
     [SerializeField] Vector3 ballLaunchPos;
+    [SerializeField] GameObject newBall, instBall;
 
     public bool isGameOver = false;
 
@@ -44,6 +45,7 @@ public class Pusher : MonoBehaviour
         Application.targetFrameRate = 60;
         activeCamTrans = GameObject.FindObjectOfType<Camera>().transform;
     }
+
 
     //private void Update()
     //{
@@ -62,6 +64,7 @@ public class Pusher : MonoBehaviour
     //        }
     //    }
     //}
+
 
     IEnumerator LaunchBallsWithDelay()
     {
@@ -84,29 +87,51 @@ public class Pusher : MonoBehaviour
                 yield return new WaitForSeconds(1f);
                 float cc = xArr[Random.Range(1, 2)];
                 ballLaunchPos.z = cc;
-                GameObject newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
+                if (ballsLaunched == 0)
+                {
+                    newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
+                }
+                else
+                {
+                    newBall = instBall;
+                    newBall.transform.position = ballLaunchPos;
+                    newBall.transform.rotation = Quaternion.Euler(Vector3.left * -90);
+                }
                 currentBall = newBall.transform;
                 newBall.GetComponent<Rigidbody>().isKinematic = false;
                 newBall.SetActive(true);
 
                 rb = newBall.GetComponent<Rigidbody>();
                 Vector3 initialPosition = newBall.transform.position;
-                Vector3 direction = (pitchPoints[randPitch] - initialPosition).normalized;
+                Vector3 targetPos = pitchPoints[randPitch];
+                Vector3 direction = (targetPos - initialPosition).normalized;
+
+                //float time = 0;
+                //float duration = 2;
+
+                //while (time <= duration)
+                //{
+                //    time += Time.deltaTime;
+                //    newBall.transform.position = Vector3.Lerp(initialPosition, targetPos, time / duration);
+                //    yield return null;
+                //}
 
                 rb.WakeUp();
-
+                rb.AddTorque(Vector3.forward * -20);
                 rb.AddForce(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), ForceMode.Impulse);
 
                 yield return new WaitForSeconds(.3f);
 
-                if (CameraLookAt.instance != null && MainGame.camIndex==3)
+                if (CameraLookAt.instance != null && MainGame.camIndex == 3)
                 {
                     CameraLookAt.instance.ball = newBall;
                 }
 
-                Destroy(newBall, 4f);
+                //Destroy(newBall, 4f);                
                 ballsLaunched++;
-                yield return new WaitForSeconds(5f);
+                yield return new WaitForSeconds(7f);
+                StartCoroutine(ResetBall(newBall));
+                yield return new WaitForSeconds(1);
             }
             yield return null;
         }
@@ -114,6 +139,14 @@ public class Pusher : MonoBehaviour
 
     public float miRand, maRand, randomAngle;
     [SerializeField] float[] xArr = { -0.37f, -2.05f };
+
+    IEnumerator ResetBall(GameObject ball)
+    {
+        ball.GetComponent<BallHit>().Reset();        
+        CameraLookAt.instance.ball = null;
+        yield return new WaitForSeconds(1);
+        instBall = ball;
+    }
 
     void LaunchBall(float launchSpeed)
     {
@@ -138,7 +171,7 @@ public class Pusher : MonoBehaviour
             Vector3 direction = (pitchPoints[randPitch] - initialPosition).normalized;
 
             randomAngle = Random.Range(miRand, maRand);
-            Vector3 axis = Vector3.down; 
+            Vector3 axis = Vector3.down;
             Quaternion rotation = Quaternion.AngleAxis(randomAngle, axis);
 
             Vector3 newDirection = rotation * direction;
@@ -146,7 +179,7 @@ public class Pusher : MonoBehaviour
             Vector3 acDir = new Vector3(newDirection.x, newDirection.y, 0);
 
             acDir = new Vector3(acDir.x, acDir.y + randomAngle, acDir.z);
-            
+
 
             rb.WakeUp();
 
@@ -197,7 +230,7 @@ public class Pusher : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene("crk");  
+        SceneManager.LoadScene("crk");
     }
 
 }

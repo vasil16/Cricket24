@@ -28,6 +28,7 @@ public class CameraLookAt : MonoBehaviour
     {
         if(ball == null)
         {
+            //Debug.Log("ball Null");
             camera.transform.rotation = defRotation;
             return;
         }
