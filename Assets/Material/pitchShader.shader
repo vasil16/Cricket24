@@ -10,11 +10,11 @@ Shader "Custom/PitchShader"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" } // Keep transparency
         LOD 200
 
         Blend SrcAlpha OneMinusSrcAlpha // Enable alpha blending
-        ZWrite Off // Disable depth writing
+        ZWrite Off // Disable depth writing for transparency
 
         Pass
         {
@@ -28,13 +28,14 @@ Shader "Custom/PitchShader"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+                float3 normal : NORMAL;
             };
 
             struct v2f
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
-                float edgeDistance : TEXCOORD1; // Distance from the edge
+                float3 normalWS : TEXCOORD1; // World space normal
             };
 
             sampler2D _MainTex;
@@ -48,6 +49,7 @@ Shader "Custom/PitchShader"
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv * _Tiling.xy; // Apply tiling
+                o.normalWS = normalize(mul(v.normal, (float3x3)unity_ObjectToWorld)); // Transform normal to world space
 
                 return o;
             }
@@ -56,6 +58,10 @@ Shader "Custom/PitchShader"
             {
                 // Sample the grass texture
                 fixed4 texColor = tex2D(_MainTex, i.uv) * _Color; // Combine texture color with tint
+
+                // Simple Lambert lighting
+                half3 lightDir = normalize(_WorldSpaceLightPos0.xyz); // Get the main directional light direction
+                half lambert = saturate(dot(i.normalWS, lightDir)); // Lambert's cosine law
 
                 // Calculate alpha based on edge distances and corresponding edge fade values
                 float alpha = 1.0; // Start with full alpha
@@ -81,6 +87,9 @@ Shader "Custom/PitchShader"
                 }
 
                 texColor.a *= alpha; // Apply the calculated alpha to the texture color
+
+                // Combine the texture color and lighting (no self-lighting)
+                texColor.rgb *= lambert;
 
                 return texColor;
             }
