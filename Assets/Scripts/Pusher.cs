@@ -2,33 +2,32 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using Cinemachine;
+using UnityEngine.UI;
 
 public class Pusher : MonoBehaviour
 {
     public static Pusher instance;
 
-    public GameObject bails;
-    public GameObject Ball;
-    public List<float> launchSpeeds;
-    public List<float> launchHeights;
-    public int numberOfBallsToLaunch = 5;
-    [SerializeField] float speedMult;
-    [SerializeField] public Transform batTrans, currentBall;
-    [SerializeField] GameObject lostPanel, pauseBtn;
-    Touch touch;
-    [SerializeField] GameObject mark;
-
-    private int ballsLaunched = 0;
-    private Rigidbody rb;
-    [SerializeField] Animator machineAnim;
-    bool isPaused;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Transform activeCamTrans;
     [SerializeField] Vector3[] pitchPoints, ppT;
-    [SerializeField] int randPitch;
+    [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos;
-    [SerializeField] GameObject newBall, instBall;
+    [SerializeField] float speedMult;
+    [SerializeField] public Transform batTrans, currentBall;
+    [SerializeField] Animator machineAnim;
+    [SerializeField] Text overText;
+    public CameraLookAt[] activeCams;
+    
+    public List<float> launchSpeeds, launchHeights;
+    public int numberOfBallsToLaunch = 5;
+
+    private int ballsLaunched = 0;
+    private Rigidbody rb;
+    public Camera sideCam;
+
+    bool isPaused;
 
     public bool isGameOver = false;
 
@@ -44,8 +43,13 @@ public class Pusher : MonoBehaviour
         StartCoroutine(LaunchBallsWithDelay());
         Application.targetFrameRate = 60;
         activeCamTrans = GameObject.FindObjectOfType<Camera>().transform;
+        activeCams = GameObject.FindObjectsOfType<CameraLookAt>();
     }
 
+    private void Update()
+    {
+        
+    }
 
     //private void Update()
     //{
@@ -69,7 +73,7 @@ public class Pusher : MonoBehaviour
     IEnumerator LaunchBallsWithDelay()
     {
         yield return new WaitForSeconds(1);
-        while (ballsLaunched < numberOfBallsToLaunch && !isGameOver)
+        while (overs < 5 && !isGameOver)
         {
             if (isPaused)
             {
@@ -87,14 +91,13 @@ public class Pusher : MonoBehaviour
                 yield return new WaitForSeconds(1f);
                 float cc = xArr[Random.Range(1, 2)];
                 ballLaunchPos.z = cc;
-                if (ballsLaunched == 0)
+                if (overs == 0 && ballsLaunched == 0)
                 {
                     newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
                 }
                 else
                 {
-                    newBall = instBall;
-                    newBall.transform.position = ballLaunchPos;
+                    newBall = instBall;                    
                     newBall.transform.rotation = Quaternion.Euler(Vector3.left * -90);
                 }
                 currentBall = newBall.transform;
@@ -106,15 +109,17 @@ public class Pusher : MonoBehaviour
                 Vector3 targetPos = pitchPoints[randPitch];
                 Vector3 direction = (targetPos - initialPosition).normalized;
 
-                //float time = 0;
-                //float duration = 2;
+                {
+                    //float time = 0;
+                    //float duration = 2;
 
-                //while (time <= duration)
-                //{
-                //    time += Time.deltaTime;
-                //    newBall.transform.position = Vector3.Lerp(initialPosition, targetPos, time / duration);
-                //    yield return null;
-                //}
+                    //while (time <= duration)
+                    //{
+                    //    time += Time.deltaTime;
+                    //    newBall.transform.position = Vector3.Lerp(initialPosition, targetPos, time / duration);
+                    //    yield return null;
+                    //}
+                }
 
                 rb.WakeUp();
                 rb.AddTorque(Vector3.forward * -20);
@@ -122,19 +127,47 @@ public class Pusher : MonoBehaviour
 
                 yield return new WaitForSeconds(.3f);
 
-                if (CameraLookAt.instance != null && MainGame.camIndex == 3)
+                //if (CameraLookAt.instance != null && MainGame.camIndex == 3)
+                //{
+                //    CameraLookAt.instance.ball = newBall;
+                //}
+
+                foreach(CameraLookAt cam in activeCams)
                 {
-                    CameraLookAt.instance.ball = newBall;
+                    if(MainGame.camIndex == 3)
+                        cam.ball = newBall;
                 }
 
                 //Destroy(newBall, 4f);                
                 ballsLaunched++;
-                yield return new WaitForSeconds(7f);
+                if(ballsLaunched%6==0)
+                {
+                    overs++;                    
+                    ballsLaunched = 0;
+                }
+
+                //if(newBall.GetComponent<BallHit>().secondTouch)
+                //{
+                //    yield return new WaitForSeconds(7);
+                //}
+                //else
+                //{
+                //    yield return new WaitForSeconds(2);
+                //}
+                yield return new WaitForSeconds(7);
+                sideCam.depth = -2;
+                sideCam.enabled = false;
                 StartCoroutine(ResetBall(newBall));
+                overText.text = overs + "." + ballsLaunched;
                 yield return new WaitForSeconds(1);
             }
             yield return null;
         }
+    }
+
+    void UpdateScoreBoard()
+    {
+
     }
 
     public float miRand, maRand, randomAngle;
@@ -142,8 +175,13 @@ public class Pusher : MonoBehaviour
 
     IEnumerator ResetBall(GameObject ball)
     {
-        ball.GetComponent<BallHit>().Reset();        
-        CameraLookAt.instance.ball = null;
+        newBall.SetActive(false);
+        newBall.transform.position = ballLaunchPos;
+        ball.GetComponent<BallHit>().Reset();
+        foreach (CameraLookAt cam in activeCams)
+        {
+            cam.ball = null;
+        }
         yield return new WaitForSeconds(1);
         instBall = ball;
     }

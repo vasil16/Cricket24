@@ -11,6 +11,7 @@ public class MainGame : MonoBehaviour
     [SerializeField] AnimationClip blockAnim;
     [SerializeField] Material day, Night, floodLight;
     public static int camIndex;
+    
 
     private void Start()
     {

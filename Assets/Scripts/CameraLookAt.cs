@@ -10,7 +10,7 @@ public class CameraLookAt : MonoBehaviour
     public GameObject ball;
     Quaternion defRotation;
 
-    private void Awake()
+    private void OnEnable()
     {
         instance = this;
         camera = GetComponent<Camera>();

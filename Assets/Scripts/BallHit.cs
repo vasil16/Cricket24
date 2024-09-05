@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class BallHit : MonoBehaviour
 {
@@ -9,8 +10,7 @@ public class BallHit : MonoBehaviour
 
     Vector2 touchVelocity;
     float shotAngle;
-
-    bool secondTouch;
+    public bool secondTouch;
 
     [SerializeField] AudioSource shotFx;
 
@@ -19,13 +19,23 @@ public class BallHit : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    //private void Update()
-    //{
-    //    //transform.position = new Vector3(transform.position.x, transform.position.y, -0.37f);
-    //    //transform.position = new Vector3(transform.position.x, transform.position.y, Pusher.instance.batTrans.position.z);
-    //    touchVelocity = gameObject.GetComponent<Rigidbody>().velocity;
-        
-    //}
+    private void Update()
+    {
+        ////transform.position = new Vector3(transform.position.x, transform.position.y, -0.37f);
+        ////transform.position = new Vector3(transform.position.x, transform.position.y, Pusher.instance.batTrans.position.z);
+        //touchVelocity = gameObject.GetComponent<Rigidbody>().velocity; 54
+        if (!Pusher.instance) return;
+        if (transform.position.x > 80 && transform.position.z < 54)
+        {
+            Pusher.instance.sideCam.depth = 0;
+            Pusher.instance.sideCam.enabled = true;
+        }
+        else
+        {
+            Pusher.instance.sideCam.depth = -2;
+            Pusher.instance.sideCam.enabled = false;
+        }
+    }
 
     void OnCollisionEnter(Collision collision)
     {
@@ -36,7 +46,7 @@ public class BallHit : MonoBehaviour
         else if(collision.gameObject.CompareTag("pitch"))
         {
             if(secondTouch)
-                rb.velocity =  new Vector3(rb.velocity.x, 0.04f, rb.velocity.z);
+                rb.velocity =  new Vector3(rb.velocity.x, 0.07f, rb.velocity.z);
         }
         else if (collision.gameObject.CompareTag("Bat"))
         {
@@ -78,7 +88,7 @@ public class BallHit : MonoBehaviour
     bool groundShot;
 
     public void Reset()
-    {
+    {        
         GetComponent<Rigidbody>().isKinematic = true;
         GetComponent<Rigidbody>().velocity = Vector3.zero;
         GetComponent<Rigidbody>().angularVelocity = Vector3.zero;        
@@ -89,9 +99,15 @@ public class BallHit : MonoBehaviour
     IEnumerator waitAndLook()
     {
         yield return new WaitForSeconds(0.2f);
-        if (CameraLookAt.instance != null && MainGame.camIndex == 1)
+        //if (CameraLookAt.instance != null && MainGame.camIndex == 1)
+        //{
+        //    CameraLookAt.instance.ball = this.gameObject;
+        //}
+
+        foreach (CameraLookAt cam in Pusher.instance.activeCams)
         {
-            CameraLookAt.instance.ball = this.gameObject;
+            if (MainGame.camIndex == 1)
+                cam.ball = this.gameObject;
         }
     }
 
