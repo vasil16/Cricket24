@@ -10,9 +10,11 @@ public class BallHit : MonoBehaviour
 
     Vector2 touchVelocity;
     float shotAngle;
-    public bool secondTouch;
+    public bool secondTouch , groundShot;
 
     [SerializeField] AudioSource shotFx;
+
+    public string lastHit;
 
     private void Start()
     {
@@ -39,6 +41,7 @@ public class BallHit : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        lastHit = collision.gameObject.tag;
         if(collision.gameObject.CompareTag("Wicket"))
         {
             Pusher.instance.Out();
@@ -46,7 +49,7 @@ public class BallHit : MonoBehaviour
         else if(collision.gameObject.CompareTag("pitch"))
         {
             if(secondTouch)
-                rb.velocity =  new Vector3(rb.velocity.x, 0.07f, rb.velocity.z);
+                rb.velocity =  new Vector3(rb.velocity.x, 0.1f, rb.velocity.z);
         }
         else if (collision.gameObject.CompareTag("Bat"))
         {
@@ -56,13 +59,14 @@ public class BallHit : MonoBehaviour
             {
                 return;
             }
+            secondTouch = true;
             Rigidbody ballRigidbody = gameObject.GetComponent<Rigidbody>();
             if (ballRigidbody != null)
             {
                 //Vector2 direction = collision.contacts[0].point - transform.position;
                 hitVelocity = ballRigidbody.velocity;
 
-                StartCoroutine(Score());
+                //StartCoroutine(Score());
 
                 if (CameraShake.instance != null)
                 {
@@ -70,8 +74,7 @@ public class BallHit : MonoBehaviour
                     //CameraShake.instance.followBall(this.gameObject);                   
                 }
                 shotFx.Play();
-                VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);
-                secondTouch = true;
+                VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);                
             }
         }
         else if (collision.gameObject.CompareTag("Ground"))
@@ -85,10 +88,10 @@ public class BallHit : MonoBehaviour
         }
 
     }
-    bool groundShot;
 
     public void Reset()
-    {        
+    {
+        lastHit = "";
         GetComponent<Rigidbody>().isKinematic = true;
         GetComponent<Rigidbody>().velocity = Vector3.zero;
         GetComponent<Rigidbody>().angularVelocity = Vector3.zero;        

@@ -33,7 +33,7 @@ public class MainGame : MonoBehaviour
         if(index==0)
         {
             RenderSettings.skybox = day;
-            //lights.SetActive(false);
+            lights.SetActive(false);
             floodLight.DisableKeyword("_EMISSION");
             sun.SetActive(true);
             Debug.Log("day");

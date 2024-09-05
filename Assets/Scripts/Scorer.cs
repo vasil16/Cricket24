@@ -16,6 +16,11 @@ public class Scorer : MonoBehaviour
         instance = this;
     }
 
+    public void NewScore(int runs, int wickets)
+    {
+        scoreText.text = runs + " - " + wickets;
+    }
+
     public void UpdateScore(float angle, bool grounded)
     {
         if(angle < 0)

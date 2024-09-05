@@ -23,7 +23,7 @@ public class Pusher : MonoBehaviour
     public List<float> launchSpeeds, launchHeights;
     public int numberOfBallsToLaunch = 5;
 
-    private int ballsLaunched = 0;
+    private int ballsLaunched = 0, run;
     private Rigidbody rb;
     public Camera sideCam;
 
@@ -125,7 +125,9 @@ public class Pusher : MonoBehaviour
                 rb.AddTorque(Vector3.forward * -20);
                 rb.AddForce(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), ForceMode.Impulse);
 
-                yield return new WaitForSeconds(.3f);
+                //yield return new WaitForSeconds(.7f);
+
+                yield return new WaitUntil(()=>ballPassed(newBall.transform));
 
                 //if (CameraLookAt.instance != null && MainGame.camIndex == 3)
                 //{
@@ -146,15 +148,18 @@ public class Pusher : MonoBehaviour
                     ballsLaunched = 0;
                 }
 
-                //if(newBall.GetComponent<BallHit>().secondTouch)
-                //{
-                //    yield return new WaitForSeconds(7);
-                //}
-                //else
-                //{
-                //    yield return new WaitForSeconds(2);
-                //}
-                yield return new WaitForSeconds(7);
+
+                if (newBall.GetComponent<BallHit>().secondTouch)
+                {
+                    yield return new WaitForSeconds(7);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(2);
+                }
+                //yield return new WaitForSeconds(7);
+
+                UpdateScoreBoard(newBall.GetComponent<BallHit>());
                 sideCam.depth = -2;
                 sideCam.enabled = false;
                 StartCoroutine(ResetBall(newBall));
@@ -165,9 +170,51 @@ public class Pusher : MonoBehaviour
         }
     }
 
-    void UpdateScoreBoard()
+    bool ballPassed(Transform ballT)
     {
+        if (ballT.position.x < -28.8 || ballT.GetComponent<BallHit>().secondTouch)
+            return true;
+        return false;
+    }
 
+    void UpdateScoreBoard(BallHit ball)
+    {        
+        Vector3 ballfinal = ball.transform.position;
+        if(ball.secondTouch)
+        {
+            switch(ball.lastHit)
+            {
+                case "Ground":
+                    if (ballfinal.x < -116 || ballfinal.x > 133 || ballfinal.z > 110 || ballfinal.z < 110)
+                    {
+                        run += 2;
+                    }
+                    else
+                        run += 1;
+                        break;
+                case "boundary":
+                    if (ball.groundShot)
+                        run += 4;
+                    else
+                        run += 6;
+                    break;
+                case "gallery":
+                        run += 6;
+                        break;
+
+                default:
+                    if (ball.secondTouch)
+                        run += 6;
+                    else
+                        run += 0;
+                    break;
+            }
+        }
+        else
+        {
+            run += 0;
+        }
+        Scorer.instance.NewScore(run, wickets);
     }
 
     public float miRand, maRand, randomAngle;
