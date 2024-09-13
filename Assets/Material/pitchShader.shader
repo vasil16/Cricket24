@@ -8,21 +8,25 @@ Shader "Custom/PitchShader"
         _EdgeFadeLR ("Left/Right Edge Fade", Range(0, 1)) = 0.1 // Edge fade amount for left and right
         _EdgeFadeTB ("Top/Bottom Edge Fade", Range(0, 1)) = 0.1 // Edge fade amount for top and bottom
     }
+
     SubShader
     {
-        Tags { "RenderType"="Transparent" } // Keep transparency
+        Tags { "RenderType"="Opaque" }
         LOD 200
-
-        Blend SrcAlpha OneMinusSrcAlpha // Enable alpha blending
-        ZWrite Off // Disable depth writing for transparency
 
         Pass
         {
+            Tags { "LightMode"="ForwardBase" }
+            Blend SrcAlpha OneMinusSrcAlpha // Enable alpha blending
+            ZWrite On // Enable depth writing
+
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fwdbase // Support for shadows, main directional light, etc.
 
             #include "UnityCG.cginc"
+            #include "AutoLight.cginc" // Include Unity's lighting functions
 
             struct appdata_t
             {
@@ -36,6 +40,7 @@ Shader "Custom/PitchShader"
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
                 float3 normalWS : TEXCOORD1; // World space normal
+                SHADOW_COORDS(2) // Use TEXCOORD2 for shadow calculations
             };
 
             sampler2D _MainTex;
@@ -51,6 +56,8 @@ Shader "Custom/PitchShader"
                 o.uv = v.uv * _Tiling.xy; // Apply tiling
                 o.normalWS = normalize(mul(v.normal, (float3x3)unity_ObjectToWorld)); // Transform normal to world space
 
+                TRANSFER_SHADOW(o) // Pass shadow information to the fragment shader, using TEXCOORD2
+
                 return o;
             }
 
@@ -62,6 +69,10 @@ Shader "Custom/PitchShader"
                 // Simple Lambert lighting
                 half3 lightDir = normalize(_WorldSpaceLightPos0.xyz); // Get the main directional light direction
                 half lambert = saturate(dot(i.normalWS, lightDir)); // Lambert's cosine law
+
+                // Apply shadow attenuation
+                fixed shadow = SHADOW_ATTENUATION(i); // Calculate shadow factor
+                lambert *= shadow; // Modulate lighting by shadow
 
                 // Calculate alpha based on edge distances and corresponding edge fade values
                 float alpha = 1.0; // Start with full alpha
@@ -88,7 +99,7 @@ Shader "Custom/PitchShader"
 
                 texColor.a *= alpha; // Apply the calculated alpha to the texture color
 
-                // Combine the texture color and lighting (no self-lighting)
+                // Combine the texture color and lighting (with shadows)
                 texColor.rgb *= lambert;
 
                 return texColor;
@@ -96,5 +107,6 @@ Shader "Custom/PitchShader"
             ENDCG
         }
     }
+
     FallBack "Diffuse"
 }
