@@ -11,7 +11,7 @@ public class Pusher : MonoBehaviour
     [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Transform activeCamTrans;
-    [SerializeField] Vector3[] pitchPoints, ppT;
+    [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos;
     [SerializeField] float speedMult;
@@ -46,10 +46,6 @@ public class Pusher : MonoBehaviour
         activeCams = GameObject.FindObjectsOfType<CameraLookAt>();
     }
 
-    private void Update()
-    {
-        
-    }
 
     //private void Update()
     //{
@@ -73,12 +69,14 @@ public class Pusher : MonoBehaviour
     IEnumerator LaunchBallsWithDelay()
     {
         yield return new WaitForSeconds(1);
+
         while (overs < 5 && !isGameOver)
         {
             if (isPaused)
             {
                 yield return null;
             }
+
             else
             {
                 machineAnim.SetTrigger("Restart");
@@ -109,23 +107,11 @@ public class Pusher : MonoBehaviour
                 Vector3 targetPos = pitchPoints[randPitch];
                 Vector3 direction = (targetPos - initialPosition).normalized;
 
-                {
-                    //float time = 0;
-                    //float duration = 2;
-
-                    //while (time <= duration)
-                    //{
-                    //    time += Time.deltaTime;
-                    //    newBall.transform.position = Vector3.Lerp(initialPosition, targetPos, time / duration);
-                    //    yield return null;
-                    //}
-                }
-
                 rb.WakeUp();
                 rb.AddTorque(Vector3.forward * -20);
                 rb.AddForce(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), ForceMode.Impulse);
 
-                //yield return new WaitForSeconds(.7f);
+                yield return new WaitForSeconds(.7f);
 
                 yield return new WaitUntil(()=>ballPassed(newBall.transform));
 
@@ -134,7 +120,7 @@ public class Pusher : MonoBehaviour
                 //    CameraLookAt.instance.ball = newBall;
                 //}
 
-                foreach(CameraLookAt cam in activeCams)
+                foreach (CameraLookAt cam in activeCams)
                 {
                     if(MainGame.camIndex == 3)
                         cam.ball = newBall;
@@ -157,7 +143,6 @@ public class Pusher : MonoBehaviour
                 {
                     yield return new WaitForSeconds(2);
                 }
-                //yield return new WaitForSeconds(7);
 
                 UpdateScoreBoard(newBall.GetComponent<BallHit>());
                 sideCam.depth = -2;
@@ -165,6 +150,7 @@ public class Pusher : MonoBehaviour
                 StartCoroutine(ResetBall(newBall));
                 overText.text = overs + "." + ballsLaunched;
                 yield return new WaitForSeconds(1);
+
             }
             yield return null;
         }
