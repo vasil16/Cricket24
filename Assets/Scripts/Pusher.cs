@@ -156,6 +156,15 @@ public class Pusher : MonoBehaviour
         }
     }
 
+    Vector3 CalculateBallPitch(Vector3 direction)
+    {
+        if (newBall.GetComponent<Rigidbody>().SweepTest(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), out RaycastHit hit))
+        {
+            return hit.point;
+        }
+        return Vector3.zero;
+    }
+
     bool ballPassed(Transform ballT)
     {
         if (ballT.position.x < -28.8 || ballT.GetComponent<BallHit>().secondTouch)

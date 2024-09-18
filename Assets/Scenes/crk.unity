@@ -1002,7 +1002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4044528847752272487, guid: 81a98d9fdbb3140189238b30f2ab7b8e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -28.8
+      value: 56.8
       objectReference: {fileID: 0}
     - target: {fileID: 4044528847752272487, guid: 81a98d9fdbb3140189238b30f2ab7b8e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1010,7 +1010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4044528847752272487, guid: 81a98d9fdbb3140189238b30f2ab7b8e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.8
+      value: -1.64
       objectReference: {fileID: 0}
     - target: {fileID: 4044528847752272487, guid: 81a98d9fdbb3140189238b30f2ab7b8e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6018,9 +6018,9 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 378150918}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.08770915, g: 0.15112986, b: 0.254717, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -12516,7 +12516,7 @@ MeshCollider:
   m_GameObject: {fileID: 1077611252}
   m_Material: {fileID: 13400000, guid: eb1a7cb7ced0f465ba05ff777c273985, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
@@ -12530,10 +12530,10 @@ BoxCollider:
   m_GameObject: {fileID: 1077611252}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 2.220446e-16, z: 10}
-  m_Center: {x: -0.000000014901161, y: 0.00000047683716, z: -0.0000000018626451}
+  m_Size: {x: 10.000003, y: 36.96056, z: 10}
+  m_Center: {x: 0, y: -18.629995, z: 0}
 --- !u!1 &1095848023
 GameObject:
   m_ObjectHideFlags: 0
@@ -16093,7 +16093,7 @@ MeshCollider:
   m_GameObject: {fileID: 1420645432}
   m_Material: {fileID: 13400000, guid: 187c22c6b1ac1459ea9477cd56cc6c04, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
@@ -19462,7 +19462,7 @@ BoxCollider:
   m_GameObject: {fileID: 1696673022}
   m_Material: {fileID: 13400000, guid: 187c22c6b1ac1459ea9477cd56cc6c04, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 10, y: 0.22981693, z: 10.000001}
   m_Center: {x: 0, y: -0.07759585, z: 0}
