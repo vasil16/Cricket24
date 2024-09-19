@@ -72,21 +72,19 @@ public class Pusher : MonoBehaviour
 
         while (overs < 5 && !isGameOver)
         {
-            if (isPaused)
-            {
-                yield return null;
-            }
+            yield return null;
+            //if (isPaused)
+            //{
+            //    yield return null;
+            //}
 
-            else
+            //else
             {
-                machineAnim.SetTrigger("Restart");
                 yield return new WaitForSeconds(0.2f);
-                //LaunchBall(launchSpeeds[Random.Range(0, launchSpeeds.Count)]);
-
 
                 randPitch = Random.Range(0, 20);
                 mark.transform.position = pitchPoints[randPitch];
-                yield return new WaitForSeconds(1f);
+
                 float cc = xArr[Random.Range(1, 2)];
                 ballLaunchPos.z = cc;
                 if (overs == 0 && ballsLaunched == 0)
@@ -96,20 +94,28 @@ public class Pusher : MonoBehaviour
                 else
                 {
                     newBall = instBall;                    
-                    newBall.transform.rotation = Quaternion.Euler(Vector3.left * -90);
+                    newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
                 }
+                newBall.SetActive(false);
+                newBall.transform.position = ballLaunchPos;
+
+                Vector3 initialPosition = newBall.transform.position;
+                Vector3 targetPos = pitchPoints[randPitch];
+                Vector3 direction = (targetPos - initialPosition).normalized;
+                Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
+
+                //mark.transform.position = CalculateBallPitch(pitchPoint);
+                yield return new WaitForSeconds(1f);
                 currentBall = newBall.transform;
                 newBall.GetComponent<Rigidbody>().isKinematic = false;
                 newBall.SetActive(true);
 
                 rb = newBall.GetComponent<Rigidbody>();
-                Vector3 initialPosition = newBall.transform.position;
-                Vector3 targetPos = pitchPoints[randPitch];
-                Vector3 direction = (targetPos - initialPosition).normalized;
+                
 
                 rb.WakeUp();
-                rb.AddTorque(Vector3.forward * -20);
-                rb.AddForce(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), ForceMode.Impulse);
+                //rb.AddTorque(Vector3.forward * -20);
+                rb.AddForce(pitchPoint, ForceMode.Impulse);
 
                 yield return new WaitForSeconds(.7f);
 
@@ -148,7 +154,7 @@ public class Pusher : MonoBehaviour
                 sideCam.depth = -2;
                 sideCam.enabled = false;
                 StartCoroutine(ResetBall(newBall));
-                overText.text = overs + "." + ballsLaunched;
+                overText.text = $"{overs}.{ballsLaunched}";
                 yield return new WaitForSeconds(1);
 
             }
@@ -158,7 +164,7 @@ public class Pusher : MonoBehaviour
 
     Vector3 CalculateBallPitch(Vector3 direction)
     {
-        if (newBall.GetComponent<Rigidbody>().SweepTest(direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult), out RaycastHit hit))
+        if (newBall.GetComponent<Rigidbody>().SweepTest(direction, out RaycastHit hit))
         {
             return hit.point;
         }
