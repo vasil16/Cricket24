@@ -73,12 +73,7 @@ public class Pusher : MonoBehaviour
         while (overs < 5 && !isGameOver)
         {
             yield return null;
-            //if (isPaused)
-            //{
-            //    yield return null;
-            //}
 
-            //else
             {
                 yield return new WaitForSeconds(0.2f);
 
@@ -87,11 +82,6 @@ public class Pusher : MonoBehaviour
 
                 float cc = xArr[Random.Range(1, 2)];
                 ballLaunchPos.z = cc;
-                if (overs == 0 && ballsLaunched == 0)
-                {
-                    newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
-                }
-                else
                 {
                     newBall = instBall;                    
                     newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
