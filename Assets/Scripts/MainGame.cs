@@ -6,7 +6,7 @@ public class MainGame : MonoBehaviour
 {
     [SerializeField] GameObject[] cams;
     [SerializeField] BatMovement batMovement;
-    [SerializeField] GameObject homePanel, startObj, lights, sun;
+    [SerializeField] GameObject homePanel, startObj, lights, sun, canvas;
     [SerializeField] Animator swingAnim;
     [SerializeField] AnimationClip blockAnim;
     [SerializeField] Material day, Night, floodLight;
@@ -16,6 +16,7 @@ public class MainGame : MonoBehaviour
     private void Start()
     {
         camIndex = 1;
+        canvas.SetActive(true);
     }
 
     private void OnApplicationQuit()
