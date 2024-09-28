@@ -96,6 +96,13 @@ public class Pusher : MonoBehaviour
 
                 //mark.transform.position = CalculateBallPitch(pitchPoint);
                 yield return new WaitForSeconds(1f);
+                //if(MainGame.camIndex ==1)
+                //{
+                //    CameraLookAt.instance.TryGetComponent(out Animator anim);
+                //    anim.Play("camRunUpAnim");
+                //    yield return new WaitUntil(CameraLookAt.instance.Ready);
+                //}
+                CameraLookAt.instance.readyToDeliver = false;
                 currentBall = newBall.transform;
                 newBall.GetComponent<Rigidbody>().isKinematic = false;
                 newBall.SetActive(true);

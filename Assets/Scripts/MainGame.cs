@@ -11,6 +11,7 @@ public class MainGame : MonoBehaviour
     [SerializeField] AnimationClip blockAnim;
     [SerializeField] Material day, Night, floodLight;
     public static int camIndex;
+    [SerializeField] Transform batter;
     
 
     private void Start()
@@ -95,6 +96,13 @@ public class MainGame : MonoBehaviour
         {
             StartCoroutine(DelayBlockAnim(shot));
         }
+    }
+
+    public void MoveBatter(int side)
+    {
+        batter.position += Vector3.forward * side *3;
+        batter.TryGetComponent(out Animator anim);
+        anim.PlayInFixedTime("move", side);
     }
 
   
