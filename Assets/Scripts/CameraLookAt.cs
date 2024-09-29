@@ -9,6 +9,7 @@ public class CameraLookAt : MonoBehaviour
     Camera camera;
     public GameObject ball;
     Quaternion defRotation;
+    public bool readyToDeliver;
 
     private void OnEnable()
     {
@@ -38,5 +39,10 @@ public class CameraLookAt : MonoBehaviour
     public void LookAt()
     {
         camera.transform.LookAt(ball.transform);        
+    }
+
+    public bool Ready()
+    {
+        return readyToDeliver;
     }
 }
