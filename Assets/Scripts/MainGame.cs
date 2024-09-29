@@ -12,13 +12,32 @@ public class MainGame : MonoBehaviour
     [SerializeField] Material day, Night, floodLight;
     public static int camIndex;
     [SerializeField] Transform batter;
-    
+
+    public Renderer stadium;
+    private MaterialPropertyBlock mpb;
+
+    [SerializeField] Color[] color; 
+
 
     private void Start()
     {
         camIndex = 1;
         canvas.SetActive(true);
+
+        mpb = new MaterialPropertyBlock();
+
+        // Assign different colors to each submesh
+        for (int i = 0; i < stadium.sharedMaterials.Length; i++)
+        {
+
+            mpb.SetColor("_BaseColor", color[i]);
+
+            // Apply the MPB to the submesh index
+            stadium.SetPropertyBlock(mpb, i);
+        }
     }
+
+    
 
     private void OnApplicationQuit()
     {
