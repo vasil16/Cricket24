@@ -8,9 +8,8 @@ public class Pusher : MonoBehaviour
 {
     public static Pusher instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds;
     [SerializeField] RectTransform dragRect;
-    [SerializeField] Transform activeCamTrans;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos;
@@ -19,6 +18,7 @@ public class Pusher : MonoBehaviour
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
     public CameraLookAt[] activeCams;
+    Bounds stadiumBounds;
     
     public List<float> launchSpeeds, launchHeights;
     public int numberOfBallsToLaunch = 5;
@@ -42,8 +42,8 @@ public class Pusher : MonoBehaviour
     {
         StartCoroutine(LaunchBallsWithDelay());
         Application.targetFrameRate = 60;
-        activeCamTrans = GameObject.FindObjectOfType<Camera>().transform;
-        activeCams = GameObject.FindObjectsOfType<CameraLookAt>();
+        activeCams = FindObjectsOfType<CameraLookAt>();
+        stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
     }
 
 
@@ -201,10 +201,10 @@ public class Pusher : MonoBehaviour
                         break;
 
                 default:
-                    if (ball.secondTouch)
-                        run += 6;
-                    else
+                    if(stadiumBounds.Contains(ballfinal))                    
                         run += 0;
+                    else
+                        run += 6;
                     break;
             }
         }

@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 
 public class Bat : MonoBehaviour
 {
-    Touch touch;
     [SerializeField] Animator swingAnim;
     [SerializeField] AnimationClip animationClip;
     public Vector3 touchPos;
@@ -77,7 +76,7 @@ public class Bat : MonoBehaviour
         else if (angle >= 90 && angle < 135)
         {
             Debug.Log("Swipe in Slice 3 (Top)");
-            swingAnim.Play("block");
+            //swingAnim.Play("block");
         }
         else if (angle >= 135 && angle < 180)
         {
@@ -108,7 +107,6 @@ public class Bat : MonoBehaviour
 
     IEnumerator anim()
     {
-        //swingAnim.gameObject.GetComponent<Animator>().enabled = true;
         if (pressPoint > 0.5f) // Check if the tap is on the right portion of the screen
         {
             swingAnim.Play("shot");
@@ -118,7 +116,5 @@ public class Bat : MonoBehaviour
             swingAnim.Play("pull");
         }
         yield return new WaitForSeconds(1f);
-        //swingAnim.enabled = false;
-        //swingAnim.gameObject.GetComponent<Animator>().enabled = false;
     }
 }

@@ -23,10 +23,7 @@ public class BallHit : MonoBehaviour
 
     private void Update()
     {
-        ////transform.position = new Vector3(transform.position.x, transform.position.y, -0.37f);
-        ////transform.position = new Vector3(transform.position.x, transform.position.y, Pusher.instance.batTrans.position.z);
-        //touchVelocity = gameObject.GetComponent<Rigidbody>().velocity; 54
-        if (!Pusher.instance) return;
+        if (!Pusher.instance || MainGame.camIndex!=1) return;
         if (transform.position.x > 80 && transform.position.z < 54)
         {
             Pusher.instance.sideCam.depth = 0;
