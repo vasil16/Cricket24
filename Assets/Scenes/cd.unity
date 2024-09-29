@@ -7649,6 +7649,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
+  readyToDeliver: 0
 --- !u!114 &378150921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11136,11 +11137,13 @@ MonoBehaviour:
   startObj: {fileID: 2538090492868057656}
   lights: {fileID: 607564407}
   sun: {fileID: 168065114}
+  canvas: {fileID: 0}
   swingAnim: {fileID: 34451759}
   blockAnim: {fileID: 7400000, guid: 931bf3dcd757849d1a661e9dea416120, type: 2}
   day: {fileID: 2100000, guid: efd1c33efd2d58340b88804268e6833f, type: 2}
   Night: {fileID: 2100000, guid: 51b74d7bad397457d883c5940f7664d8, type: 2}
   floodLight: {fileID: 2100000, guid: 12f255cbc83d14e44a8152a72ce108ef, type: 2}
+  batter: {fileID: 0}
 --- !u!4 &601663865
 Transform:
   m_ObjectHideFlags: 0
@@ -12486,6 +12489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
+  readyToDeliver: 0
 --- !u!81 &667714096
 AudioListener:
   m_ObjectHideFlags: 0
@@ -16488,6 +16492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
+  readyToDeliver: 0
 --- !u!81 &977987653
 AudioListener:
   m_ObjectHideFlags: 0
@@ -19059,6 +19064,7 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: 368e71699ff794bb3bcfd80d58ad7f6f, type: 2}
   touchPos: {x: 0, y: 0, z: 0}
   pressPoint: 0
+  diss: 0
 --- !u!1 &1194149354
 GameObject:
   m_ObjectHideFlags: 0
@@ -21097,6 +21103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
+  readyToDeliver: 0
 --- !u!1 &1329608821
 GameObject:
   m_ObjectHideFlags: 0
@@ -23013,6 +23020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
+  readyToDeliver: 0
 --- !u!1 &1465678569
 GameObject:
   m_ObjectHideFlags: 0
@@ -24119,6 +24127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
+  readyToDeliver: 0
 --- !u!81 &1537373559
 AudioListener:
   m_ObjectHideFlags: 0
@@ -34814,8 +34823,8 @@ MonoBehaviour:
   Ball: {fileID: 3278323730372544780, guid: 81a98d9fdbb3140189238b30f2ab7b8e, type: 3}
   newBall: {fileID: 0}
   instBall: {fileID: 0}
+  groundBounds: {fileID: 0}
   dragRect: {fileID: 1739712406}
-  activeCamTrans: {fileID: 0}
   pitchPoints:
   - {x: 3.3, y: -4.592, z: -0.78}
   - {x: -23.1, y: -4.592, z: -0.8}
