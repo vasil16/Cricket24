@@ -31,6 +31,12 @@ public class Pusher : MonoBehaviour
 
     public bool isGameOver = false;
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(instBall.transform.position, helperdir);
+    }
+
     private void Awake()
     {
         instance = this;
@@ -46,25 +52,7 @@ public class Pusher : MonoBehaviour
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
     }
 
-
-    //private void Update()
-    //{
-    //    if (Input.touchCount > 0)
-    //    {
-    //        touch = Input.GetTouch(0);
-    //        if (RectTransformUtility.RectangleContainsScreenPoint(dragRect, touch.position))
-    //        {
-    //            if (touch.phase == TouchPhase.Moved)
-    //            {
-    //                if (touch.deltaPosition.x > 0)
-    //                    activeCamTrans.Rotate(Vector3.up);
-    //                else
-    //                    activeCamTrans.Rotate(Vector3.up * -1);
-    //            }
-    //        }
-    //    }
-    //}
-
+    Vector3 helperdir;
 
     IEnumerator LaunchBallsWithDelay()
     {
@@ -74,99 +62,102 @@ public class Pusher : MonoBehaviour
         {
             yield return null;
 
+            
+            yield return new WaitForSeconds(0.2f);
+
+            randPitch = Random.Range(0, 20);
+            mark.transform.position = pitchPoints[randPitch];
+
+            float cc = xArr[Random.Range(1, 2)];
+            ballLaunchPos.z = cc;
             {
-                yield return new WaitForSeconds(0.2f);
+                newBall = instBall;                    
+                newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
+            }
+            newBall.SetActive(false);
+            newBall.transform.position = ballLaunchPos;
 
-                randPitch = Random.Range(0, 20);
-                mark.transform.position = pitchPoints[randPitch];
+            Vector3 initialPosition = newBall.transform.position;
+            Vector3 targetPos = pitchPoints[randPitch];
+            Vector3 direction = (targetPos - initialPosition).normalized;
+            Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
+            helperdir = pitchPoint;
 
-                float cc = xArr[Random.Range(1, 2)];
-                ballLaunchPos.z = cc;
-                {
-                    newBall = instBall;                    
-                    newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
-                }
-                newBall.SetActive(false);
-                newBall.transform.position = ballLaunchPos;
+            //Vector3 landingPosition = CalculateBallPitch(initialPosition, pitchPoint);
 
-                Vector3 initialPosition = newBall.transform.position;
-                Vector3 targetPos = pitchPoints[randPitch];
-                Vector3 direction = (targetPos - initialPosition).normalized;
-                Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
+            // Update the marker to show the predicted landing position
+            //mark.transform.position = new Vector3(landingPosition.x, mark.transform.position.y, landingPosition.z);
 
-                //mark.transform.position = CalculateBallPitch(pitchPoint);
-                yield return new WaitForSeconds(1f);
-                //if(MainGame.camIndex ==1)
-                //{
-                //    CameraLookAt.instance.TryGetComponent(out Animator anim);
-                //    anim.Play("camRunUpAnim");
-                //    yield return new WaitUntil(CameraLookAt.instance.Ready);
-                //}
-                CameraLookAt.instance.readyToDeliver = false;
-                currentBall = newBall.transform;
-                newBall.GetComponent<Rigidbody>().isKinematic = false;
-                newBall.SetActive(true);
+            yield return new WaitForSeconds(1f);
 
-                rb = newBall.GetComponent<Rigidbody>();
+            CameraLookAt.instance.readyToDeliver = false;
+            currentBall = newBall.transform;
+            newBall.GetComponent<Rigidbody>().isKinematic = false;
+            newBall.SetActive(true);
+
+            rb = newBall.GetComponent<Rigidbody>();
                 
 
-                rb.WakeUp();
-                //rb.AddTorque(Vector3.forward * -20);
-                rb.AddForce(pitchPoint, ForceMode.Impulse);
+            rb.WakeUp();
+            rb.AddTorque(Vector3.forward * -10);
+            rb.AddForce(pitchPoint, ForceMode.Impulse);
 
-                yield return new WaitForSeconds(.7f);
+            yield return new WaitForSeconds(.7f);
 
-                yield return new WaitUntil(()=>ballPassed(newBall.transform));
+            yield return new WaitUntil(()=>ballPassed(newBall.transform));
 
-                //if (CameraLookAt.instance != null && MainGame.camIndex == 3)
-                //{
-                //    CameraLookAt.instance.ball = newBall;
-                //}
-
-                foreach (CameraLookAt cam in activeCams)
-                {
-                    if(MainGame.camIndex == 3)
-                        cam.ball = newBall;
-                }
-
-                //Destroy(newBall, 4f);                
-                ballsLaunched++;
-                if(ballsLaunched%6==0)
-                {
-                    overs++;                    
-                    ballsLaunched = 0;
-                }
-
-
-                if (newBall.GetComponent<BallHit>().secondTouch)
-                {
-                    yield return new WaitForSeconds(7);
-                }
-                else
-                {
-                    yield return new WaitForSeconds(2);
-                }
-
-                UpdateScoreBoard(newBall.GetComponent<BallHit>());
-                sideCam.depth = -2;
-                sideCam.enabled = false;
-                StartCoroutine(ResetBall(newBall));
-                overText.text = $"{overs}.{ballsLaunched}";
-                yield return new WaitForSeconds(1);
-
+            foreach (CameraLookAt cam in activeCams)
+            {
+                if(MainGame.camIndex == 3)
+                    cam.ball = newBall;
             }
+
+            ballsLaunched++;
+            if(ballsLaunched%6==0)
+            {
+                overs++;                    
+                ballsLaunched = 0;
+            }
+
+            if (newBall.GetComponent<BallHit>().secondTouch)
+            {
+                yield return new WaitForSeconds(7);
+            }
+            else
+            {
+                yield return new WaitForSeconds(2);
+            }
+
+            UpdateScoreBoard(newBall.GetComponent<BallHit>());
+            sideCam.depth = -2;
+            sideCam.enabled = false;
+            StartCoroutine(ResetBall(newBall));
+            overText.text = $"{overs}.{ballsLaunched}";
+            yield return new WaitForSeconds(1);
+            
             yield return null;
         }
     }
 
-    Vector3 CalculateBallPitch(Vector3 direction)
-    {
-        if (newBall.GetComponent<Rigidbody>().SweepTest(direction, out RaycastHit hit))
-        {
-            return hit.point;
-        }
-        return Vector3.zero;
-    }
+Vector3 CalculateBallPitch(Vector3 initialPosition, Vector3 velocity)
+{
+    // Separate velocity into horizontal (X,Z) and vertical (Y) components
+    Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
+    float verticalVelocity = velocity.y;
+
+    // Gravity value (can also use Physics.gravity.y if you want the Unity gravity setting)
+    float gravity = Physics.gravity.y;
+
+    // Calculate time to land using the vertical velocity and gravity (y = v_y * t + 0.5 * g * t^2)
+    float timeToLand = (-verticalVelocity - Mathf.Sqrt(verticalVelocity * verticalVelocity - 2 * gravity * initialPosition.y)) / gravity;
+
+    // Predict the landing position using the horizontal velocity and time to land
+    Vector3 landingPosition = initialPosition + horizontalVelocity * timeToLand;
+
+    // Return the predicted landing position
+    return landingPosition;
+}
+
 
     bool ballPassed(Transform ballT)
     {

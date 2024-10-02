@@ -23,7 +23,8 @@ public class BallHit : MonoBehaviour
 
     private void Update()
     {
-        if (!Pusher.instance || MainGame.camIndex!=1) return;
+        if (!Pusher.instance) return;
+        if (MainGame.camIndex != 1) return;
         if (transform.position.x > 80 && transform.position.z < 54)
         {
             Pusher.instance.sideCam.depth = 0;
