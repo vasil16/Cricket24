@@ -177,7 +177,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.43333334
-        value: {x: -2.742, y: 6.558, z: -34.688}
+        value: {x: -2.742, y: 6.558, z: -46.709}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -1032,7 +1032,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.43333334
-        value: {x: 0.65, y: -0.34, z: 1}
+        value: {x: 0.86, y: -0.34, z: 0.99}
         inSlope: {x: 0, y: 2.4, z: 0}
         outSlope: {x: 0, y: 2.4, z: 0}
         tangentMode: 0
@@ -2828,7 +2828,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.43333334
-        value: 0.65
+        value: 0.86
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -2956,7 +2956,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.43333334
-        value: 1
+        value: 0.99
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -3148,7 +3148,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.43333334
-        value: -34.688
+        value: -46.709
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -7865,7 +7865,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Body/Hand (2)/Bat
+    path: Shoes1 (2)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7875,7 +7875,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Body/Hand (2)/Bat
+    path: Shoes1 (2)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7885,7 +7885,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Body/Hand (2)/Bat
+    path: Shoes1 (2)
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7985,7 +7985,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Shoes1 (2)
+    path: Body/Hand (2)/Bat
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7995,7 +7995,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Shoes1 (2)
+    path: Body/Hand (2)/Bat
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -8005,7 +8005,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Shoes1 (2)
+    path: Body/Hand (2)/Bat
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0
