@@ -13,7 +13,7 @@ public class Pusher : MonoBehaviour
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos;
-    [SerializeField] float speedMult;
+    [SerializeField] float speedMult, pitchXOffset;
     [SerializeField] public Transform batTrans, currentBall;
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
@@ -56,17 +56,14 @@ public class Pusher : MonoBehaviour
 
     IEnumerator LaunchBallsWithDelay()
     {
-        yield return new WaitForSeconds(1);
-
         while (overs < 5 && !isGameOver)
         {
-            yield return null;
-
             
             yield return new WaitForSeconds(0.2f);
 
             randPitch = Random.Range(0, 20);
-            mark.transform.position = pitchPoints[randPitch];
+            Vector3 drop = pitchPoints[randPitch];
+            mark.transform.position = new Vector3(drop.x + pitchXOffset, drop.y, drop.z);
 
             float cc = xArr[Random.Range(1, 2)];
             ballLaunchPos.z = cc;
@@ -83,12 +80,11 @@ public class Pusher : MonoBehaviour
             Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
             helperdir = pitchPoint;
 
-            //Vector3 landingPosition = CalculateBallPitch(initialPosition, pitchPoint);
-
-            // Update the marker to show the predicted landing position
-            //mark.transform.position = new Vector3(landingPosition.x, mark.transform.position.y, landingPosition.z);
-
             yield return new WaitForSeconds(1f);
+
+            Bowl.instance.anim.Play("bowl");
+
+            yield return new WaitUntil(() => Bowl.instance.ready);
 
             CameraLookAt.instance.readyToDeliver = false;
             currentBall = newBall.transform;
@@ -96,7 +92,8 @@ public class Pusher : MonoBehaviour
             newBall.SetActive(true);
 
             rb = newBall.GetComponent<Rigidbody>();
-                
+
+            Bowl.instance.ready = false;
 
             rb.WakeUp();
             rb.AddTorque(Vector3.forward * -10);
@@ -138,25 +135,6 @@ public class Pusher : MonoBehaviour
             yield return null;
         }
     }
-
-Vector3 CalculateBallPitch(Vector3 initialPosition, Vector3 velocity)
-{
-    // Separate velocity into horizontal (X,Z) and vertical (Y) components
-    Vector3 horizontalVelocity = new Vector3(velocity.x, 0, velocity.z);
-    float verticalVelocity = velocity.y;
-
-    // Gravity value (can also use Physics.gravity.y if you want the Unity gravity setting)
-    float gravity = Physics.gravity.y;
-
-    // Calculate time to land using the vertical velocity and gravity (y = v_y * t + 0.5 * g * t^2)
-    float timeToLand = (-verticalVelocity - Mathf.Sqrt(verticalVelocity * verticalVelocity - 2 * gravity * initialPosition.y)) / gravity;
-
-    // Predict the landing position using the horizontal velocity and time to land
-    Vector3 landingPosition = initialPosition + horizontalVelocity * timeToLand;
-
-    // Return the predicted landing position
-    return landingPosition;
-}
 
 
     bool ballPassed(Transform ballT)
@@ -222,6 +200,7 @@ Vector3 CalculateBallPitch(Vector3 initialPosition, Vector3 velocity)
         instBall = ball;
     }
 
+    #region Old
     void LaunchBall(float launchSpeed)
     {
         float cc = xArr[Random.Range(0, 1)];
@@ -270,6 +249,7 @@ Vector3 CalculateBallPitch(Vector3 initialPosition, Vector3 velocity)
             Debug.LogError("Rigidbody component or Bails reference not found!");
         }
     }
+    #endregion
 
     public void Out()
     {

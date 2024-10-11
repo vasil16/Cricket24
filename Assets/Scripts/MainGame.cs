@@ -131,22 +131,6 @@ public class MainGame : MonoBehaviour
         anim.Play("move");
     }
 
-  
-
-    public void Pull()
-    {     
-        swingAnim.Play("pull");
-    }
-
-    public void vDrive()
-    {
-        swingAnim.Play("shot2");
-    }
-
-    public void loftDrive()
-    {
-        swingAnim.Play("shot");
-    }
 
     IEnumerator DelayBlockAnim(string animName)
     {
