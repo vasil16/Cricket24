@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+
+
 
 public class MainGame : MonoBehaviour
 {
@@ -16,7 +19,15 @@ public class MainGame : MonoBehaviour
     public Renderer stadium;
     private MaterialPropertyBlock mpb;
 
-    [SerializeField] Color[] color; 
+    [SerializeField] Color[] color;
+
+    public static MainGame instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+            instance = this;
+    }
 
 
     private void Start()
@@ -37,7 +48,6 @@ public class MainGame : MonoBehaviour
         }
     }
 
-    
 
     private void OnApplicationQuit()
     {
@@ -63,6 +73,7 @@ public class MainGame : MonoBehaviour
         {
             RenderSettings.skybox = Night;
             lights.SetActive(true);
+            floodLight.EnableKeyword("_EMISSION");
             sun.SetActive(false);
             Debug.Log("night");
         }
