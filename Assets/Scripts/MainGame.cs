@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 
 public class MainGame : MonoBehaviour
@@ -17,7 +20,6 @@ public class MainGame : MonoBehaviour
     [SerializeField] Color[] colors;
     MaterialPropertyBlock propBlock;
     [SerializeField] Texture spriteTexture, seatTex;
-    
 
     private void Start()
     {
@@ -49,11 +51,6 @@ public class MainGame : MonoBehaviour
     private void OnApplicationQuit()
     {
         floodLight.EnableKeyword("_EMISSION");
-    }
-
-    private void Update()
-    {
-        Application.targetFrameRate = 60;
     }
 
     public void TimeSelect(int index)
