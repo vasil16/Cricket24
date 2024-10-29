@@ -54,11 +54,6 @@ public class MainGame : MonoBehaviour
         floodLight.EnableKeyword("_EMISSION");
     }
 
-    private void Update()
-    {
-        Application.targetFrameRate = 60;
-    }
-
     public void TimeSelect(int index)
     {
         if(index==0)

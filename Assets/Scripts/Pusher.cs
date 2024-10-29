@@ -8,13 +8,13 @@ public class Pusher : MonoBehaviour
 {
     public static Pusher instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds, bat;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos;
     [SerializeField] float speedMult, pitchXOffset;
-    [SerializeField] public Transform batTrans, currentBall;
+    [SerializeField] public Transform batCenter, currentBall, bb;
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
     public CameraLookAt[] activeCams;
@@ -40,6 +40,7 @@ public class Pusher : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        bat.GetComponent<Rigidbody>().centerOfMass = batCenter.localPosition;
     }
 
     public float scc;

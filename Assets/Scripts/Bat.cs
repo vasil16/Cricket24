@@ -1,7 +1,5 @@
- using System.Collections;
-using System.Net;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class Bat : MonoBehaviour
 {
