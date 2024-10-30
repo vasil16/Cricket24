@@ -40,7 +40,7 @@ public class Pusher : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        bat.GetComponent<Rigidbody>().centerOfMass = batCenter.localPosition;
+        //bat.GetComponent<Rigidbody>().centerOfMass = batCenter.localPosition;
     }
 
     public float scc;

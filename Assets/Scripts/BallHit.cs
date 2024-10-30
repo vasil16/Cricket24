@@ -50,6 +50,7 @@ public class BallHit : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Bat"))
         {
+            Debug.Log("spot " + collision.gameObject.name);
             Pusher.instance.bb.position = collision.GetContact(0).point;
             StartCoroutine(waitAndLook());
 

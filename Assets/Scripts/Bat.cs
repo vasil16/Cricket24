@@ -41,7 +41,7 @@ public class Bat : MonoBehaviour
                         diss = Vector3.Distance(endPoint, startPoint);
                         if (Vector3.Distance(endPoint, startPoint) <= 30)
                         {
-                            Debug.Log("no swipe for " + diss);
+                            //Debug.Log("no swipe for " + diss);
                             return;
                         }
                         Vector3 direction = endPoint - startPoint;
@@ -63,42 +63,42 @@ public class Bat : MonoBehaviour
         // Divide the screen into 8 pizza slices (each 45 degrees)
         if (angle >= 0 && angle < 45)
         {
-            Debug.Log("Swipe in Slice 1 (Right)");
+            //Debug.Log("Swipe in Slice 1 (Right)");
             swingAnim.Play("pull");
         }
         else if (angle >= 45 && angle < 90)
         {
-            Debug.Log("Swipe in Slice 2 (Top-Right)");
+            //Debug.Log("Swipe in Slice 2 (Top-Right)");
             swingAnim.Play("flick");
         }
         else if (angle >= 90 && angle < 135)
         {
-            Debug.Log("Swipe in Slice 3 (Top)");
+            //Debug.Log("Swipe in Slice 3 (Top)");
             //swingAnim.Play("block");
         }
         else if (angle >= 135 && angle < 180)
         {
-            Debug.Log("Swipe in Slice 4 (Top-Left)");
+            //Debug.Log("Swipe in Slice 4 (Top-Left)");
             swingAnim.Play("cut");
         }
         else if (angle >= 180 && angle < 225)
         {
-            Debug.Log("Swipe in Slice 5 (Left)");
+            //Debug.Log("Swipe in Slice 5 (Left)");
             swingAnim.Play("offDrive");
         }
         else if (angle >= 225 && angle < 270)
         {
-            Debug.Log("Swipe in Slice 6 (Bottom-Left)");
+            //Debug.Log("Swipe in Slice 6 (Bottom-Left)");
             swingAnim.Play("straightDrive");
         }
         else if (angle >= 270 && angle < 315)
         {
-            Debug.Log("Swipe in Slice 7 (Bottom)");
+            //Debug.Log("Swipe in Slice 7 (Bottom)");
             swingAnim.Play("shot");
         }
         else if (angle >= 315 && angle < 360)
         {
-            Debug.Log("Swipe in Slice 8 (Bottom-Right)");
+            //Debug.Log("Swipe in Slice 8 (Bottom-Right)");
             swingAnim.Play("flick");
         }
     }
