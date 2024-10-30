@@ -73,8 +73,8 @@ public class Bat : MonoBehaviour
         }
         else if (angle >= 90 && angle < 135)
         {
-            //Debug.Log("Swipe in Slice 3 (Top)");
-            //swingAnim.Play("block");
+            Debug.Log("Swipe in Slice 3 (Top)");
+            swingAnim.Play("block");
         }
         else if (angle >= 135 && angle < 180)
         {
