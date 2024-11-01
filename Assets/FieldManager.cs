@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class FieldManager : MonoBehaviour
@@ -10,10 +11,12 @@ public class FieldManager : MonoBehaviour
     [SerializeField] private List<GameObject> fielders;
     [SerializeField] private float runSpeed;
     [SerializeField] private float fieldingRange = 10f;
+    [SerializeField] private float deepFielderBoost = 0.8f; // Boost score for optimal deep fielders
+    //[SerializeField] private float circledistance;
     private Coroutine moverCoroutine;
 
     private Vector3 initialFielderPosition;
-    private GameObject bestFielder;
+    [SerializeField] GameObject bestFielder, marker;
 
     private void Start()
     {
@@ -21,26 +24,45 @@ public class FieldManager : MonoBehaviour
         ResetFielder = ResetField;
     }
 
-    void CheckAndInitiateFielder(Vector3 ballAt, Vector3 ballDirection)
+    void CheckAndInitiateFielder(Vector3 ballAt, Vector3 at)
     {
         Debug.Log("Checking fielders...");
+
+        Vector3 ballDirection = Pusher.instance.currentBall.GetComponent<Rigidbody>().velocity.normalized; // Accurate direction based on velocity
+        GameObject ball = Pusher.instance.currentBall.gameObject;
         float bestScore = -1f;
         bestFielder = null;
 
         foreach (var fielder in fielders)
         {
-            Vector3 toFielder = (fielder.transform.position - ballAt).normalized;
-            float dotProduct = Vector3.Dot(toFielder, ballDirection.normalized);
-            float distance = Vector3.Distance(fielder.transform.position, ballAt);
+            Vector3 toFielder = (fielder.transform.position - ballAt);
+            float distance = toFielder.magnitude;
+            toFielder.Normalize();
 
-            // Define if fielder is inside or outside the 30-yard circle
-            bool isInsideCircle = distance <= 180f; // Adjust as necessary for Unity's units
+            // Check direction accuracy - positive dot value means the fielder is closer to the ball's direction
+            float dotProduct = Vector3.Dot(toFielder, ballDirection);
 
-            // Calculate score: prioritize inner fielders if direction and distance are similar
-            float score = dotProduct - (distance / fieldingRange);
-            if (isInsideCircle) score += 0.5f; // Boost inner fielder score for closer fielding
+            // Set a base score
+            float score = dotProduct;
 
-            // Select the fielder with the highest score, considering circle positioning
+            // Prioritize fielders in the right general direction, discourage fielders positioned behind
+            if (dotProduct < 0)
+            {
+                score -= 1f; // or some larger penalty for being in the opposite direction
+            }
+            else
+            {
+                // Distance penalty
+                score -= distance / fieldingRange;
+
+                // Boost deep fielders who are in the correct direction
+                if (distance > 110f)
+                {
+                    score += deepFielderBoost;
+                }
+            }
+
+            // Track the best fielder
             if (score > bestScore)
             {
                 bestScore = score;
@@ -48,42 +70,49 @@ public class FieldManager : MonoBehaviour
             }
         }
 
+
         if (bestFielder != null)
         {
-            initialFielderPosition = bestFielder.transform.position;
-            moverCoroutine = StartCoroutine(RunToBall(bestFielder, Pusher.instance.currentBall));
-            Debug.Log($"Selected Fielder: {bestFielder.name} with score {bestScore}");
+            //if(!ball.GetComponent<BallHit>().groundShot)
+            //{
+            //    Vector3 landingPos = PredictLandingPosition(ball.GetComponent<Rigidbody>(), 20f, 20);
+            //    landingPos.y = bestFielder.transform.position.y;
+            //    marker.transform.position = landingPos;
+            //    initialFielderPosition = bestFielder.transform.position;
+            //    moverCoroutine = StartCoroutine(RunToLanding(bestFielder, Pusher.instance.currentBall.transform, landingPos));
+            //}
+            //else
+            {
+                Vector3 landingPos = fallPos(ballAt,ball.transform);
+                landingPos.y = bestFielder.transform.position.y;
+                marker.transform.position = landingPos;
+                initialFielderPosition = bestFielder.transform.position;
+                moverCoroutine = StartCoroutine(RunToBall(bestFielder, Pusher.instance.currentBall.transform, ballAt));
+                Debug.Log($"Selected Fielder: {bestFielder.name} with score {bestScore}");
+            }
         }
+
         else
         {
             Debug.Log("No suitable fielder found within range.");
         }
     }
 
-
-    IEnumerator RunToBall(GameObject fielder, Transform ball)
+    IEnumerator RunToLanding(GameObject fielder, Transform ball, Vector3 predictedSpot)
     {
         Debug.Log("Starting fielder movement...");
+        Vector3 predictedPosition;
 
-        // Ensure the ball was hit
-        if (!ball.GetComponent<BallHit>().secondTouch)
+        predictedPosition = predictedSpot;
+
+        while (Vector2.Distance(new Vector2(fielder.transform.position.x, fielder.transform.position.z), new Vector2(predictedSpot.x, predictedSpot.z)) > 1f)
         {
-            Pusher.instance.deliveryDead = true;
-            Debug.Log("No ball hit detected.");
-            yield break;
-        }
+            if(Vector2.Distance(new Vector2(fielder.transform.position.x, fielder.transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 2f)
+            {
+                break;
+            }            
 
-
-        // Continue running until the fielder reaches the ball
-        while (Vector2.Distance(
-            new Vector2(fielder.transform.position.x, fielder.transform.position.z),
-            new Vector2(ball.position.x, ball.position.z)) > 0.1f ||
-            (!ball.GetComponent<BallHit>().groundShot && (ball.position.y) > 0.22f))
-        {
-            Vector3 ballTargetPos = new Vector3(ball.position.x, fielder.transform.position.y, ball.position.z);
-
-            // Move the fielder toward the ball’s current position
-            fielder.transform.position = Vector3.MoveTowards(fielder.transform.position, ballTargetPos, runSpeed * Time.deltaTime);
+            fielder.transform.position = Vector3.MoveTowards(fielder.transform.position, predictedPosition, runSpeed * Time.deltaTime);
 
             yield return null;
         }
@@ -100,8 +129,81 @@ public class FieldManager : MonoBehaviour
             Pusher.instance.deliveryDead = true;
         }
 
-        // Stop ball movement
         ball.GetComponent<Rigidbody>().isKinematic = true;
+    }
+
+    IEnumerator RunToBall(GameObject fielder, Transform ball, Vector3 ballAt)
+    {
+
+        Debug.Log("Starting fielder movement...");
+        
+
+        while (Vector2.Distance(new Vector2(fielder.transform.position.x, fielder.transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 2f ||
+            (!ball.GetComponent<BallHit>().groundShot && ball.position.y > 0.22f))
+        {
+            Vector3 ballDirection = ball.transform.position - ballAt;
+            Vector3 predictedPosition;
+            if (ball.GetComponent<BallHit>().groundShot)
+            {
+                predictedPosition = new Vector3(ball.position.x, fielder.transform.position.y, ball.position.z);
+            }
+            else
+            {
+                predictedPosition = ball.position + ballDirection * 2f;
+                predictedPosition.y = fielder.transform.position.y;
+            }
+
+            fielder.transform.position = Vector3.MoveTowards(fielder.transform.position, predictedPosition, runSpeed * Time.deltaTime);
+
+            yield return null;
+        }
+
+        Debug.Log("Fielder reached the target position!");
+
+        if (!ball.GetComponent<BallHit>().groundShot)
+        {
+            Pusher.instance.Out();
+        }
+        else
+        {
+            fielder.transform.position = initialFielderPosition;
+            Pusher.instance.deliveryDead = true;
+        }
+
+        ball.GetComponent<Rigidbody>().isKinematic = true;
+    }
+
+    Vector3 fallPos(Vector3 ballAt, Transform ball)
+    {
+        return ball.position - ballAt.normalized * 3;
+    }
+
+    Vector3 PredictLandingPosition(Rigidbody ballRb, float timeToSimulate, int steps)
+    {
+        Vector3 initialPosition = ballRb.position; // Current position of the ball
+        Vector3 velocity = ballRb.velocity; // Current velocity of the ball
+        Vector3 gravity = Physics.gravity; // Gravity vector
+
+        // Simulate the trajectory
+        Vector3 predictedPosition = initialPosition;
+
+        for (int i = 0; i < steps; i++)
+        {
+            // Update position based on current velocity
+            predictedPosition += velocity * (timeToSimulate / steps);
+
+            // Update velocity based on gravity
+            velocity += gravity * (timeToSimulate / steps);
+
+            // Check if predicted position is below ground level (assuming ground is at y = 0)
+            if (predictedPosition.y <= -4.437081f || !Pusher.instance.stadiumBounds.Contains(predictedPosition))
+            {
+                predictedPosition.y = -4.437081f; // Ground level
+                break; // Exit the loop if we've hit the ground
+            }
+        }
+
+        return predictedPosition;
     }
 
 

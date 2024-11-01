@@ -68,10 +68,9 @@ public class Pusher : MonoBehaviour
 
             randPitch = Random.Range(0, 20);
 
-            //Vector3 drop = pitchPoints[randPitch];
+            Vector3 targetPos = pitchPoints[randPitch];
 
-            Vector3 drop = GenerateRandomPointOnPlane();
-            mark.transform.position = new Vector3(drop.x + pitchXOffset, drop.y, drop.z);
+            mark.transform.position = new Vector3(targetPos.x + pitchXOffset, targetPos.y, targetPos.z);
 
             float cc = xArr[Random.Range(1, 2)];
             ballLaunchPos.z = cc;
@@ -83,8 +82,6 @@ public class Pusher : MonoBehaviour
             newBall.transform.position = ballLaunchPos;
 
             Vector3 initialPosition = newBall.transform.position;
-            //Vector3 targetPos = pitchPoints[randPitch];
-            Vector3 targetPos = drop;
             Vector3 direction = (targetPos - initialPosition).normalized;
             Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
             helperdir = pitchPoint;
@@ -112,7 +109,8 @@ public class Pusher : MonoBehaviour
 
             yield return new WaitUntil(() => ballPassed(newBall.transform));
 
-            StartCoroutine(CheckBallDirection());
+            if(newBall.GetComponent<BallHit>().secondTouch)
+                StartCoroutine(CheckBallDirection());
 
             foreach (CameraLookAt cam in activeCams)
             {

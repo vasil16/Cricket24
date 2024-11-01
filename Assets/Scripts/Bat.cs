@@ -3,13 +3,18 @@ using UnityEngine;
 
 public class Bat : MonoBehaviour
 {
-    [SerializeField] Animator swingAnim;
+    [SerializeField] Animator batterAnim;
     [SerializeField] AnimationClip animationClip;
     public Vector3 touchPos;
     public float pressPoint;
 
     Vector3 startPoint, endPoint;
     public float diss;
+
+    private void Awake()
+    {
+        batterAnim.Play("idle");
+    }
 
     void Update()
     {
@@ -64,42 +69,42 @@ public class Bat : MonoBehaviour
         if (angle >= 0 && angle < 45)
         {
             //Debug.Log("Swipe in Slice 1 (Right)");
-            swingAnim.Play("pull");
+            batterAnim.Play("pull");
         }
         else if (angle >= 45 && angle < 90)
         {
             //Debug.Log("Swipe in Slice 2 (Top-Right)");
-            swingAnim.Play("flick");
+            batterAnim.Play("flick");
         }
         else if (angle >= 90 && angle < 135)
         {
             Debug.Log("Swipe in Slice 3 (Top)");
-            swingAnim.Play("block");
+            batterAnim.Play("block");
         }
         else if (angle >= 135 && angle < 180)
         {
             //Debug.Log("Swipe in Slice 4 (Top-Left)");
-            swingAnim.Play("cut");
+            batterAnim.Play("cut");
         }
         else if (angle >= 180 && angle < 225)
         {
             //Debug.Log("Swipe in Slice 5 (Left)");
-            swingAnim.Play("offDrive");
+            batterAnim.Play("offDrive");
         }
         else if (angle >= 225 && angle < 270)
         {
             //Debug.Log("Swipe in Slice 6 (Bottom-Left)");
-            swingAnim.Play("straightDrive");
+            batterAnim.Play("straightDrive");
         }
         else if (angle >= 270 && angle < 315)
         {
             //Debug.Log("Swipe in Slice 7 (Bottom)");
-            swingAnim.Play("shot");
+            batterAnim.Play("shot");
         }
         else if (angle >= 315 && angle < 360)
         {
             //Debug.Log("Swipe in Slice 8 (Bottom-Right)");
-            swingAnim.Play("flick");
+            batterAnim.Play("flick");
         }
     }
 }
