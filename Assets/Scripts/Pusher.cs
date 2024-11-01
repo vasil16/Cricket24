@@ -18,7 +18,7 @@ public class Pusher : MonoBehaviour
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
     public CameraLookAt[] activeCams;
-    Bounds stadiumBounds;
+    public Bounds stadiumBounds;
 
     public List<float> launchSpeeds, launchHeights;
     public int numberOfBallsToLaunch = 5;
@@ -30,6 +30,8 @@ public class Pusher : MonoBehaviour
     bool isPaused;
 
     public bool isGameOver = false;
+    public bool readyToBowl = true;
+    public bool deliveryDead;
 
     private void OnDrawGizmos()
     {
@@ -62,8 +64,13 @@ public class Pusher : MonoBehaviour
 
             yield return new WaitForSeconds(0.2f);
 
+            deliveryDead = false;
+
             randPitch = Random.Range(0, 20);
-            Vector3 drop = pitchPoints[randPitch];
+
+            //Vector3 drop = pitchPoints[randPitch];
+
+            Vector3 drop = GenerateRandomPointOnPlane();
             mark.transform.position = new Vector3(drop.x + pitchXOffset, drop.y, drop.z);
 
             float cc = xArr[Random.Range(1, 2)];
@@ -76,7 +83,8 @@ public class Pusher : MonoBehaviour
             newBall.transform.position = ballLaunchPos;
 
             Vector3 initialPosition = newBall.transform.position;
-            Vector3 targetPos = pitchPoints[randPitch];
+            //Vector3 targetPos = pitchPoints[randPitch];
+            Vector3 targetPos = drop;
             Vector3 direction = (targetPos - initialPosition).normalized;
             Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
             helperdir = pitchPoint;
@@ -104,6 +112,8 @@ public class Pusher : MonoBehaviour
 
             yield return new WaitUntil(() => ballPassed(newBall.transform));
 
+            StartCoroutine(CheckBallDirection());
+
             foreach (CameraLookAt cam in activeCams)
             {
                 if (MainGame.camIndex == 3)
@@ -117,16 +127,12 @@ public class Pusher : MonoBehaviour
                 ballsLaunched = 0;
             }
 
-            if (newBall.GetComponent<BallHit>().secondTouch)
-            {
-                yield return new WaitForSeconds(7);
-            }
-            else
-            {
-                yield return new WaitForSeconds(2);
-            }
-
+            yield return new WaitUntil(() => deliveryDead);
             UpdateScoreBoard(newBall.GetComponent<BallHit>());
+            yield return new WaitForSeconds(2f);
+
+            FieldManager.ResetFielder.Invoke();
+            
             sideCam.depth = -2;
             sideCam.enabled = false;
             StartCoroutine(ResetBall(newBall));
@@ -135,6 +141,24 @@ public class Pusher : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    Vector3 GenerateRandomPointOnPlane()
+    {
+        // Generate random x and z coordinates within the defined range
+        float randomX = Random.Range(-45.8f, 22.4f);
+        float randomZ = Random.Range(-4f, .8f);
+
+        // Set y to 0 for a flat plane
+        return new Vector3(randomX, -4.427082f, randomZ);
+    }
+
+    IEnumerator CheckBallDirection()
+    {
+        Vector3 firstPos = newBall.transform.position;
+        yield return new WaitForSeconds(0.2f);
+        Vector3 ballDirection = (newBall.transform.position - firstPos).normalized;
+        FieldManager.StartCheckField.Invoke(firstPos, ballDirection);
     }
 
 

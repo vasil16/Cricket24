@@ -102,17 +102,4 @@ public class Bat : MonoBehaviour
             swingAnim.Play("flick");
         }
     }
-
-    IEnumerator anim()
-    {
-        if (pressPoint > 0.5f) // Check if the tap is on the right portion of the screen
-        {
-            swingAnim.Play("shot");
-        }
-        else
-        {
-            swingAnim.Play("pull");
-        }
-        yield return new WaitForSeconds(1f);
-    }
 }

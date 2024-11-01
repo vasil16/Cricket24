@@ -24,6 +24,12 @@ public class BallHit : MonoBehaviour
     private void Update()
     {
         if (!Pusher.instance || MainGame.camIndex!=1) return;
+
+        if (!Pusher.instance.stadiumBounds.Contains(transform.position))
+        {
+            Pusher.instance.deliveryDead = true;
+        }
+
         if (transform.position.x > 80 && transform.position.z < 54)
         {
             Pusher.instance.sideCam.depth = 0;
@@ -73,7 +79,7 @@ public class BallHit : MonoBehaviour
                     //CameraShake.instance.followBall(this.gameObject);                   
                 }
                 shotFx.Play();
-                VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);                
+                //VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);                
             }
         }
         else if (collision.gameObject.CompareTag("Ground"))
@@ -84,6 +90,11 @@ public class BallHit : MonoBehaviour
                 //Vector3 vel = gameObject.GetComponent<Rigidbody>().velocity;
                 //gameObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, vel.y * 1 / 4, vel.z);
             }
+        }
+
+        else if (collision.gameObject.CompareTag("boundary"))
+        {
+            Pusher.instance.deliveryDead = true;
         }
 
     }
