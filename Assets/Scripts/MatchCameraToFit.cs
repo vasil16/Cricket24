@@ -49,7 +49,7 @@ public class MatchCameraToFit : MonoBehaviour
         {
             float matchFOV = fieldOfView;
 
-            if (currentAspectRatio > targetAspectRatio)
+            if (currentAspectRatio!=  targetAspectRatio)
             {
                 // Adjust the field of view to maintain the width
                 float scale = targetAspectRatio / currentAspectRatio;
