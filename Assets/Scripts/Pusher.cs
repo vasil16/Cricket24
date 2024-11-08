@@ -8,12 +8,12 @@ public class Pusher : MonoBehaviour
 {
     public static Pusher instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds, bat;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds, bat, bowler;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos;
-    [SerializeField] float speedMult, pitchXOffset;
+    [SerializeField] float speedMult, pitchXOffset, ballStopPoint;
     [SerializeField] public Transform batCenter, currentBall, bb;
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
@@ -32,6 +32,7 @@ public class Pusher : MonoBehaviour
     public bool isGameOver = false;
     public bool readyToBowl = true;
     public bool deliveryDead;
+    public bool opp;
 
     private void OnDrawGizmos()
     {
@@ -49,6 +50,7 @@ public class Pusher : MonoBehaviour
 
     void Start()
     {
+        ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
         Application.targetFrameRate = 60;
         activeCams = FindObjectsOfType<CameraLookAt>();
@@ -72,12 +74,10 @@ public class Pusher : MonoBehaviour
 
             mark.transform.position = new Vector3(targetPos.x + pitchXOffset, targetPos.y, targetPos.z);
 
-            float cc = xArr[Random.Range(1, 2)];
-            ballLaunchPos.z = cc;
-            {
-                newBall = instBall;
-                newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
-            }
+
+            newBall = instBall;
+            newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
+
             newBall.SetActive(false);
             newBall.transform.position = ballLaunchPos;
 
@@ -105,24 +105,35 @@ public class Pusher : MonoBehaviour
             rb.AddTorque(Vector3.forward * -10);
             rb.AddForce(pitchPoint, ForceMode.Impulse);
 
-            yield return new WaitForSeconds(.7f);
+            foreach (CameraLookAt cam in activeCams)
+            {
+                //if (MainGame.camIndex == 3)
+                    cam.ball = newBall;
+            }
 
+            yield return new WaitForSeconds(.7f);
             yield return new WaitUntil(() => ballPassed(newBall.transform));
 
             if(newBall.GetComponent<BallHit>().secondTouch)
                 StartCoroutine(CheckBallDirection());
-
-            foreach (CameraLookAt cam in activeCams)
+            else
             {
-                if (MainGame.camIndex == 3)
-                    cam.ball = newBall;
+                while(currentBall.position.x>ballStopPoint)
+                {
+                    yield return null;
+                }
+                yield return null;
+                rb.isKinematic = true;
+                deliveryDead = true;
             }
+
 
             ballsLaunched++;
             if (ballsLaunched % 6 == 0)
             {
                 overs++;
                 ballsLaunched = 0;
+                ShiftEnd();
             }
 
             yield return new WaitUntil(() => deliveryDead);
@@ -138,6 +149,21 @@ public class Pusher : MonoBehaviour
             yield return new WaitForSeconds(1);
 
             yield return null;
+        }
+    }
+
+    void ShiftEnd()
+    {
+        opp = Random.Range(0, 2) == 0;
+        if(opp)
+        {
+            ballLaunchPos.z = 2.35f;
+            bowler.transform.position =  new Vector3(bowler.transform.position.x, bowler.transform.position.y, 2.466186f);
+        }
+        else
+        {
+            ballLaunchPos.z = -1.64f;
+            bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, -2.999954f);            
         }
     }
 
@@ -281,7 +307,7 @@ public class Pusher : MonoBehaviour
         pauseBtn.SetActive(false);
         //wicketFx.Play();
         //crowdFx.Play();
-        VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Failure);
+        //VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Failure);
     }
 
     IEnumerator SetOFf(GameObject gg)

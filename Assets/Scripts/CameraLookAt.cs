@@ -10,7 +10,7 @@ public class CameraLookAt : MonoBehaviour
     public GameObject ball;
     Quaternion defRotation;
     public bool readyToDeliver;
-    [SerializeField] float distanceThreshold, defFOV;
+    [SerializeField] float distanceThreshold, defFOV, currentDist;
 
     private void OnEnable()
     {
@@ -24,6 +24,9 @@ public class CameraLookAt : MonoBehaviour
         defFOV = camera.fieldOfView;
     }
 
+    bool goDown;
+    float dampFact = 0;
+
     // Update is called once per frame
     void Update()
     {
@@ -34,11 +37,67 @@ public class CameraLookAt : MonoBehaviour
             camera.fieldOfView = defFOV;
             return;
         }
-        if(Vector3.Distance(transform.position, ball.transform.position)<distanceThreshold)
+        currentDist = Vector3.Distance(transform.position, ball.transform.position);
+
+        if (MainGame.camIndex != 3 && MainGame.camIndex==1)
         {
-            camera.fieldOfView += ball.GetComponent<Rigidbody>().velocity.magnitude *  .2f * Time.deltaTime;
+
+            //if (Vector3.Distance(transform.position, ball.transform.position) < 200)
+            if(ball.GetComponent<BallHit>().secondTouch)
+            {
+                //camera.fieldOfView += ball.GetComponent<Rigidbody>().velocity.magnitude * .2f * Time.deltaTime;
+                if(ball.transform.position.x< -27.03f)
+                {
+                    camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 6, ref dampFact, 0.6f);
+                }
+                else
+                {
+                    if(camera.fieldOfView<10.3f)
+                    {
+                        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 10.3f, ref dampFact, 1f);
+                    }
+                    else
+                    {
+                        transform.LookAt(FieldManager.bestFielder.transform);
+                        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 9.1f, ref dampFact, 1f);
+                    }
+                }
+            }
+            //else
+            if (ball.transform.position.y > 80)
+            {
+                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 20, ref dampFact, 1f);
+                goDown = true;
+            }
+            if (goDown)
+            {
+                if (ball.transform.position.y < 60)
+                {
+                    camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, defFOV, ref dampFact, 1.4f);
+                    if (Pusher.instance.deliveryDead)
+                    {
+                        goDown = false;
+                        camera.fieldOfView = defFOV;
+                    }
+                }
+            }
+
+            if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold && !ball.GetComponent<BallHit>().secondTouch && !Pusher.instance.deliveryDead)
+            {
+                camera.fieldOfView -= .3f * Time.deltaTime;
+                //camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 9, ref dampFact, 2f);
+                camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(5.21f, -90, 0), 0.3f * Time.deltaTime);
+            }
+            else
+            {
+                LookAt();
+            }
         }
-        LookAt();
+
+        else
+            LookAt();
+
+
     }
 
     public void LookAt()
