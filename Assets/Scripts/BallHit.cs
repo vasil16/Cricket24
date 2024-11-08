@@ -53,7 +53,7 @@ public class BallHit : MonoBehaviour
         {
             if (secondTouch)
             {
-                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y*0.40f, rb.velocity.z);
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y*0.01f, rb.velocity.z);
             }
         }
         else if (collision.gameObject.CompareTag("Bat"))

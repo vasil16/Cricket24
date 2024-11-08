@@ -10,18 +10,18 @@ public class CameraLookAt : MonoBehaviour
     public GameObject ball;
     Quaternion defRotation;
     public bool readyToDeliver;
+    [SerializeField] float distanceThreshold, defFOV;
 
     private void OnEnable()
     {
         instance = this;
         camera = GetComponent<Camera>();
         defRotation = camera.transform.rotation;
-
     }
 
     void Start()
     {
-        
+        defFOV = camera.fieldOfView;
     }
 
     // Update is called once per frame
@@ -31,7 +31,12 @@ public class CameraLookAt : MonoBehaviour
         {
             //Debug.Log("ball Null");
             camera.transform.rotation = defRotation;
+            camera.fieldOfView = defFOV;
             return;
+        }
+        if(Vector3.Distance(transform.position, ball.transform.position)<distanceThreshold)
+        {
+            camera.fieldOfView += ball.GetComponent<Rigidbody>().velocity.magnitude *  .2f * Time.deltaTime;
         }
         LookAt();
     }

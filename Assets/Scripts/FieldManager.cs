@@ -35,22 +35,18 @@ public class FieldManager : MonoBehaviour
 
     IEnumerator StartCheckingField(Vector3 ballAt)
     {
-        yield return new WaitForSeconds(.3f);
-
         ball = Pusher.instance.currentBall;
         Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
+        yield return new WaitForSeconds(.5f);
 
         bool isAerialShot = ballAt.y < ball.transform.position.y;
 
-        int steps = 50;  // A high number of steps for smoother prediction
+        int steps = 50;
 
-        // Predict the landing position if it's an aerial shot
         Vector3 landingPosition = isAerialShot ? PredictLandingPosition(ballRigidbody, steps) : Vector3.zero;
 
-        // Set marker position to the predicted landing position
         marker.transform.position = landingPosition;
 
-        // Score for the fielder interception
         float bestScore = float.MinValue;
         bestFielder = null;
 
@@ -58,33 +54,27 @@ public class FieldManager : MonoBehaviour
         {
             bool isDeep = fielder.CompareTag("DeepFielder");
 
-            // Calculate angles between ball and fielder
             Vector3 ballDir = ball.position - ballAt;
             ballAngle = Mathf.Atan2(ballDir.z, ballDir.x) * Mathf.Rad2Deg;
 
             Vector3 fielderDir = fielder.transform.position - Pusher.instance.batCenter.position;
             fielderAngle = Mathf.Atan2(fielderDir.z, fielderDir.x) * Mathf.Rad2Deg;
 
-            // Calculate direction boost for fielder positioning
             float directionBoost = -1 * Mathf.Abs(fielderAngle - ballAngle);
 
-            // Calculate distance to landing position
             Vector3 toLandingPosition = landingPosition - fielder.transform.position;
             float distanceToLanding = toLandingPosition.magnitude;
 
             
-
-            // Calculate time required for the fielder to intercept the ball
             float timeToIntercept = distanceToLanding / runSpeed;
 
-            // Calculate the score for each fielder based on distance, direction, and position
             float score = 0f;
 
             boostDeep = ballRigidbody.velocity.magnitude > speedThreshold;
 
             if (boostDeep && isDeep)
             {
-                score += 2;  // Deep fielder advantage
+                score += 2;
             }
 
             score += directionBoost;
@@ -96,7 +86,6 @@ public class FieldManager : MonoBehaviour
             }
         }
 
-        // If the best fielder is found, execute the appropriate action
         if (bestFielder != null)
         {
             initialFielderPosition = bestFielder.transform.position;
