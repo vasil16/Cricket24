@@ -84,9 +84,12 @@ public class CameraLookAt : MonoBehaviour
 
             if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold && !ball.GetComponent<BallHit>().secondTouch && !Pusher.instance.deliveryDead)
             {
-                camera.fieldOfView -= .3f * Time.deltaTime;
-                //camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 9, ref dampFact, 2f);
-                camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(5.21f, -90, 0), 0.3f * Time.deltaTime);
+                ////if(camera.fieldOfView>7.5f)
+                ////{
+                //    camera.fieldOfView -= .8f * Time.deltaTime;
+                ////}
+                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 7f/2, ref dampFact, 0.3f);
+                camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(6.064f, -90, 0), 0.3f * Time.deltaTime);
             }
             else
             {

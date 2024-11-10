@@ -182,7 +182,7 @@ public class Pusher : MonoBehaviour
         Vector3 firstPos = newBall.transform.position;
         yield return new WaitForSeconds(0.2f);
         Vector3 ballDirection = (newBall.transform.position - firstPos).normalized;
-        FieldManager.StartCheckField.Invoke(firstPos, ballDirection);
+        FieldManager.StartCheckField.Invoke(currentBall.transform.position);
     }
 
 

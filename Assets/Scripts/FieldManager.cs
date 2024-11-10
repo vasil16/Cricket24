@@ -5,315 +5,261 @@ using UnityEngine;
 
 public class FieldManager : MonoBehaviour
 {
-    public static Action<Vector3, Vector3> StartCheckField;
-    public static Action ResetFielder;
+    public List<Fielder> fielders;
+    public Transform ball;
+    public float fieldingRange = 1.5f;
 
-    [SerializeField] private List<GameObject> fielders;
-    [SerializeField] private float runSpeed = 5f;
-    [SerializeField] private float fieldingRange = 1.5f;
-    [SerializeField] private float speedThreshold = 1.5f;
-    [SerializeField] private float slowThreshold = 30f;
-    private Coroutine fielderCoroutine;
+    public static Fielder bestFielder;
 
-    private Vector3 initialFielderPosition;
-    [SerializeField] private GameObject marker;
+    public static Action<Vector3> StartCheckField;
+    public static Action  ResetFielder;
 
-    public static GameObject bestFielder;
+    public float score;
 
-    private Transform ball;
-    private bool boostDeep;
+    public Fielder assignedFielder;
 
-    public float ballAngle, fielderAngle;
+    public Transform marker;
 
     private void Start()
     {
-        StartCheckField = CheckAndInitiateFielder;
+        StartCheckField = AssignBestFielder;
         ResetFielder = ResetField;
     }
 
-    void CheckAndInitiateFielder(Vector3 ballAt, Vector3 direction)
+    public void AssignBestFielder(Vector3 ballAt)
     {
-        StartCoroutine(StartCheckingField(ballAt));
+        StartCoroutine(Assign(ballAt));
     }
 
-    IEnumerator StartCheckingField(Vector3 ballAt)
+    Vector3 landPos;
+
+    IEnumerator Assign(Vector3 ballAt)
     {
+        yield return new WaitForSeconds(0.4f);
+        Debug.Log("called");
         ball = Pusher.instance.currentBall;
-        Rigidbody ballRigidbody = ball.GetComponent<Rigidbody>();
-        yield return new WaitForSeconds(.5f);
+        float bestScore = -1000;
+        Fielder selectedFielder = null;
 
-        //bool isAerialShot = ballAt.y < ball.transform.position.y;
-
-        bool isAerialShot = ballRigidbody.velocity.y<0;
-
-        int steps = 50;
-
-        Vector3 landingPosition = isAerialShot ? PredictLandingPosition(ballRigidbody, steps) : PredictBestTravelPoint(ballRigidbody,30,20);
-
-        marker.transform.position = landingPosition;
-
-        float bestScore = float.MinValue;
-        bestFielder = null;
+        if (!ball.GetComponent<BallHit>().groundShot)
+            landPos =  marker.position = PredictLandingPosition(ball);
 
         foreach (var fielder in fielders)
         {
+            score = 0;
+
             bool isDeep = fielder.CompareTag("DeepFielder");
 
+            if (!ball.GetComponent<BallHit>().groundShot)
+            {
+                Vector3 toLanding = landPos - fielder.transform.position;
+                float distanceToLanding = toLanding.magnitude;
+                score -= distanceToLanding;
+            }
+
+            else
+            {
+                if(isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude>80)
+                {
+                    score += 5;
+                }
+            }
+
+            Vector3 toBall = ball.position - fielder.transform.position;
+            float distanceToBall = toBall.magnitude;
+
+            
+
+
             Vector3 ballDir = ball.position - ballAt;
-            ballAngle = Mathf.Atan2(ballDir.z, ballDir.x) * Mathf.Rad2Deg;
+            float ballAngle = Mathf.Atan2(ballDir.z, ballDir.x) * Mathf.Rad2Deg;
 
             Vector3 fielderDir = fielder.transform.position - Pusher.instance.batCenter.position;
-            fielderAngle = Mathf.Atan2(fielderDir.z, fielderDir.x) * Mathf.Rad2Deg;
+            float fielderAngle = Mathf.Atan2(fielderDir.z, fielderDir.x) * Mathf.Rad2Deg;
+
 
             float directionBoost = -1 * Mathf.Abs(fielderAngle - ballAngle);
 
-            Vector3 toLandingPosition = landingPosition - fielder.transform.position;
-            float distanceToLanding = toLandingPosition.magnitude;
-
-            
-            float timeToIntercept = distanceToLanding / runSpeed;
-
-            float score = 0f;
-
-            boostDeep = ballRigidbody.velocity.magnitude > speedThreshold;
-
-            if(ballRigidbody.velocity.magnitude<slowThreshold && !isDeep)
+            //if (distanceToBall <= fieldingRange)
             {
-                score += 6;
-            }
+                //score = fieldingRange - distanceToBall;
 
-            if (boostDeep && isDeep)
-            {
-                if(isAerialShot)
+                score += directionBoost;
+                if (score > bestScore)
                 {
-                    score += 3;
+                    bestScore = score;
+                    selectedFielder = fielder;
                 }
-                score += 4;
-            }
-
-            score += directionBoost;
-
-            if (score > bestScore)
-            {
-                bestScore = score;
-                bestFielder = fielder;
+                selectedFielder.score = score;
             }
         }
 
-        if (bestFielder != null)
+        if (selectedFielder != null && selectedFielder != bestFielder)
         {
-            initialFielderPosition = bestFielder.transform.position;
-            if (isAerialShot)
+            bestFielder = selectedFielder;
+            if(!ball.GetComponent<BallHit>().groundShot)
             {
-                HandleAerialShot(landingPosition);
+                bestFielder.StartField(landPos, ball);
             }
             else
-            {
-                HandleGroundedShot(ballAt);
-            }
+                bestFielder.StartField(ball.position, ball);
+            bestFielder.enabled = true;
+            bestFielder.active = true;
+            assignedFielder = bestFielder;
         }
+
         else
         {
-            Debug.Log("No fielder able to reach the target position in time.");
+            Debug.Log("no fielder");
         }
     }
 
-    Vector3 PredictBestTravelPoint(Rigidbody ballRb, int steps, float forwardDistance = 10f)
+    //private Vector3 PredictLandingPosition(Transform ball)
+    //{
+    //    BallHit ballComp = ball.GetComponent<BallHit>();
+    //    Rigidbody ballRb = ball.GetComponent<Rigidbody>();
+    //    Vector3 landingPosition = Vector3.zero;
+
+    //    if (ballRb == null)
+    //    {
+    //        Debug.LogError("Ball Rigidbody is missing.");
+    //        return landingPosition;
+    //    }
+
+    //    Vector3 ballVelocity = ballRb.velocity;
+    //    float gravity = Mathf.Abs(Physics.gravity.y);
+
+    //    // Airborne shot prediction using projectile motion
+    //    float verticalVelocity = ballVelocity.y;
+    //    float discriminant = verticalVelocity * verticalVelocity + 2 * gravity * ball.position.y;
+
+    //    // Check if discriminant is non-negative
+    //    if (discriminant < 0)
+    //    {
+    //        Debug.LogError("Invalid discriminant for airborne shot calculation.");
+    //        return landingPosition; // Return zero vector if calculation fails
+    //    }
+
+    //    float timeToLand = (verticalVelocity + Mathf.Sqrt(discriminant)) / gravity;
+    //    if (float.IsNaN(timeToLand) || timeToLand < 0) timeToLand = 0;
+
+    //    // Calculate horizontal displacement over the flight time
+    //    Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+    //    Vector3 horizontalDisplacement = horizontalVelocity * timeToLand;
+
+    //    landingPosition = ball.position + horizontalDisplacement;
+
+
+    //    landingPosition.y = fielders[0].transform.position.y;  // Adjust y position to be level with fielders
+
+    //    if (float.IsNaN(landingPosition.x) || float.IsNaN(landingPosition.z))
+    //    {
+    //        Debug.LogError("Landing position has invalid coordinates.");
+    //        return Vector3.zero; // Return a default value if invalid
+    //    }
+
+    //    return landingPosition;
+    //}
+
+    private Vector3 PredictLandingPosition(Transform ball)
     {
-        Vector3 position = ballRb.position;
-        Vector3 velocity = ballRb.velocity;
-        Vector3 gravity = Physics.gravity;
-        Vector3 targetPosition = position;
-
-        for (int i = 0; i < steps; i++)
-        {
-            float deltaTime = Time.fixedDeltaTime;
-
-            // Simulate the position and velocity update
-            position += velocity * deltaTime;
-            velocity += gravity * deltaTime;
-
-            // Check if it’s going to land soon (for aerial shots)
-            if (position.y <= -4.221f || !Pusher.instance.stadiumBounds.Contains(position))
-            {
-                // Assume we hit the ground or are out of bounds
-                targetPosition = new Vector3(position.x, -4.221f, position.z);
-                break;
-            }
-
-            // If we reach the forwardDistance along the path, break early for grounded shots
-            if (Vector3.Distance(ballRb.position, position) >= forwardDistance)
-            {
-                targetPosition = position;
-                break;
-            }
-        }
-        return new Vector3(targetPosition.x, fielderY, targetPosition.z); // Ensure target Y position aligns with fielder’s plane
-    }
-
-
-    void HandleGroundedShot(Vector3 ballAt)
-    {
-        Vector3 ballDirection = (ball.position - ballAt).normalized;
-        Vector3 fielderToBall = ball.position - bestFielder.transform.position;
-        float angleToBall = Vector3.Angle(ballDirection, fielderToBall);
-
-        // Check if the ball is coming directly at the fielder and within range
-        if (angleToBall < 10f && fielderToBall.magnitude < fieldingRange)
-        {
-            Debug.Log("Grounded ball coming straight at fielder. Fielder stops the ball.");
-            StopBall();
-        }
-        else
-        {
-            // Calculate intercept point and immediately set fielder to move
-            Vector3 interceptPoint = FindBestIntersectionPoint(ball.GetComponent<Rigidbody>(), bestFielder.transform.position);
-
-            // Start coroutine to move towards target, considering ground check
-            fielderCoroutine = StartCoroutine(MoveToTargetWithGroundCheck(bestFielder, interceptPoint));
-        }
-    }
-
-    void HandleAerialShot(Vector3 landingPosition)
-    {
-        if (Vector3.Distance(new Vector2(landingPosition.x, landingPosition.z), new Vector2(bestFielder.transform.position.x, bestFielder.transform.position.z)) < 5)
-        {
-            Debug.Log("Aerial ball landing close to fielder. Fielder stays to catch.");
-            StartCoroutine(WaitForCatch());
-        }
-        else
-        {
-            Debug.Log("Aerial ball. Fielder moves to landing position.");
-            fielderCoroutine = StartCoroutine(MoveToTargetWithGroundCheck(bestFielder, landingPosition));
-        }
-    }
-
-    IEnumerator WaitForCatch()
-    {
-        yield return new WaitUntil(() => ball.position.y <= bestFielder.transform.position.y);
-        Debug.Log("Caught the ball!");
-        Pusher.instance.Out();
-    }
-
-    void StopBall()
-    {
+        BallHit ballComp = ball.GetComponent<BallHit>();
         Rigidbody ballRb = ball.GetComponent<Rigidbody>();
-        ballRb.isKinematic = true;
-        Pusher.instance.deliveryDead = true;
-    }
+        Vector3 landingPosition = Vector3.zero;
 
-    Vector3 FindBestIntersectionPoint(Rigidbody ballRb, Vector3 fielderPos)
-    {
-        Vector3 ballDir = ballRb.velocity.normalized;
-        Vector3 relativePos = fielderPos - ball.position;
-        float distanceAlongPath = Vector3.Dot(relativePos, ballDir);
-        Vector3 interceptPoint = ball.position + ballDir * distanceAlongPath;
-        return new Vector3(interceptPoint.x, fielderY, interceptPoint.z);
-    }
-
-    IEnumerator MoveToTargetWithGroundCheck(GameObject fielder, Vector3 targetPosition)
-    {
-        //while (Vector2.Distance(new Vector2(fielder.transform.position.x, fielder.transform.position.z), new Vector2(ball.transform.position.x, ball.transform.position.z)) > fieldingRange)
-        while (Vector2.Distance(new Vector2(fielder.transform.position.x, fielder.transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) > fieldingRange)
+        if (ballRb == null)
         {
-            // Check if ball has hit the ground
-            if (ball.GetComponent<BallHit>().groundShot)
+            Debug.LogError("Ball Rigidbody is missing.");
+            return landingPosition;
+        }
+
+        Vector3 ballVelocity = ballRb.velocity;
+        float gravity = Mathf.Abs(Physics.gravity.y);
+
+        // Calculate height difference to ground (fielder's height)
+        float heightDifference = ball.position.y - fielders[0].transform.position.y;
+
+        // Using quadratic equation from projectile motion:
+        // y = y0 + v0y*t - (1/2)g*t^2
+        // Where y is final height (fielder's height), y0 is initial height,
+        // v0y is initial vertical velocity, g is gravity, and t is time
+
+        float verticalVelocity = ballVelocity.y;
+
+        // Calculate quadratic formula components
+        // at^2 + bt + c = 0
+        float a = -0.5f * gravity;
+        float b = verticalVelocity;
+        float c = heightDifference;
+
+        float discriminant = (b * b) - (4 * a * c);
+
+        // Debug values
+        Debug.Log($"Ball Position: {ball.position}, Velocity: {ballVelocity}");
+        Debug.Log($"Height Difference: {heightDifference}, Vertical Velocity: {verticalVelocity}");
+        Debug.Log($"Discriminant: {discriminant}");
+
+        if (discriminant < 0)
+        {
+            Debug.LogWarning($"Invalid discriminant ({discriminant}) for airborne shot calculation.");
+            // If discriminant is negative, use simple linear prediction
+            float simpleTime = heightDifference / Mathf.Abs(verticalVelocity);
+            if (!float.IsNaN(simpleTime) && simpleTime > 0)
             {
-                Debug.Log("Ball hit the ground, adjusting fielder movement.");
-                targetPosition = AdjustForGroundedBall(ball.position, fielder.transform.position);
+                Vector3 horVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+                landingPosition = ball.position + horVelocity * simpleTime;
+                landingPosition.y = fielders[0].transform.position.y;
+                return landingPosition;
             }
-
-            fielder.transform.position = Vector3.MoveTowards(fielder.transform.position, targetPosition, runSpeed * Time.deltaTime);
-            yield return null;
+            return Vector3.zero;
         }
-        Debug.Log("Fielder reached the target position.");
 
+        // Get the positive time solution (we want future, not past)
+        float timeToLand = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
 
-        if (!ball.GetComponent<BallHit>().groundShot)
+        // If first solution gives negative time, try the other solution
+        if (timeToLand < 0)
         {
-            while (ball.transform.position.y > fielderY)
-            {
-                fielder.transform.position = Vector3.MoveTowards(fielder.transform.position, new Vector3(ball.transform.position.x, fielder.transform.position.y, ball.transform.position.z), runSpeed * Time.deltaTime);
-                yield return null;
-            }
-            yield return null;
-            ball.GetComponent<Rigidbody>().isKinematic = true;
-            if(!Pusher.instance.deliveryDead)
-                Pusher.instance.Out();
+            timeToLand = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
         }
 
-        ball.GetComponent<Rigidbody>().isKinematic = true;
-        Pusher.instance.deliveryDead = true;
+        Debug.Log($"Time to Land: {timeToLand}");
+
+        if (float.IsNaN(timeToLand) || timeToLand < 0)
+        {
+            Debug.LogWarning($"Invalid time to land: {timeToLand}");
+            return Vector3.zero;
+        }
+
+        // Calculate horizontal displacement
+        Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+        Vector3 horizontalDisplacement = horizontalVelocity * timeToLand;
+
+        // Calculate final position
+        landingPosition = ball.position + horizontalDisplacement;
+        landingPosition.y = fielders[0].transform.position.y;
+
+        // Validate final position
+        if (float.IsNaN(landingPosition.x) || float.IsNaN(landingPosition.z))
+        {
+            Debug.LogError($"Invalid landing position calculated: {landingPosition}");
+            return Vector3.zero;
+        }
+
+        // Optional: Visualize the prediction
+        Debug.DrawLine(ball.position, landingPosition, Color.red, 0.1f);
+
+        return landingPosition;
     }
 
-    Vector3 AdjustForGroundedBall(Vector3 ballPosition, Vector3 fielderPosition)
+    public void ResetField()
     {
-        // Calculate a dynamic intercept point based on the ball's direction and fielding range
-        Vector3 directionToBall = (ballPosition - fielderPosition).normalized;
-        float distanceAdjustment = Mathf.Max(fieldingRange - 1f, 1f); // Maintain some distance based on fielding range
-
-        Vector3 adjustedPosition = ballPosition - directionToBall * distanceAdjustment;
-        return new Vector3(adjustedPosition.x, fielderY, adjustedPosition.z); // Set to fielder's height (fielderY)
-    }
-
-    [SerializeField] float fielderY = 0.507754f;
-
-    Vector3 PredictLandingPosition(Rigidbody ballRb, int steps)
-    {
-        Vector3 position = ballRb.position;
-        Vector3 velocity = ballRb.velocity;
-        Vector3 gravity = Physics.gravity;
-
-        // Time to hit the ground based on the vertical component (taking gravity into account more accurately)
-        float timeToGround = 0f;
-
-        if (velocity.y != 0f)
+        if(bestFielder)
         {
-            // If the ball is moving upwards or downwards, calculate the time to reach the ground
-            timeToGround = Mathf.Abs(velocity.y) / Mathf.Abs(gravity.y);
-            if (velocity.y > 0f)
-            {
-                // Calculate time to ground considering the upward motion
-                timeToGround = (velocity.y + Mathf.Sqrt(velocity.y * velocity.y + 2 * gravity.y * position.y)) / Mathf.Abs(gravity.y);
-            }
-        }
-
-        // Start simulating the ball's motion
-        float stepTime = timeToGround / steps;  // Divide the total time by the number of steps to make it smooth
-
-        for (int i = 0; i < steps; i++)
-        {
-            // Horizontal motion remains unaffected by gravity
-            position.x += velocity.x * stepTime;
-            position.z += velocity.z * stepTime;
-
-            // Apply gravity to the vertical motion
-            velocity.y += gravity.y * stepTime;
-            position.y += velocity.y * stepTime;
-
-            // Check if the ball hits the ground or leaves the bounds
-            if (position.y <= -4.221f || !Pusher.instance.stadiumBounds.Contains(position))
-            {
-                position.y = Mathf.Max(position.y, -4.221f);  // Ensure it doesn't go below the ground level
-                break;
-            }
-        }
-
-        return new Vector3(position.x, fielderY, position.z);  // Only return x and z coordinates, with a fixed y (fielderY)
-    }
-
-
-    void ResetField()
-    {
-        if (fielderCoroutine != null)
-        {
-            StopCoroutine(fielderCoroutine);
-        }
-
-        if (bestFielder != null)
-        {
-            bestFielder.transform.position = initialFielderPosition;
-            Debug.Log("Fielder position reset.");
+            bestFielder.Reset();
+            bestFielder.active = false;
+            bestFielder.enabled = false;
+            bestFielder = null;
         }
     }
 }
