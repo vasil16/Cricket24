@@ -6,7 +6,7 @@ using UnityEngine;
 public class Fielder : MonoBehaviour
 {
     public float runSpeed, score;
-    private Vector3 targetPosition, actualPos;
+    private Vector3 targetPosition, actualPos, aimDistance;
     private Rigidbody rb;
     public bool reachedBall;
     BallHit ballComp;
@@ -113,15 +113,31 @@ public class Fielder : MonoBehaviour
                 ballRb.isKinematic = true;
                 reachedBall = true;
             }
-            if (Vector2.Distance(new Vector2 (transform.position.x, transform.position.z), new Vector2 (aimPos.x, aimPos.z)) < 1f && !reachedBall)
+            if (Vector3.Distance(transform.position, aimPos) < 3f && !reachedBall)
             {
                 Debug.Log("reeach aim go for");
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
+                StartCoroutine(CollectBall());
+                dontRun = true;
                 return;
             }
         }
-        
-        transform.position = Vector3.MoveTowards(transform.position, UpdateTargetPosition(), runSpeed * Time.deltaTime);
+        if(!dontRun)
+        {
+            Debug.Log("runnn");
+            transform.position = Vector3.MoveTowards(transform.position, UpdateTargetPosition(), runSpeed * Time.deltaTime);
+        }
+    }
+
+    bool dontRun;
+
+    IEnumerator CollectBall()
+    {
+        while(Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 3f)
+        { 
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
+            yield return null;
+        }
+        yield return null;
     }
 
     void WaitForBall()
@@ -138,7 +154,7 @@ public class Fielder : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(aimPos.x, transform.position.y, aimPos.z), runSpeed * Time.deltaTime);
         }
         
-        if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 10)
+        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 10)
         {
             Debug.Log("slowed beyound thrshold reached");
             ballRb.isKinematic = true;
@@ -158,7 +174,7 @@ public class Fielder : MonoBehaviour
             else
             {
                 Debug.Log("no chase");
-                return new Vector3(aimPos.x, transform.position.y, aimPos.z);
+                return aimPos;
             }
         }
         else
@@ -167,9 +183,11 @@ public class Fielder : MonoBehaviour
         }
     }
 
-    public static Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float time)
+    public Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float time)
     {
-        return initialPosition + velocity * time;
+        Vector3 returnVec = initialPosition + velocity * time;
+        returnVec.y = transform.position.y;
+        return returnVec;
     }
 
     public static bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity,
@@ -242,6 +260,7 @@ public class Fielder : MonoBehaviour
         this.ball = ball;
         targetPosition = position;
         aimPos = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+        aimPos.y = transform.position.y;
     }
 
     
@@ -255,6 +274,7 @@ public class Fielder : MonoBehaviour
     public void Reset()
     {
         pot = false;
+        dontRun = false;
         transform.position = actualPos;
         reachedBall = false;
         this.enabled = false;

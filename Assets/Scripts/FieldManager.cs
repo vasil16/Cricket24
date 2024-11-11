@@ -59,7 +59,7 @@ public class FieldManager : MonoBehaviour
 
             else
             {
-                if(isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude>80)
+                if(isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude>60)
                 {
                     score += 5;
                 }
