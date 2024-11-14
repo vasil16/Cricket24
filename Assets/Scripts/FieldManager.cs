@@ -42,7 +42,14 @@ public class FieldManager : MonoBehaviour
         Fielder selectedFielder = null;
 
         if (!ball.GetComponent<BallHit>().groundShot)
+        {
             landPos =  marker.position = PredictLandingPosition(ball);
+        }
+
+        else
+        {
+
+        }
 
         foreach (var fielder in fielders)
         {
@@ -59,9 +66,9 @@ public class FieldManager : MonoBehaviour
 
             else
             {
-                if(isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude>60)
+                if(isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude>48)
                 {
-                    score += 5;
+                    score += 10;
                 }
             }
 
@@ -112,6 +119,11 @@ public class FieldManager : MonoBehaviour
         {
             Debug.Log("no fielder");
         }
+    }
+
+    Vector3 BallStopPos(Rigidbody ballRb)
+    {
+
     }
 
     //private Vector3 PredictLandingPosition(Transform ball)

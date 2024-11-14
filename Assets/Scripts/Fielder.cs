@@ -6,23 +6,16 @@ using UnityEngine;
 public class Fielder : MonoBehaviour
 {
     public float runSpeed, score;
-    private Vector3 targetPosition, actualPos, aimDistance;
-    private Rigidbody rb;
+    private Vector3 targetPosition, actualPos;
     public bool reachedBall;
     BallHit ballComp;
     Rigidbody ballRb;
     Transform ball;
     public bool active, startedRun;
 
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody>();        
-    }
-
     private void OnEnable()
     {
         actualPos = transform.position;
-        //StartCoroutine(MoveTowardsTarget());
     }
 
     bool pot;
@@ -95,7 +88,7 @@ public class Fielder : MonoBehaviour
     {
         if(!ballComp.groundShot)
         {
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 3f)
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 1f)
             {
                 if(ball.position.y<=transform.position.y)
                 {
@@ -107,13 +100,13 @@ public class Fielder : MonoBehaviour
         }
         else
         {
-            if(Vector2.Distance(new Vector2 (transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z))<=3f)
+            if(Vector2.Distance(new Vector2 (transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z))<=1f)
             {
                 Debug.Log("run to reeach ground");
                 ballRb.isKinematic = true;
                 reachedBall = true;
             }
-            if (Vector3.Distance(transform.position, aimPos) < 3f && !reachedBall)
+            if (Vector3.Distance(transform.position, aimPos) < 1f && !reachedBall)
             {
                 Debug.Log("reeach aim go for");
                 StartCoroutine(CollectBall());
@@ -132,7 +125,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator CollectBall()
     {
-        while(Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 3f)
+        while(Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 1f)
         { 
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
             yield return null;

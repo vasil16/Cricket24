@@ -9,6 +9,7 @@ public class Pusher : MonoBehaviour
     public static Pusher instance;
 
     [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds, bat, bowler;
+    [SerializeField] AudioSource wicketFx;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
@@ -59,6 +60,8 @@ public class Pusher : MonoBehaviour
 
     Vector3 helperdir;
 
+    [SerializeField] Bat batter;
+
     IEnumerator LaunchBallsWithDelay()
     {
         while (overs < 5 && !isGameOver)
@@ -89,6 +92,8 @@ public class Pusher : MonoBehaviour
             yield return new WaitForSeconds(1f);
 
             Bowl.instance.anim.Play("bowl");
+
+            //batter.batterAnim.Play("hitGround");
 
             yield return new WaitUntil(() => Bowl.instance.ready);
 
@@ -305,7 +310,7 @@ public class Pusher : MonoBehaviour
         isGameOver = true;
         lostPanel.SetActive(true);
         pauseBtn.SetActive(false);
-        //wicketFx.Play();
+        wicketFx.Play();
         //crowdFx.Play();
         //VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Failure);
     }
