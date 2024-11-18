@@ -23,22 +23,22 @@ public class BallHit : MonoBehaviour
 
     private void Update()
     {
-        if (!Pusher.instance || MainGame.camIndex!=1) return;
+        if (!Gameplay.instance || MainGame.camIndex!=1) return;
 
-        if (!Pusher.instance.stadiumBounds.Contains(transform.position))
+        if (!Gameplay.instance.stadiumBounds.Contains(transform.position))
         {
-            Pusher.instance.deliveryDead = true;
+            Gameplay.instance.deliveryDead = true;
         }
 
         if (transform.position.x > 80 && transform.position.z < 54)
         {
-            Pusher.instance.sideCam.depth = 0;
-            Pusher.instance.sideCam.enabled = true;
+            Gameplay.instance.sideCam.depth = 0;
+            Gameplay.instance.sideCam.enabled = true;
         }
         else
         {
-            Pusher.instance.sideCam.depth = -2;
-            Pusher.instance.sideCam.enabled = false;
+            Gameplay.instance.sideCam.depth = -2;
+            Gameplay.instance.sideCam.enabled = false;
         }
     }
 
@@ -47,7 +47,7 @@ public class BallHit : MonoBehaviour
         lastHit = collision.gameObject.tag;
         if(collision.gameObject.CompareTag("Wicket"))
         {
-            Pusher.instance.Out();
+            Gameplay.instance.Out();
         }
         else if(collision.gameObject.CompareTag("pitch"))
         {
@@ -59,7 +59,7 @@ public class BallHit : MonoBehaviour
         else if (collision.gameObject.CompareTag("Bat"))
         {
             Debug.Log("spot " + collision.gameObject.name);
-            Pusher.instance.bb.position = collision.GetContact(0).point;
+            Gameplay.instance.bb.position = collision.GetContact(0).point;
             StartCoroutine(waitAndLook());
 
             if (secondTouch)
@@ -96,7 +96,7 @@ public class BallHit : MonoBehaviour
 
         else if (collision.gameObject.CompareTag("boundary"))
         {
-            Pusher.instance.deliveryDead = true;
+            Gameplay.instance.deliveryDead = true;
         }
 
     }
@@ -119,7 +119,7 @@ public class BallHit : MonoBehaviour
         //    CameraLookAt.instance.ball = this.gameObject;
         //}
 
-        foreach (CameraLookAt cam in Pusher.instance.activeCams)
+        foreach (CameraLookAt cam in Gameplay.instance.activeCams)
         {
             if (MainGame.camIndex == 1)
                 cam.ball = this.gameObject;
@@ -129,7 +129,7 @@ public class BallHit : MonoBehaviour
     IEnumerator Score()
     {
         yield return new WaitForSeconds(1f);
-        if (Pusher.instance.isGameOver) yield break;
+        if (Gameplay.instance.isGameOver) yield break;
         Vector2 lastPos = new Vector2 (gameObject.transform.position.x,gameObject.transform.position.y);
         //Debug.Log(lastPos);
         float shotAngle = Mathf.Atan2(lastPos.y, lastPos.x) * Mathf.Rad2Deg;

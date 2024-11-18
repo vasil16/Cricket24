@@ -37,19 +37,22 @@ public class FieldManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.4f);
         Debug.Log("called");
-        ball = Pusher.instance.currentBall;
+        ball = Gameplay.instance.currentBall;
         float bestScore = -1000;
         Fielder selectedFielder = null;
 
-        if (!ball.GetComponent<BallHit>().groundShot)
+        if (ball.GetComponent<BallHit>().groundShot)
         {
-            landPos =  marker.position = PredictLandingPosition(ball);
+            landPos = BallStopPos(ball.GetComponent<Rigidbody>());
         }
 
         else
         {
-
+            landPos =  marker.position = PredictLandingPosition(ball);
+            Debug.Log("ground ball");
         }
+
+        marker.transform.position = landPos;
 
         foreach (var fielder in fielders)
         {
@@ -81,7 +84,7 @@ public class FieldManager : MonoBehaviour
             Vector3 ballDir = ball.position - ballAt;
             float ballAngle = Mathf.Atan2(ballDir.z, ballDir.x) * Mathf.Rad2Deg;
 
-            Vector3 fielderDir = fielder.transform.position - Pusher.instance.batCenter.position;
+            Vector3 fielderDir = fielder.transform.position - Gameplay.instance.batCenter.position;
             float fielderAngle = Mathf.Atan2(fielderDir.z, fielderDir.x) * Mathf.Rad2Deg;
 
 
@@ -123,7 +126,20 @@ public class FieldManager : MonoBehaviour
 
     Vector3 BallStopPos(Rigidbody ballRb)
     {
+        // Get the initial ball position and velocity
+        Vector3 initialPosition = ballRb.transform.position;
+        Vector3 initialVelocity = ballRb.velocity;
 
+        // Calculate the time it takes for the ball to come to a stop
+        float timeToStop = -initialVelocity.magnitude / Physics.gravity.y;
+
+        // Calculate the final position using constant acceleration
+        Vector3 finalPosition = initialPosition + (initialVelocity * timeToStop) + (0.5f * Physics.gravity * timeToStop * timeToStop);
+
+        // Adjust the y-coordinate to match the fielder's height
+        finalPosition.y = fielders[0].transform.position.y;
+
+        return finalPosition;
     }
 
     //private Vector3 PredictLandingPosition(Transform ball)

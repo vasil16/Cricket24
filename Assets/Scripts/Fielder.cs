@@ -44,9 +44,9 @@ public class Fielder : MonoBehaviour
                 {
                     if(!ballComp.groundShot)
                     {
-                        Pusher.instance.Out();
+                        Gameplay.instance.Out();
                     }
-                    Pusher.instance.deliveryDead = true;
+                    Gameplay.instance.deliveryDead = true;
                     ballRb.isKinematic = true;
                 }
             }
@@ -62,9 +62,9 @@ public class Fielder : MonoBehaviour
                 {
                     if (!ballComp.groundShot)
                     {
-                        Pusher.instance.Out();
+                        Gameplay.instance.Out();
                     }
-                    Pusher.instance.deliveryDead = true;
+                    Gameplay.instance.deliveryDead = true;
                     ballRb.isKinematic = true;
                 }
             }

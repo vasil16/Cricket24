@@ -74,7 +74,7 @@ public class CameraLookAt : MonoBehaviour
                 if (ball.transform.position.y < 60)
                 {
                     camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, defFOV, ref dampFact, 1.4f);
-                    if (Pusher.instance.deliveryDead)
+                    if (Gameplay.instance.deliveryDead)
                     {
                         goDown = false;
                         camera.fieldOfView = defFOV;
@@ -82,7 +82,7 @@ public class CameraLookAt : MonoBehaviour
                 }
             }
 
-            if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold && !ball.GetComponent<BallHit>().secondTouch && !Pusher.instance.deliveryDead)
+            if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold && !ball.GetComponent<BallHit>().secondTouch && !Gameplay.instance.deliveryDead)
             {
                 ////if(camera.fieldOfView>7.5f)
                 ////{

@@ -108,7 +108,7 @@ public class MainGame : MonoBehaviour
     {
         homePanel.SetActive(false);
         startObj.SetActive(true);
-        batMovement.started = true;
+        //batMovement.started = true;
     }
 
     public void PlayShot(string shot)

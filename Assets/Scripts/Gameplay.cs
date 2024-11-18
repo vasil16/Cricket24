@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Pusher : MonoBehaviour
+public class Gameplay : MonoBehaviour
 {
-    public static Pusher instance;
+    public static Gameplay instance;
 
     [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds, bat, bowler;
     [SerializeField] AudioSource wicketFx;
