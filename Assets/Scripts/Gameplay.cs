@@ -64,6 +64,7 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator LaunchBallsWithDelay()
     {
+        batter.batterAnim.SetTrigger("ToWait");
         while (overs < 5 && !isGameOver)
         {
 
@@ -89,11 +90,12 @@ public class Gameplay : MonoBehaviour
             Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
             helperdir = pitchPoint;
 
-            yield return new WaitForSeconds(1f);
+            batter.batterAnim.SetTrigger("ToStance");
+
+            yield return new WaitForSeconds(2f);
 
             Bowl.instance.anim.Play("bowl");
 
-            //batter.batterAnim.Play("hitGround");
 
             yield return new WaitUntil(() => Bowl.instance.ready);
 

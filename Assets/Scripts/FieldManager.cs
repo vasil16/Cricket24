@@ -59,6 +59,19 @@ public class FieldManager : MonoBehaviour
             score = 0;
 
             bool isDeep = fielder.CompareTag("DeepFielder");
+            
+
+            Vector3 toBall = ball.position - fielder.transform.position;
+            float distanceToBall = toBall.magnitude;
+
+            Vector3 ballDir = ball.position - ballAt;
+            float ballAngle = Mathf.Atan2(ballDir.z, ballDir.x) * Mathf.Rad2Deg;
+
+            Vector3 fielderDir = fielder.transform.position - Gameplay.instance.batCenter.position;
+            float fielderAngle = Mathf.Atan2(fielderDir.z, fielderDir.x) * Mathf.Rad2Deg;
+
+
+            float directionBoost = -1 * Mathf.Abs(fielderAngle - ballAngle);
 
             if (!ball.GetComponent<BallHit>().groundShot)
             {
@@ -69,26 +82,15 @@ public class FieldManager : MonoBehaviour
 
             else
             {
-                if(isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude>48)
+                if (isDeep && ball.GetComponent<Rigidbody>().velocity.magnitude > 48)
                 {
-                    score += 10;
+                    Debug.Log("dir diff " + directionBoost);
+                    if(MathF.Abs(directionBoost)<35)
+                    {
+                        score += 1000;
+                    }
                 }
             }
-
-            Vector3 toBall = ball.position - fielder.transform.position;
-            float distanceToBall = toBall.magnitude;
-
-            
-
-
-            Vector3 ballDir = ball.position - ballAt;
-            float ballAngle = Mathf.Atan2(ballDir.z, ballDir.x) * Mathf.Rad2Deg;
-
-            Vector3 fielderDir = fielder.transform.position - Gameplay.instance.batCenter.position;
-            float fielderAngle = Mathf.Atan2(fielderDir.z, fielderDir.x) * Mathf.Rad2Deg;
-
-
-            float directionBoost = -1 * Mathf.Abs(fielderAngle - ballAngle);
 
             //if (distanceToBall <= fieldingRange)
             {
@@ -102,7 +104,15 @@ public class FieldManager : MonoBehaviour
                 }
                 selectedFielder.score = score;
             }
+
+            //if (IsBallComingAtFielder(fielder.transform))
+            //{
+            //    Debug.Log("to fielder");
+            //    break;
+            //}
         }
+
+       
 
         if (selectedFielder != null && selectedFielder != bestFielder)
         {
@@ -122,6 +132,19 @@ public class FieldManager : MonoBehaviour
         {
             Debug.Log("no fielder");
         }
+    }
+
+    private bool IsBallComingAtFielder(Transform fielder)
+    {
+        // Get the direction from the fielder to the ball
+        Vector3 toBall = (ball.position - fielder.position).normalized;
+
+        // Calculate the angle between the fielder's forward direction and the direction to the ball
+        float angleToBall = Vector3.Angle(fielder.forward, toBall);
+
+        // If the angle is close to 180 degrees, the ball is coming straight at the fielder
+        float thresholdAngle = 5f; // Adjust this threshold as needed
+        return Mathf.Abs(angleToBall - 180f) < thresholdAngle;
     }
 
     Vector3 BallStopPos(Rigidbody ballRb)

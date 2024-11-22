@@ -57,57 +57,6 @@ public class Bat : MonoBehaviour
         }
     }
 
-    void CheckDirection(Vector3 direction)
-    {
-        // Calculate the angle of the swipe
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        // Normalize the angle to be between 0 and 360
-        if (angle < 0) angle += 360;
-
-        // Divide the screen into 8 pizza slices (each 45 degrees)
-        if (angle >= 0 && angle < 45)
-        {
-            //Debug.Log("Swipe in Slice 1 (Right)");
-            batterAnim.Play("pull");
-        }
-        else if (angle >= 45 && angle < 90)
-        {
-            //Debug.Log("Swipe in Slice 2 (Top-Right)");
-            batterAnim.Play("flick");
-        }
-        else if (angle >= 90 && angle < 135)
-        {
-            Debug.Log("Swipe in Slice 3 (Top)");
-            batterAnim.Play("block");
-        }
-        else if (angle >= 135 && angle < 180)
-        {
-            //Debug.Log("Swipe in Slice 4 (Top-Left)");
-            batterAnim.Play("cut");
-        }
-        else if (angle >= 180 && angle < 225)
-        {
-            //Debug.Log("Swipe in Slice 5 (Left)");
-            batterAnim.Play("offDrive");
-        }
-        else if (angle >= 225 && angle < 270)
-        {
-            //Debug.Log("Swipe in Slice 6 (Bottom-Left)");
-            batterAnim.Play("straightDrive");
-        }
-        else if (angle >= 270 && angle < 315)
-        {
-            //Debug.Log("Swipe in Slice 7 (Bottom)");
-            batterAnim.Play("shot");
-        }
-        else if (angle >= 315 && angle < 360)
-        {
-            //Debug.Log("Swipe in Slice 8 (Bottom-Right)");
-            batterAnim.Play("flick");
-        }
-    }
-
     //void CheckDirection(Vector3 direction)
     //{
     //    // Calculate the angle of the swipe
@@ -129,6 +78,7 @@ public class Bat : MonoBehaviour
     //    }
     //    else if (angle >= 90 && angle < 135)
     //    {
+    //        Debug.Log("Swipe in Slice 3 (Top)");
     //        batterAnim.Play("block");
     //    }
     //    else if (angle >= 135 && angle < 180)
@@ -154,7 +104,57 @@ public class Bat : MonoBehaviour
     //    else if (angle >= 315 && angle < 360)
     //    {
     //        //Debug.Log("Swipe in Slice 8 (Bottom-Right)");
-    //        batterAnim.Play("legGlance");
+    //        batterAnim.Play("flick");
     //    }
     //}
+
+    void CheckDirection(Vector3 direction)
+    {
+        // Calculate the angle of the swipe
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // Normalize the angle to be between 0 and 360
+        if (angle < 0) angle += 360;
+
+        // Divide the screen into 8 pizza slices (each 45 degrees)
+        if (angle >= 0 && angle < 45)
+        {
+            //Debug.Log("Swipe in Slice 1 (Right)");
+            batterAnim.Play("pull");
+        }
+        else if (angle >= 45 && angle < 90)
+        {
+            //Debug.Log("Swipe in Slice 2 (Top-Right)");
+            batterAnim.Play("flick");
+        }
+        else if (angle >= 90 && angle < 135)
+        {
+            batterAnim.Play("block");
+        }
+        else if (angle >= 135 && angle < 180)
+        {
+            //Debug.Log("Swipe in Slice 4 (Top-Left)");
+            batterAnim.Play("cut");
+        }
+        else if (angle >= 180 && angle < 225)
+        {
+            //Debug.Log("Swipe in Slice 5 (Left)");
+            batterAnim.Play("offDrive");
+        }
+        else if (angle >= 225 && angle < 270)
+        {
+            //Debug.Log("Swipe in Slice 6 (Bottom-Left)");
+            batterAnim.Play("straightDrive");
+        }
+        else if (angle >= 270 && angle < 315)
+        {
+            //Debug.Log("Swipe in Slice 7 (Bottom)");
+            batterAnim.Play("shot");
+        }
+        else if (angle >= 315 && angle < 360)
+        {
+            //Debug.Log("Swipe in Slice 8 (Bottom-Right)");
+            batterAnim.Play("legGlance");
+        }
+    }
 }
