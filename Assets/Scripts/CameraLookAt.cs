@@ -8,7 +8,7 @@ public class CameraLookAt : MonoBehaviour
     public static CameraLookAt instance;
     Camera camera;
     public GameObject ball;
-    Quaternion defRotation;
+    public Quaternion defRotation;
     public bool readyToDeliver;
     [SerializeField] float distanceThreshold, defFOV, currentDist;
 
@@ -16,7 +16,7 @@ public class CameraLookAt : MonoBehaviour
     {
         instance = this;
         camera = GetComponent<Camera>();
-        defRotation = camera.transform.rotation;
+        defRotation = camera.transform.localRotation;
     }
 
     void Start()
@@ -33,13 +33,16 @@ public class CameraLookAt : MonoBehaviour
         if(ball == null)
         {
             //Debug.Log("ball Null");
-            camera.transform.rotation = defRotation;
-            camera.fieldOfView = defFOV;
+            if(MainGame.camIndex!=3)
+            {
+                camera.transform.rotation = defRotation;
+                camera.fieldOfView = defFOV;
+            }
             return;
         }
         currentDist = Vector3.Distance(transform.position, ball.transform.position);
 
-        if (MainGame.camIndex != 3 && MainGame.camIndex==1)
+        if (MainGame.camIndex==1)
         {
 
             //if (Vector3.Distance(transform.position, ball.transform.position) < 200)
@@ -92,13 +95,16 @@ public class CameraLookAt : MonoBehaviour
                 camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(6.064f, -90, 0), 0.3f * Time.deltaTime);
             }
             else
-            {
+            {                
                 LookAt();
             }
         }
 
-        else
-            LookAt();
+        else if(MainGame.camIndex == 3)
+        {
+            transform.parent.LookAt(ball.transform);
+            //LookAt();
+        }
 
 
     }

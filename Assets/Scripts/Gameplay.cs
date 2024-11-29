@@ -90,9 +90,17 @@ public class Gameplay : MonoBehaviour
             Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
             helperdir = pitchPoint;
 
+            foreach (CameraLookAt cam in activeCams)
+            {
+                if (MainGame.camIndex == 3)
+                {
+                    cam.transform.localRotation = cam.defRotation;
+                }                
+            }
+
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(3f);
 
             Bowl.instance.anim.Play("bowl");
 
@@ -114,14 +122,17 @@ public class Gameplay : MonoBehaviour
 
             foreach (CameraLookAt cam in activeCams)
             {
-                //if (MainGame.camIndex == 3)
+                //if (MainGame.camIndex == 3) { }
+                //else
+                {
                     cam.ball = newBall;
+                }
             }
 
             yield return new WaitForSeconds(.7f);
             yield return new WaitUntil(() => ballPassed(newBall.transform));
-
-            if(newBall.GetComponent<BallHit>().secondTouch)
+            
+            if (newBall.GetComponent<BallHit>().secondTouch)
                 StartCoroutine(CheckBallDirection());
             else
             {
