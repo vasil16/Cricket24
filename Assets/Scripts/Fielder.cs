@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Fielder : MonoBehaviour
@@ -90,7 +89,13 @@ public class Fielder : MonoBehaviour
         {
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 1f)
             {
-                if(ball.position.y<=transform.position.y)
+                //if(ball.position.y<=transform.position.y)
+                //{
+                //    Debug.Log("run to reeach air");
+                //    ballRb.isKinematic = true;
+                //    reachedBall = true;
+                //}
+                if(ball.position.y-transform.position.y<10f)
                 {
                     Debug.Log("run to reeach air");
                     ballRb.isKinematic = true;

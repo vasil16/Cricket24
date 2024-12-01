@@ -8,7 +8,7 @@ public class Gameplay : MonoBehaviour
 {
     public static Gameplay instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, Ball, newBall, instBall, groundBounds, bat, bowler;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler;
     [SerializeField] AudioSource wicketFx;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
@@ -38,7 +38,7 @@ public class Gameplay : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(instBall.transform.position, helperdir);
+        Gizmos.DrawLine(ball.transform.position, helperdir);
     }
 
     private void Awake()
@@ -79,13 +79,12 @@ public class Gameplay : MonoBehaviour
             mark.transform.position = new Vector3(targetPos.x + pitchXOffset, targetPos.y, targetPos.z);
 
 
-            newBall = instBall;
-            newBall.transform.rotation = Quaternion.Euler(-90, 0, 0);
+            ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
 
-            newBall.SetActive(false);
-            newBall.transform.position = ballLaunchPos;
+            ball.SetActive(false);
+            ball.transform.position = ballLaunchPos;
 
-            Vector3 initialPosition = newBall.transform.position;
+            Vector3 initialPosition = ball.transform.position;
             Vector3 direction = (targetPos - initialPosition).normalized;
             Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
             helperdir = pitchPoint;
@@ -108,11 +107,11 @@ public class Gameplay : MonoBehaviour
             yield return new WaitUntil(() => Bowl.instance.ready);
 
             CameraLookAt.instance.readyToDeliver = false;
-            currentBall = newBall.transform;
-            newBall.GetComponent<Rigidbody>().isKinematic = false;
-            newBall.SetActive(true);
+            currentBall = ball.transform;
+            ball.GetComponent<Rigidbody>().isKinematic = false;
+            ball.SetActive(true);
 
-            rb = newBall.GetComponent<Rigidbody>();
+            rb = ball.GetComponent<Rigidbody>();
 
             Bowl.instance.ready = false;
 
@@ -125,14 +124,14 @@ public class Gameplay : MonoBehaviour
                 //if (MainGame.camIndex == 3) { }
                 //else
                 {
-                    cam.ball = newBall;
+                    cam.ball = ball;
                 }
             }
 
             yield return new WaitForSeconds(.7f);
-            yield return new WaitUntil(() => ballPassed(newBall.transform));
+            yield return new WaitUntil(() => ballPassed(ball.transform));
             
-            if (newBall.GetComponent<BallHit>().secondTouch)
+            if (ball.GetComponent<BallHit>().secondTouch)
                 StartCoroutine(CheckBallDirection());
             else
             {
@@ -155,14 +154,14 @@ public class Gameplay : MonoBehaviour
             }
 
             yield return new WaitUntil(() => deliveryDead);
-            UpdateScoreBoard(newBall.GetComponent<BallHit>());
+            UpdateScoreBoard(ball.GetComponent<BallHit>());
             yield return new WaitForSeconds(2f);
 
             FieldManager.ResetFielder.Invoke();
             
             sideCam.depth = -2;
             sideCam.enabled = false;
-            StartCoroutine(ResetBall(newBall));
+            StartCoroutine(ResetBall(ball));
             overText.text = $"{overs}.{ballsLaunched}";
             yield return new WaitForSeconds(1);
 
@@ -197,9 +196,9 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator CheckBallDirection()
     {
-        Vector3 firstPos = newBall.transform.position;
+        Vector3 firstPos = ball.transform.position;
         yield return new WaitForSeconds(0.2f);
-        Vector3 ballDirection = (newBall.transform.position - firstPos).normalized;
+        Vector3 ballDirection = (ball.transform.position - firstPos).normalized;
         FieldManager.StartCheckField.Invoke(currentBall.transform.position);
     }
 
@@ -256,66 +255,66 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator ResetBall(GameObject ball)
     {
-        newBall.SetActive(false);
-        newBall.transform.position = ballLaunchPos;
+        this.ball.SetActive(false);
+        this.ball.transform.position = ballLaunchPos;
         ball.GetComponent<BallHit>().Reset();
         foreach (CameraLookAt cam in activeCams)
         {
             cam.ball = null;
         }
         yield return new WaitForSeconds(1);
-        instBall = ball;
+        this.ball = ball;
     }
 
     #region Old
-    void LaunchBall(float launchSpeed)
-    {
-        float cc = xArr[Random.Range(0, 1)];
-        //GameObject newBall = Instantiate(Ball, new Vector3(42.7f, 1.61f, cc), Quaternion.Euler(-90, 0, 0));
-        GameObject newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
-        currentBall = newBall.transform;
-        newBall.GetComponent<Rigidbody>().isKinematic = false;
-        newBall.SetActive(true);
-        if (CameraLookAt.instance != null)
-        {
-            CameraLookAt.instance.ball = newBall;
-        }
-        rb = newBall.GetComponent<Rigidbody>();
+    //void LaunchBall(float launchSpeed)
+    //{
+    //    float cc = xArr[Random.Range(0, 1)];
+    //    //GameObject newBall = Instantiate(Ball, new Vector3(42.7f, 1.61f, cc), Quaternion.Euler(-90, 0, 0));
+    //    GameObject newBall = Instantiate(Ball, ballLaunchPos, Quaternion.Euler(-90, 0, 0));
+    //    currentBall = newBall.transform;
+    //    newBall.GetComponent<Rigidbody>().isKinematic = false;
+    //    newBall.SetActive(true);
+    //    if (CameraLookAt.instance != null)
+    //    {
+    //        CameraLookAt.instance.ball = newBall;
+    //    }
+    //    rb = newBall.GetComponent<Rigidbody>();
 
-        if (rb != null && bails != null)
-        {
-            Vector3 initialPosition = newBall.transform.position;
+    //    if (rb != null && bails != null)
+    //    {
+    //        Vector3 initialPosition = newBall.transform.position;
 
-            randPitch = Random.Range(0, 20);
-            mark.transform.position = pitchPoints[randPitch];
-            Vector3 direction = (pitchPoints[randPitch] - initialPosition).normalized;
+    //        randPitch = Random.Range(0, 20);
+    //        mark.transform.position = pitchPoints[randPitch];
+    //        Vector3 direction = (pitchPoints[randPitch] - initialPosition).normalized;
 
-            randomAngle = Random.Range(miRand, maRand);
-            Vector3 axis = Vector3.down;
-            Quaternion rotation = Quaternion.AngleAxis(randomAngle, axis);
+    //        randomAngle = Random.Range(miRand, maRand);
+    //        Vector3 axis = Vector3.down;
+    //        Quaternion rotation = Quaternion.AngleAxis(randomAngle, axis);
 
-            Vector3 newDirection = rotation * direction;
+    //        Vector3 newDirection = rotation * direction;
 
-            Vector3 acDir = new Vector3(newDirection.x, newDirection.y, 0);
+    //        Vector3 acDir = new Vector3(newDirection.x, newDirection.y, 0);
 
-            acDir = new Vector3(acDir.x, acDir.y + randomAngle, acDir.z);
+    //        acDir = new Vector3(acDir.x, acDir.y + randomAngle, acDir.z);
 
 
-            rb.WakeUp();
+    //        rb.WakeUp();
 
-            //rb.AddForce(direction * (launchSpeed * speedMult), ForceMode.Impulse);
+    //        //rb.AddForce(direction * (launchSpeed * speedMult), ForceMode.Impulse);
 
-            rb.AddForce(acDir * (launchSpeed * speedMult), ForceMode.Impulse);
+    //        rb.AddForce(acDir * (launchSpeed * speedMult), ForceMode.Impulse);
 
-            Destroy(newBall, 2f);
+    //        Destroy(newBall, 2f);
 
-            //StartCoroutine(SetOFf(newBall));
-        }
-        else
-        {
-            Debug.LogError("Rigidbody component or Bails reference not found!");
-        }
-    }
+    //        //StartCoroutine(SetOFf(newBall));
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("Rigidbody component or Bails reference not found!");
+    //    }
+    //}
     #endregion
 
     public void Out()
