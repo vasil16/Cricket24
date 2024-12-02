@@ -23,6 +23,6 @@ public class Bowl : MonoBehaviour
 
     public void Deliver()
     {
-        ready = true;
+        ready = true;        
     }
 }

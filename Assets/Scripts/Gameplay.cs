@@ -51,7 +51,7 @@ public class Gameplay : MonoBehaviour
 
     void Start()
     {
-        ShiftEnd();
+        //ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
         Application.targetFrameRate = 60;
         activeCams = FindObjectsOfType<CameraLookAt>();
@@ -74,7 +74,9 @@ public class Gameplay : MonoBehaviour
 
             randPitch = Random.Range(0, 20);
 
-            Vector3 targetPos = pitchPoints[randPitch];
+            //Vector3 targetPos = pitchPoints[randPitch];
+
+            Vector3 targetPos = GenerateRandomPointOnPlane();
 
             mark.transform.position = new Vector3(targetPos.x + pitchXOffset, targetPos.y, targetPos.z);
 
@@ -100,6 +102,8 @@ public class Gameplay : MonoBehaviour
             batter.batterAnim.SetTrigger("ToStance");
 
             yield return new WaitForSeconds(3f);
+
+            CameraLookAt.instance.startingRunUp = true;
 
             Bowl.instance.anim.Play("bowl");
 
@@ -130,7 +134,17 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitForSeconds(.7f);
             yield return new WaitUntil(() => ballPassed(ball.transform));
-            
+
+            foreach (CameraLookAt cam in activeCams)
+            {
+                //if (MainGame.camIndex == 3) { }
+                //else
+                {
+                    cam.startingRunUp = false;
+                }
+            }
+
+
             if (ball.GetComponent<BallHit>().secondTouch)
                 StartCoroutine(CheckBallDirection());
             else
@@ -150,7 +164,7 @@ public class Gameplay : MonoBehaviour
             {
                 overs++;
                 ballsLaunched = 0;
-                ShiftEnd();
+                //ShiftEnd();
             }
 
             yield return new WaitUntil(() => deliveryDead);
@@ -158,7 +172,11 @@ public class Gameplay : MonoBehaviour
             yield return new WaitForSeconds(2f);
 
             FieldManager.ResetFielder.Invoke();
-            
+            foreach (CameraLookAt cam in activeCams)
+            {
+                cam.ball = null;
+                cam.CamReset();                
+            }
             sideCam.depth = -2;
             sideCam.enabled = false;
             StartCoroutine(ResetBall(ball));

@@ -9,14 +9,14 @@ public class CameraLookAt : MonoBehaviour
     Camera camera;
     public GameObject ball;
     public Quaternion defRotation;
-    public bool readyToDeliver;
+    public bool readyToDeliver, startingRunUp;
     [SerializeField] float distanceThreshold, defFOV, currentDist;
 
     private void OnEnable()
     {
         instance = this;
         camera = GetComponent<Camera>();
-        defRotation = camera.transform.localRotation;
+        defRotation = camera.transform.rotation;
     }
 
     void Start()
@@ -27,18 +27,25 @@ public class CameraLookAt : MonoBehaviour
     bool goDown;
     float dampFact = 0;
 
-    // Update is called once per frame
     void Update()
     {
         if(ball == null)
         {
             //Debug.Log("ball Null");
-            if(MainGame.camIndex!=3)
+            //if(MainGame.camIndex!=3)
+            //{
+            //    camera.transform.rotation = defRotation;
+            //    camera.fieldOfView = defFOV;
+            //}
+            if(MainGame.camIndex==1 && startingRunUp)
             {
-                camera.transform.rotation = defRotation;
-                camera.fieldOfView = defFOV;
+                CamRunUpAnim();
             }
             return;
+        }
+        else
+        {
+            //CamReset();
         }
         currentDist = Vector3.Distance(transform.position, ball.transform.position);
 
@@ -102,11 +109,23 @@ public class CameraLookAt : MonoBehaviour
 
         else if(MainGame.camIndex == 3)
         {
-            transform.parent.LookAt(ball.transform);
+            transform.LookAt(ball.transform);
             //LookAt();
         }
 
 
+    }
+
+    void CamRunUpAnim()
+    {
+        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-1f, ref dampFact, 1.5f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6f,Time.deltaTime * 0.3f), -90, 0);
+    }
+
+    public void CamReset()
+    {
+        camera.transform.rotation = defRotation;
+        camera.fieldOfView = defFOV;
     }
 
     public void LookAt()

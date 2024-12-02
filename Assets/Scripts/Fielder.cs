@@ -5,29 +5,33 @@ using UnityEngine;
 public class Fielder : MonoBehaviour
 {
     public float runSpeed, score;
-    private Vector3 targetPosition, actualPos;
+    private Vector3 targetPosition, actualPos, actualRot;
     public bool reachedBall;
     BallHit ballComp;
     Rigidbody ballRb;
     Transform ball;
-    public bool active, startedRun;
+    public bool startedRun;
 
     private void OnEnable()
     {
         actualPos = transform.position;
+        actualRot = transform.rotation.eulerAngles;
     }
 
     bool pot;
 
     private void Update()
     {
-        if(active)
+        if (startedRun)
         {
-            if (IsBallComingAtFielder() || pot)
+            Vector3 groundUp = Vector3.Cross(transform.right, ball.position - transform.position);
+
+            //transform.LookAt(ball, groundUp);
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, groundUp.y, transform.rotation.eulerAngles.z);
+            if (IsBallComingAtFielder())
             {
-                pot = true;
                 Debug.Log("Coming to fielder");
-                
+
                 if (!reachedBall)
                 {
                     if (!ballComp.groundShot)
@@ -41,7 +45,7 @@ public class Fielder : MonoBehaviour
                 }
                 else
                 {
-                    if(!ballComp.groundShot)
+                    if (!ballComp.groundShot)
                     {
                         Gameplay.instance.Out();
                     }
@@ -51,9 +55,8 @@ public class Fielder : MonoBehaviour
             }
             else
             {
-                if (pot) return;
                 Debug.Log("away from fielder");
-                if(!reachedBall)
+                if (!reachedBall)
                 {
                     RunToBall();
                 }
@@ -79,23 +82,17 @@ public class Fielder : MonoBehaviour
         float angleToBall = Vector3.Angle(transform.forward, toBall);
 
         // If the angle is close to 180 degrees, the ball is coming straight at the fielder
-        float thresholdAngle = 5f; // Adjust this threshold as needed
+        float thresholdAngle = 20f; // Adjust this threshold as needed
         return Mathf.Abs(angleToBall - 180f) < thresholdAngle;
     }
 
     void RunToBall()
     {
-        if(!ballComp.groundShot)
+        if (!ballComp.groundShot)
         {
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 1f)
             {
-                //if(ball.position.y<=transform.position.y)
-                //{
-                //    Debug.Log("run to reeach air");
-                //    ballRb.isKinematic = true;
-                //    reachedBall = true;
-                //}
-                if(ball.position.y-transform.position.y<10f)
+                if (ball.position.y < 7f)
                 {
                     Debug.Log("run to reeach air");
                     ballRb.isKinematic = true;
@@ -105,7 +102,7 @@ public class Fielder : MonoBehaviour
         }
         else
         {
-            if(Vector2.Distance(new Vector2 (transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z))<=1f)
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 1f)
             {
                 Debug.Log("run to reeach ground");
                 ballRb.isKinematic = true;
@@ -119,7 +116,7 @@ public class Fielder : MonoBehaviour
                 return;
             }
         }
-        if(!dontRun)
+        if (!dontRun)
         {
             Debug.Log("runnn");
             transform.position = Vector3.MoveTowards(transform.position, UpdateTargetPosition(), runSpeed * Time.deltaTime);
@@ -130,8 +127,8 @@ public class Fielder : MonoBehaviour
 
     IEnumerator CollectBall()
     {
-        while(Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 1f)
-        { 
+        while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 1f)
+        {
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
             yield return null;
         }
@@ -151,35 +148,115 @@ public class Fielder : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(aimPos.x, transform.position.y, aimPos.z), runSpeed * Time.deltaTime);
         }
-        
+
         if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 10)
         {
             Debug.Log("slowed beyound thrshold reached");
             ballRb.isKinematic = true;
             reachedBall = true;
-        }        
+        }
     }
 
+    private bool ballWasAirborne;
+
+    //private Vector3 UpdateTargetPosition()
+    //{
+
+    //    if (ballRb.velocity.magnitude < 1f || Vector3.Distance(transform.position, ball.position) < 0.5f)
+    //    {
+    //        return ball.position; // Aim directly at the ball
+    //    }
+    //    if (ballComp.groundShot && ballWasAirborne)
+    //    {
+    //        //if (ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos))
+    //        //{
+    //        //    Debug.Log("Chase ball to interception point");
+    //        //    return PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime);
+    //        //}
+    //        //else
+    //        //{
+    //        //    Debug.Log("Move to aim position");
+    //        //    return aimPos;
+    //        //}
+    //        aimPos = ball.position;
+    //        aimPos.y = transform.position.y;
+    //        //Debug.Log("Ball landed, updating aimPos to ball's current position");
+    //        return aimPos;
+    //    }
+    //    if (ballComp.groundShot && !ballWasAirborne)
+    //    {
+    //        if (ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos))
+    //        {
+    //            Debug.Log("Chase ball to interception point");
+    //            return PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime);
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("Move to aim position");
+    //            return aimPos;
+    //        }
+    //    }
+    //    //if (ballComp.groundShot || !ballWasAirborne)
+    //    //{
+    //    //    // If the ball was grounded at the start, use the original logic
+    //    //    if (ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos))
+    //    //    {
+    //    //        Debug.Log("Chase ball to interception point");
+    //    //        return PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime);
+    //    //    }
+    //    //    else
+    //    //    {
+    //    //        Debug.Log("Move to aim position");
+    //    //        return aimPos;
+    //    //    }
+    //    //}
+    //    else
+    //    {
+    //        // If the ball was airborne and has now landed, update aimPos to the ball's current position
+    //        //aimPos = ball.position;
+    //        //aimPos.y = transform.position.y;
+    //        //Debug.Log("Ball landed, updating aimPos to ball's current position");
+    //        return aimPos;
+    //    }
+    //}
+
     private Vector3 UpdateTargetPosition()
-    {        
+    {
+        // Ball velocity and proximity checks
+        if (ballRb.velocity.magnitude < 1f || Vector3.Distance(transform.position, ball.position) < 0.5f)
+        {
+            return ball.position; // Aim directly at the ball
+        }
+
         if (ballComp.groundShot)
         {
-            if (ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos))
+            if (ballWasAirborne)
             {
-                Debug.Log("chase");
-                return PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime);
+                aimPos = ball.position; // Ball has landed, aim at its current position
             }
             else
             {
-                Debug.Log("no chase");
-                return aimPos;
+                // Decide between interception and current aim position
+                aimPos = ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos)
+                    ? PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime)
+                    : aimPos;
             }
         }
         else
-        {            
+        {
+            // Ball is still airborne, calculate interception point
+            //aimPos = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+            Debug.Log("ball still air");
+            targetPosition.y = transform.position.y;
             return targetPosition;
         }
+
+        // Ensure the fielder maintains their y-coordinate
+        aimPos.y = transform.position.y;
+
+        return aimPos;
     }
+
 
     public Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float time)
     {
@@ -188,15 +265,28 @@ public class Fielder : MonoBehaviour
         return returnVec;
     }
 
-    public static bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity,
-        Vector3 fielderPosition, Vector3 intersectionPoint)
+    //public static bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity, Vector3 fielderPosition, Vector3 intersectionPoint)
+    //{
+    //    Vector3 ballToIntersection = intersectionPoint - ballPosition;
+    //    Vector3 ballDirection = Vector3.Normalize(ballVelocity);
+
+    //    // If the dot product is negative, the intersection point is behind the ball
+    //    return Vector3.Dot(ballToIntersection, ballDirection) < 0;
+    //}
+
+    public static bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity, Vector3 fielderPosition, Vector3 intersectionPoint)
     {
-        Vector3 ballToIntersection = intersectionPoint - ballPosition;
+        // Vector from the fielder to the ball
+        Vector3 fielderToBall = ballPosition - fielderPosition;
+
+        // Normalize the ball's velocity to get its direction
         Vector3 ballDirection = Vector3.Normalize(ballVelocity);
 
-        // If the dot product is negative, the intersection point is behind the ball
-        return Vector3.Dot(ballToIntersection, ballDirection) < 0;
+        // Check if the ball is behind the fielder
+        // If the dot product is negative, the ball is behind the fielder
+        return Vector3.Dot(fielderToBall, ballDirection) < 0;
     }
+
 
     public static Vector3 CalculateInterceptPosition(Vector3 ballPosition, Vector3 ballVelocity,
         Vector3 fielderPosition, Vector3 fielderForward)
@@ -257,16 +347,28 @@ public class Fielder : MonoBehaviour
         ballRb = ball.GetComponent<Rigidbody>();
         this.ball = ball;
         targetPosition = position;
-        aimPos = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+
+        // Determine if the ball is airborne at the time the script is enabled
+        ballWasAirborne = ball.GetComponent<BallHit>().groundShot==false;
+
+        // Calculate aimPos based on the ball's current state
+        if (ballWasAirborne)
+        {
+            aimPos = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+        }
+        else
+        {
+            aimPos = ball.position; // Grounded ball targets its current position
+        }
         aimPos.y = transform.position.y;
     }
 
-    
+
     private void OnReachedTarget()
     {
         Debug.Log($"{gameObject.name} has reached the target position.");
         reachedBall = true;
-        enabled = false; 
+        enabled = false;
     }
 
     public void Reset()
@@ -274,6 +376,7 @@ public class Fielder : MonoBehaviour
         pot = false;
         dontRun = false;
         transform.position = actualPos;
+        transform.rotation = Quaternion.Euler(actualRot);
         reachedBall = false;
         this.enabled = false;
     }

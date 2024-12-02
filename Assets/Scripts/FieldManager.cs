@@ -49,7 +49,7 @@ public class FieldManager : MonoBehaviour
         else
         {
             landPos =  marker.position = PredictLandingPosition(ball);
-            Debug.Log("ground ball");
+            Debug.Log("Air ball");
         }
 
         marker.transform.position = landPos;
@@ -124,7 +124,7 @@ public class FieldManager : MonoBehaviour
             else
                 bestFielder.StartField(ball.position, ball);
             bestFielder.enabled = true;
-            bestFielder.active = true;
+            bestFielder.startedRun = true;
             assignedFielder = bestFielder;
         }
 
@@ -228,67 +228,73 @@ public class FieldManager : MonoBehaviour
         float gravity = Mathf.Abs(Physics.gravity.y);
 
         // Calculate height difference to ground (fielder's height)
-        float heightDifference = ball.position.y - fielders[0].transform.position.y;
+        //float heightDifference = ball.position.y - fielders[0].transform.position.y;
+        float heightDifference = ball.position.y - (-4.437081f);
 
-        // Using quadratic equation from projectile motion:
-        // y = y0 + v0y*t - (1/2)g*t^2
-        // Where y is final height (fielder's height), y0 is initial height,
-        // v0y is initial vertical velocity, g is gravity, and t is time
+
+        // Debug values
+        Debug.Log($"Ball Position: {ball.position}, Velocity: {ballVelocity}, Height Difference: {heightDifference}");
+
+        // Handle case where the ball is at or below the fielder's height
+        if (heightDifference <= 0)
+        {
+            Debug.Log("Ball is already below or at fielder's height. Returning current position.");
+            landingPosition = ball.position;
+            landingPosition.y = fielders[0].transform.position.y;
+            return landingPosition;
+        }
 
         float verticalVelocity = ballVelocity.y;
 
-        // Calculate quadratic formula components
-        // at^2 + bt + c = 0
+        // Quadratic equation coefficients: at^2 + bt + c = 0
         float a = -0.5f * gravity;
         float b = verticalVelocity;
         float c = heightDifference;
 
+        // Discriminant
         float discriminant = (b * b) - (4 * a * c);
-
-        // Debug values
-        Debug.Log($"Ball Position: {ball.position}, Velocity: {ballVelocity}");
-        Debug.Log($"Height Difference: {heightDifference}, Vertical Velocity: {verticalVelocity}");
         Debug.Log($"Discriminant: {discriminant}");
 
         if (discriminant < 0)
         {
-            Debug.LogWarning($"Invalid discriminant ({discriminant}) for airborne shot calculation.");
-            // If discriminant is negative, use simple linear prediction
-            float simpleTime = heightDifference / Mathf.Abs(verticalVelocity);
-            if (!float.IsNaN(simpleTime) && simpleTime > 0)
+            Debug.LogWarning("Negative discriminant. Simple linear prediction will be used.");
+            float timeToGround = heightDifference / Mathf.Abs(verticalVelocity);
+            if (!float.IsNaN(timeToGround) && timeToGround > 0)
             {
-                Vector3 horVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
-                landingPosition = ball.position + horVelocity * simpleTime;
+                Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+                landingPosition = ball.position + horizontalVelocity * timeToGround;
                 landingPosition.y = fielders[0].transform.position.y;
                 return landingPosition;
             }
             return Vector3.zero;
         }
 
-        // Get the positive time solution (we want future, not past)
+        // Calculate time to land (use the positive root of the quadratic equation)
         float timeToLand = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
 
-        // If first solution gives negative time, try the other solution
         if (timeToLand < 0)
         {
+            // Try the other root
             timeToLand = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
         }
 
         Debug.Log($"Time to Land: {timeToLand}");
 
-        if (float.IsNaN(timeToLand) || timeToLand < 0)
+        if (float.IsNaN(timeToLand) || timeToLand <= 0)
         {
-            Debug.LogWarning($"Invalid time to land: {timeToLand}");
+            Debug.LogWarning("Invalid time to land. Returning zero vector.");
             return Vector3.zero;
         }
 
         // Calculate horizontal displacement
-        Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
-        Vector3 horizontalDisplacement = horizontalVelocity * timeToLand;
+        Vector3 horlVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+        Vector3 horizontalDisplacement = horlVelocity * timeToLand;
 
-        // Calculate final position
+        // Calculate final landing position
         landingPosition = ball.position + horizontalDisplacement;
         landingPosition.y = fielders[0].transform.position.y;
+
+        Debug.Log($"Landing Position: {landingPosition}");
 
         // Validate final position
         if (float.IsNaN(landingPosition.x) || float.IsNaN(landingPosition.z))
@@ -297,18 +303,20 @@ public class FieldManager : MonoBehaviour
             return Vector3.zero;
         }
 
-        // Optional: Visualize the prediction
-        Debug.DrawLine(ball.position, landingPosition, Color.red, 0.1f);
-
+        // Optional: Visualize the predicted landing position
+        Debug.DrawLine(ball.position, landingPosition, Color.green);
+        marker.position = landingPosition;
         return landingPosition;
     }
+
+
 
     public void ResetField()
     {
         if(bestFielder)
         {
             bestFielder.Reset();
-            bestFielder.active = false;
+            bestFielder.startedRun = false;
             bestFielder.enabled = false;
             bestFielder = null;
         }
