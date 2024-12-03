@@ -18,7 +18,6 @@ public class Fielder : MonoBehaviour
         actualRot = transform.rotation.eulerAngles;
     }
 
-    bool pot;
 
     private void Update()
     {
@@ -373,8 +372,7 @@ public class Fielder : MonoBehaviour
 
     public void Reset()
     {
-        pot = false;
-        dontRun = false;
+        startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
         reachedBall = false;

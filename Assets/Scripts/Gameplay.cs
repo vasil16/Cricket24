@@ -13,18 +13,19 @@ public class Gameplay : MonoBehaviour
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
-    [SerializeField] Vector3 ballLaunchPos;
+    [SerializeField] Vector3 ballLaunchPos, bound1, bound2, bound3, bound4, ballOriginPoint;
     [SerializeField] float speedMult, pitchXOffset, ballStopPoint;
-    [SerializeField] public Transform batCenter, currentBall, bb;
+    [SerializeField] public Transform batCenter, currentBall, bb, bowlerPalm;
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
+    [SerializeField] List<float> launchSpeeds;
+    [SerializeField] Bat batter;
+
     public CameraLookAt[] activeCams;
     public Bounds stadiumBounds;
 
-    public List<float> launchSpeeds, launchHeights;
-    public int numberOfBallsToLaunch = 5;
-
     private int ballsLaunched = 0, run;
+
     private Rigidbody rb;
     public Camera sideCam;
 
@@ -56,11 +57,12 @@ public class Gameplay : MonoBehaviour
         Application.targetFrameRate = 60;
         activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
+        bowlerPalm = ball.transform.parent;
+        ballOriginPoint = ball.transform.localPosition;
     }
 
     Vector3 helperdir;
 
-    [SerializeField] Bat batter;
 
     IEnumerator LaunchBallsWithDelay()
     {
@@ -76,10 +78,13 @@ public class Gameplay : MonoBehaviour
 
             //Vector3 targetPos = pitchPoints[randPitch];
 
-            Vector3 targetPos = GenerateRandomPointOnPlane();
+            Vector3 targetPos = GetRandomPointWithinBounds();
 
-            mark.transform.position = new Vector3(targetPos.x + pitchXOffset, targetPos.y, targetPos.z);
+            mark.transform.position = new Vector3(targetPos.x, targetPos.y, targetPos.z);
 
+            //ball.transform.SetParent(bowlerPalm);
+
+            ball.transform.localPosition = ballOriginPoint;
 
             ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
 
@@ -88,14 +93,15 @@ public class Gameplay : MonoBehaviour
 
             Vector3 initialPosition = ball.transform.position;
             Vector3 direction = (targetPos - initialPosition).normalized;
-            Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
+            //Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
+            Vector3 pitchPoint = direction * (launchSpeeds[0] * speedMult);
             helperdir = pitchPoint;
 
             foreach (CameraLookAt cam in activeCams)
             {
                 if (MainGame.camIndex == 3)
                 {
-                    cam.transform.localRotation = cam.defRotation;
+                    cam.transform.rotation = cam.defRotation;
                 }                
             }
 
@@ -110,11 +116,13 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitUntil(() => Bowl.instance.ready);
 
+
             CameraLookAt.instance.readyToDeliver = false;
             currentBall = ball.transform;
             ball.GetComponent<Rigidbody>().isKinematic = false;
             ball.SetActive(true);
-
+            ball.transform.SetParent(null);
+            ball.transform.position = ballLaunchPos;
             rb = ball.GetComponent<Rigidbody>();
 
             Bowl.instance.ready = false;
@@ -168,6 +176,7 @@ public class Gameplay : MonoBehaviour
             }
 
             yield return new WaitUntil(() => deliveryDead);
+            bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
             UpdateScoreBoard(ball.GetComponent<BallHit>());
             yield return new WaitForSeconds(2f);
 
@@ -182,7 +191,7 @@ public class Gameplay : MonoBehaviour
             StartCoroutine(ResetBall(ball));
             overText.text = $"{overs}.{ballsLaunched}";
             yield return new WaitForSeconds(1);
-
+            bowler.GetComponent<Animator>().SetBool("DeliveryComplete", false);
             yield return null;
         }
     }
@@ -204,11 +213,25 @@ public class Gameplay : MonoBehaviour
 
     Vector3 GenerateRandomPointOnPlane()
     {
-        // Generate random x and z coordinates within the defined range
         float randomX = Random.Range(-45.8f, 22.4f);
         float randomZ = Random.Range(-4f, .8f);
+        return new Vector3(randomX, -4.427082f, randomZ);
+    }
 
-        // Set y to 0 for a flat plane
+    Vector3 GetRandomPointWithinBounds()
+    {
+        float minX = Mathf.Min(bound1.x, bound2.x, bound3.x, bound4.x);
+        float maxX = Mathf.Max(bound1.x, bound2.x, bound3.x, bound4.x);
+
+        float minZ = Mathf.Min(bound1.z, bound2.z, bound3.z, bound4.z);
+        float maxZ = Mathf.Max(bound1.z, bound2.z, bound3.z, bound4.z);
+
+        float randomX = Random.Range(minX, maxX);
+        float randomZ = Random.Range(minZ, maxZ);
+
+        randomX = Mathf.Clamp(randomX, minX, maxX);
+        randomZ = Mathf.Clamp(randomZ, minZ, maxZ);
+
         return new Vector3(randomX, -4.427082f, randomZ);
     }
 
