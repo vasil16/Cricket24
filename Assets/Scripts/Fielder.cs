@@ -21,7 +21,7 @@ public class Fielder : MonoBehaviour
 
     private void Update()
     {
-        if (startedRun)
+        if (startedRun && !Gameplay.instance.deliveryDead)
         {
             Vector3 groundUp = Vector3.Cross(transform.right, ball.position - transform.position);
 
@@ -236,9 +236,9 @@ public class Fielder : MonoBehaviour
             else
             {
                 // Decide between interception and current aim position
-                aimPos = ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos)
-                    ? PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime)
-                    : aimPos;
+                //aimPos = ShouldChase(ball.position, ballRb.velocity, transform.position, aimPos)
+                //    ? PredictBallPosition(ball.position, ballRb.velocity, Time.deltaTime)
+                //    : aimPos;
             }
         }
         else

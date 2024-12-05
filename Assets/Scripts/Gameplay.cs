@@ -15,7 +15,7 @@ public class Gameplay : MonoBehaviour
     [SerializeField] int balls, overs, wickets, randPitch;
     [SerializeField] Vector3 ballLaunchPos, bound1, bound2, bound3, bound4, ballOriginPoint;
     [SerializeField] float speedMult, pitchXOffset, ballStopPoint;
-    [SerializeField] public Transform batCenter, currentBall, bb, bowlerPalm;
+    [SerializeField] public Transform batCenter, currentBall, bb, bowlerPalm, center;
     [SerializeField] Animator machineAnim;
     [SerializeField] Text overText;
     [SerializeField] List<float> launchSpeeds;
@@ -191,7 +191,6 @@ public class Gameplay : MonoBehaviour
             StartCoroutine(ResetBall(ball));
             overText.text = $"{overs}.{ballsLaunched}";
             yield return new WaitForSeconds(1);
-            bowler.GetComponent<Animator>().SetBool("DeliveryComplete", false);
             yield return null;
         }
     }
@@ -237,9 +236,7 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator CheckBallDirection()
     {
-        Vector3 firstPos = ball.transform.position;
-        yield return new WaitForSeconds(0.2f);
-        Vector3 ballDirection = (ball.transform.position - firstPos).normalized;
+        yield return new WaitForSeconds(0f);
         FieldManager.StartCheckField.Invoke(currentBall.transform.position);
     }
 

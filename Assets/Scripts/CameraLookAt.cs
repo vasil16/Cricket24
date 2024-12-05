@@ -68,7 +68,7 @@ public class CameraLookAt : MonoBehaviour
                     }
                     else
                     {
-                        transform.LookAt(FieldManager.bestFielder.transform);
+                        //transform.LookAt(FieldManager.bestFielder.transform);
                         camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 9.1f, ref dampFact, 1f);
                     }
                 }
