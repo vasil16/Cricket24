@@ -24,7 +24,8 @@ public class BallHit : MonoBehaviour
             Gameplay.instance.deliveryDead = true;
         }
 
-        if (transform.position.x > 80 && transform.position.z < 54)
+        if (!secondTouch) return;
+        if (transform.position.x > 80 && transform.position.z < 24)
         {
             Gameplay.instance.sideCam.depth = 0;
             Gameplay.instance.sideCam.enabled = true;
@@ -88,6 +89,23 @@ public class BallHit : MonoBehaviour
             Gameplay.instance.deliveryDead = true;
         }
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        CheckLegalDelivery();
+    }
+
+    void CheckLegalDelivery()
+    {
+        if(transform.position.z is <= -4.71f or >=1.8f || transform.position.y > 2.96f)
+        {
+            Gameplay.instance.legalDelivery = false;
+        }
+        else
+        {
+            Gameplay.instance.legalDelivery = true;
+        }
     }
 
     public void Reset()

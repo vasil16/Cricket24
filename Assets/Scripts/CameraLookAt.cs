@@ -15,13 +15,23 @@ public class CameraLookAt : MonoBehaviour
     private void OnEnable()
     {
         instance = this;
-        camera = GetComponent<Camera>();
-        defRotation = camera.transform.rotation;
+        if (TryGetComponent<Camera>(out camera))
+        {
+            camera = GetComponent<Camera>();
+        }
+        else
+        {
+            // Camera component was not found
+        }
+
+        
+        defRotation = transform.rotation;
     }
 
     void Start()
     {
-        defFOV = camera.fieldOfView;
+        if(camera)
+            defFOV = camera.fieldOfView;
     }
 
     bool goDown;
@@ -31,12 +41,6 @@ public class CameraLookAt : MonoBehaviour
     {
         if(ball == null)
         {
-            //Debug.Log("ball Null");
-            //if(MainGame.camIndex!=3)
-            //{
-            //    camera.transform.rotation = defRotation;
-            //    camera.fieldOfView = defFOV;
-            //}
             if(MainGame.camIndex==1 && startingRunUp)
             {
                 CamRunUpAnim();
@@ -53,44 +57,43 @@ public class CameraLookAt : MonoBehaviour
         {
 
             //if (Vector3.Distance(transform.position, ball.transform.position) < 200)
-            if(ball.GetComponent<BallHit>().secondTouch)
+            if (ball.GetComponent<BallHit>().secondTouch)
             {
                 //camera.fieldOfView += ball.GetComponent<Rigidbody>().velocity.magnitude * .2f * Time.deltaTime;
-                if(ball.transform.position.x< -27.03f)
+                if (ball.transform.position.x < -27.03f)
                 {
                     camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 6, ref dampFact, 0.6f);
                 }
                 else
                 {
-                    if(camera.fieldOfView<10.3f)
+                    if (camera.fieldOfView < 10.3f)
                     {
                         camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 10.3f, ref dampFact, 1f);
                     }
                     else
                     {
-                        //transform.LookAt(FieldManager.bestFielder.transform);
                         camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 9.1f, ref dampFact, 1f);
                     }
                 }
             }
             //else
-            if (ball.transform.position.y > 80)
-            {
-                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 20, ref dampFact, 1f);
-                goDown = true;
-            }
-            if (goDown)
-            {
-                if (ball.transform.position.y < 60)
-                {
-                    camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, defFOV, ref dampFact, 1.4f);
-                    if (Gameplay.instance.deliveryDead)
-                    {
-                        goDown = false;
-                        camera.fieldOfView = defFOV;
-                    }
-                }
-            }
+            //if (ball.transform.position.y > 80)
+            //{
+            //    camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 20, ref dampFact, 1f);
+            //    goDown = true;
+            //}
+            //if (goDown)
+            //{
+            //    if (ball.transform.position.y < 60)
+            //    {
+            //        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, defFOV, ref dampFact, 1.4f);
+            //        if (Gameplay.instance.deliveryDead)
+            //        {
+            //            goDown = false;
+            //            camera.fieldOfView = defFOV;
+            //        }
+            //    }
+            //}
 
             if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold && !ball.GetComponent<BallHit>().secondTouch && !Gameplay.instance.deliveryDead)
             {
@@ -124,7 +127,8 @@ public class CameraLookAt : MonoBehaviour
 
     public void CamReset()
     {
-        camera.transform.rotation = defRotation;
+        transform.rotation = defRotation;
+        if (!camera) return;
         camera.fieldOfView = defFOV;
     }
 

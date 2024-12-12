@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.Burst.Intrinsics;
 
 public class Gameplay : MonoBehaviour
 {
@@ -33,8 +34,7 @@ public class Gameplay : MonoBehaviour
 
     public bool isGameOver = false;
     public bool readyToBowl = true;
-    public bool deliveryDead;
-    public bool opp;
+    public bool deliveryDead, opp, legalDelivery;
 
     private void OnDrawGizmos()
     {
@@ -76,13 +76,9 @@ public class Gameplay : MonoBehaviour
 
             randPitch = Random.Range(0, 20);
 
-            //Vector3 targetPos = pitchPoints[randPitch];
+            //Vector3 ballPitchPoint = pitchPoints[randPitch];
 
-            Vector3 targetPos = GetRandomPointWithinBounds();
-
-            mark.transform.position = new Vector3(targetPos.x, targetPos.y, targetPos.z);
-
-            //ball.transform.SetParent(bowlerPalm);
+            Vector3 ballPitchPoint = GetRandomPointWithinBounds();
 
             ball.transform.localPosition = ballOriginPoint;
 
@@ -91,53 +87,54 @@ public class Gameplay : MonoBehaviour
             ball.SetActive(false);
             ball.transform.position = ballLaunchPos;
 
-            Vector3 initialPosition = ball.transform.position;
-            Vector3 direction = (targetPos - initialPosition).normalized;
-            //Vector3 pitchPoint = direction * (launchSpeeds[Random.Range(0, launchSpeeds.Count)] * speedMult);
-            Vector3 pitchPoint = direction * (launchSpeeds[0] * speedMult);
-            helperdir = pitchPoint;
+            Vector3 direction = (ballPitchPoint - ballLaunchPos).normalized;
+
+            float speed = 80 * 0.22f;
+
+            Vector3 force = direction * speed;
+
+            //mark.transform.position = ballPitchPoint;
 
             foreach (CameraLookAt cam in activeCams)
             {
                 if (MainGame.camIndex == 3)
                 {
                     cam.transform.rotation = cam.defRotation;
-                }                
+                }
             }
 
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(4f);
 
             CameraLookAt.instance.startingRunUp = true;
 
             Bowl.instance.anim.Play("bowl");
 
+            //mark.transform.position = PredictLandingPosition(ball.transform.position, force * 10);
+
+            mark.transform.position = ballPitchPoint;
 
             yield return new WaitUntil(() => Bowl.instance.ready);
 
-
             CameraLookAt.instance.readyToDeliver = false;
             currentBall = ball.transform;
-            ball.GetComponent<Rigidbody>().isKinematic = false;
+            rb = ball.GetComponent<Rigidbody>();
+            rb.isKinematic = false;
             ball.SetActive(true);
             ball.transform.SetParent(null);
             ball.transform.position = ballLaunchPos;
-            rb = ball.GetComponent<Rigidbody>();
 
             Bowl.instance.ready = false;
+            //rb.WakeUp();
+            //rb.AddTorque(Vector3.forward * -10);
+            //rb.AddForce(force, ForceMode.Impulse);
 
-            rb.WakeUp();
-            rb.AddTorque(Vector3.forward * -10);
-            rb.AddForce(pitchPoint, ForceMode.Impulse);
+            LaunchBallToPitchPoint(ballLaunchPos, ballPitchPoint);
 
             foreach (CameraLookAt cam in activeCams)
-            {
-                //if (MainGame.camIndex == 3) { }
-                //else
-                {
-                    cam.ball = ball;
-                }
+            {                
+                cam.ball = ball;                
             }
 
             yield return new WaitForSeconds(.7f);
@@ -145,11 +142,7 @@ public class Gameplay : MonoBehaviour
 
             foreach (CameraLookAt cam in activeCams)
             {
-                //if (MainGame.camIndex == 3) { }
-                //else
-                {
-                    cam.startingRunUp = false;
-                }
+                cam.startingRunUp = false;                
             }
 
 
@@ -157,7 +150,7 @@ public class Gameplay : MonoBehaviour
                 StartCoroutine(CheckBallDirection());
             else
             {
-                while(currentBall.position.x>ballStopPoint)
+                while (currentBall.position.x > ballStopPoint)
                 {
                     yield return null;
                 }
@@ -166,25 +159,28 @@ public class Gameplay : MonoBehaviour
                 deliveryDead = true;
             }
 
+            yield return new WaitUntil(() => deliveryDead);
+            bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
+            UpdateScoreBoard(ball.GetComponent<BallHit>());
+            yield return new WaitForSeconds(2f);
 
-            ballsLaunched++;
-            if (ballsLaunched % 6 == 0)
+            if(legalDelivery)
+            {
+                ballsLaunched++;
+            }
+
+            if (ballsLaunched > 0 && ballsLaunched % 6 == 0)
             {
                 overs++;
                 ballsLaunched = 0;
                 //ShiftEnd();
             }
 
-            yield return new WaitUntil(() => deliveryDead);
-            bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
-            UpdateScoreBoard(ball.GetComponent<BallHit>());
-            yield return new WaitForSeconds(2f);
-
             FieldManager.ResetFielder.Invoke();
             foreach (CameraLookAt cam in activeCams)
             {
                 cam.ball = null;
-                cam.CamReset();                
+                cam.CamReset();
             }
             sideCam.depth = -2;
             sideCam.enabled = false;
@@ -194,6 +190,94 @@ public class Gameplay : MonoBehaviour
             yield return null;
         }
     }
+
+    private void LaunchBallToPitchPoint(Vector3 ballLaunchPos, Vector3 ballPitchPoint)
+    {
+        // Gravity constant (you can adjust this based on your scene's gravity)
+        float landDistance = Mathf.Abs(ballLaunchPos.x - ballPitchPoint.x);
+
+        float gravity = Physics.gravity.y;
+
+        // Distance from the launch position to the target pitch point
+        float distance = Vector3.Distance(ballLaunchPos, ballPitchPoint);
+
+        // The desired time to reach the target (this is an estimate, adjust as needed)
+        float timeToReachTarget = 0.58f; // Change this based on how fast you want the ball to travel
+
+        Debug.Log("speeed" + timeToReachTarget);
+
+        // Calculate the initial velocity required to reach the target point
+        float verticalSpeed = (ballPitchPoint.y - ballLaunchPos.y - 0.5f * gravity * Mathf.Pow(timeToReachTarget, 2)) / timeToReachTarget;
+
+        // Calculate the horizontal velocity (ignoring gravity in horizontal direction)
+        Vector3 horizontalDirection = (ballPitchPoint - ballLaunchPos);
+        horizontalDirection.y = 0; // Ignore vertical direction for horizontal velocity calculation
+        Vector3 horizontalVelocity = horizontalDirection.normalized * (distance / timeToReachTarget);
+
+        // Combine vertical and horizontal components to get the final velocity
+        Vector3 initialVelocity = horizontalVelocity;
+        initialVelocity.y = verticalSpeed;
+
+        // Apply the velocity to the ball's Rigidbody
+        Rigidbody rb = ball.GetComponent<Rigidbody>();
+        rb.velocity = initialVelocity; // Directly set the velocity to simulate the launch
+
+        // Optional: If you want to add torque for spin, you can add it here
+        rb.AddTorque(Vector3.forward * -10);
+    }
+
+    private Vector3 PredictLandingPosition(Vector3 ballPos, Vector3 force)
+    {
+        Vector3 landingPosition = Vector3.zero;
+
+        Vector3 ballVelocity = force;
+        float gravity = Mathf.Abs(Physics.gravity.y);
+
+        // Ensure ballPos.y is above the ground level
+        float heightDifference = ballPos.y - (-4.427082f);
+
+        if (heightDifference <= 0)
+        {
+            landingPosition = ballPos;
+            landingPosition.y = -4.427082f;
+            return landingPosition;
+        }
+
+        float verticalVelocity = ballVelocity.y;
+
+        // Use kinematic equation: y = vt + 0.5 * at^2 to find time of flight
+        float a = -0.5f * gravity;
+        float b = verticalVelocity;
+        float c = heightDifference;
+
+        float discriminant = (b * b) - (4 * a * c);
+
+        if (discriminant < 0)
+        {
+            return Vector3.zero; // No valid solution for landing point
+        }
+
+        float timeToLand = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
+        if (timeToLand < 0)
+        {
+            timeToLand = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
+        }
+
+        if (timeToLand <= 0)
+        {
+            return Vector3.zero; // Invalid time
+        }
+
+        // Calculate horizontal displacement during timeToLand
+        Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
+        Vector3 horizontalDisplacement = horizontalVelocity * timeToLand;
+
+        landingPosition = ballPos + horizontalDisplacement;
+        landingPosition.y = -4.427082f;
+
+        return landingPosition;
+    }
+
 
     void ShiftEnd()
     {
@@ -283,7 +367,7 @@ public class Gameplay : MonoBehaviour
         }
         else
         {
-            run += 0;
+            run += legalDelivery ? 0 : 1;
         }
         Scorer.instance.NewScore(run, wickets);
     }

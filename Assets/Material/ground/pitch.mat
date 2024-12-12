@@ -26,6 +26,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ENVIRONMENTREFLECTIONS_OFF
+  - _NORMALMAP
   - _SPECULARHIGHLIGHTS_OFF
   - _SPECULAR_SETUP
   - _SURFACE_TYPE_TRANSPARENT
@@ -50,7 +51,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: af26d333eb83c4ab1a4e77519922c306, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -140,8 +141,8 @@ Material:
     - _WorkflowMode: 0
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 0.9529412, g: 0.9049658, b: 0.7411765, a: 0.53333336}
-    - _Color: {r: 0.9529411, g: 0.9049658, b: 0.7411765, a: 0.53333336}
+    - _BaseColor: {r: 0.9622642, g: 0.91984564, b: 0.76708794, a: 0.53333336}
+    - _Color: {r: 0.9622641, g: 0.91984564, b: 0.76708794, a: 0.53333336}
     - _EdgeBlendColor: {r: 0.39215687, g: 0.44313726, b: 0.34509802, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.05660379, g: 0.05660379, b: 0.05660379, a: 1}

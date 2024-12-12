@@ -26,6 +26,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ENVIRONMENTREFLECTIONS_OFF
+  - _NORMALMAP
   - _SPECULARHIGHLIGHTS_OFF
   - _SPECULAR_SETUP
   - _SURFACE_TYPE_TRANSPARENT
@@ -50,7 +51,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 19ae2bfc12aac4f54a8686bef9094879, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
