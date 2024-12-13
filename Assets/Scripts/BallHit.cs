@@ -111,9 +111,7 @@ public class BallHit : MonoBehaviour
     public void Reset()
     {
         lastHit = "";
-        GetComponent<Rigidbody>().isKinematic = true;
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
-        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;        
+        GetComponent<Rigidbody>().isKinematic = true;    
         secondTouch = false;
         groundShot = false;
     }

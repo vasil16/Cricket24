@@ -104,9 +104,9 @@ public class FieldManager : MonoBehaviour
         {
             if (!fielder.startedRun)
             {
-                fielder.StartField(landPos, ball);
                 fielder.enabled = true;
                 fielder.startedRun = true;
+                fielder.Initiate(landPos, ball);
             }
         }
 
@@ -234,6 +234,7 @@ public class FieldManager : MonoBehaviour
 
     public void ResetFielders()
     {
+        Debug.Log("reeseet called");
         foreach (var fielder in bestFielders)
         {
             fielder.Reset();

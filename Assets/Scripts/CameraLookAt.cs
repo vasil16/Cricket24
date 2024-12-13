@@ -101,7 +101,7 @@ public class CameraLookAt : MonoBehaviour
                 ////{
                 //    camera.fieldOfView -= .8f * Time.deltaTime;
                 ////}
-                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 7.449998f / 2, ref dampFact, 0.3f);
+                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 7.5f / 2, ref dampFact, 0.3f);
                 camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(6.064f, -90, 0), 0.3f * Time.deltaTime);
             }
             else
@@ -121,7 +121,7 @@ public class CameraLookAt : MonoBehaviour
 
     void CamRunUpAnim()
     {
-        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-1f, ref dampFact, 1.5f);
+        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-0.3f, ref dampFact, 1.5f);
         transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6f,Time.deltaTime * 0.3f), -90, 0);
     }
 
