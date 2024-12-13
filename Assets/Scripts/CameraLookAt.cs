@@ -101,7 +101,7 @@ public class CameraLookAt : MonoBehaviour
                 ////{
                 //    camera.fieldOfView -= .8f * Time.deltaTime;
                 ////}
-                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 7f/2, ref dampFact, 0.3f);
+                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 7.449998f / 2, ref dampFact, 0.3f);
                 camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(6.064f, -90, 0), 0.3f * Time.deltaTime);
             }
             else

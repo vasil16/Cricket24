@@ -126,11 +126,11 @@ public class Gameplay : MonoBehaviour
             ball.transform.position = ballLaunchPos;
 
             Bowl.instance.ready = false;
-            //rb.WakeUp();
-            //rb.AddTorque(Vector3.forward * -10);
-            //rb.AddForce(force, ForceMode.Impulse);
+            rb.WakeUp();
+            rb.AddTorque(Vector3.forward * -10);
+            rb.AddForce(force, ForceMode.Impulse);
 
-            LaunchBallToPitchPoint(ballLaunchPos, ballPitchPoint);
+            //LaunchBallToPitchPoint(ballLaunchPos, ballPitchPoint);
 
             foreach (CameraLookAt cam in activeCams)
             {                
@@ -472,7 +472,7 @@ public class Gameplay : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene("crk");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
 }

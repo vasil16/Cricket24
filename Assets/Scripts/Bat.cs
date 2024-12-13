@@ -7,6 +7,7 @@ public class Bat : MonoBehaviour
     [SerializeField] AnimationClip animationClip;
     public Vector3 touchPos;
     public float pressPoint;
+    [SerializeField] RectTransform dragObject;
 
     Vector3 startPoint, endPoint;
     public float diss;
@@ -32,7 +33,7 @@ public class Bat : MonoBehaviour
 
         if (true)
         {
-            if (Input.touchCount > 0 )
+            if (Input.touchCount > 0)
             {
                 foreach (Touch touch in Input.touches)
                 {
@@ -56,6 +57,7 @@ public class Bat : MonoBehaviour
             }
         }
     }
+    
 
     //void CheckDirection(Vector3 direction)
     //{
@@ -139,22 +141,22 @@ public class Bat : MonoBehaviour
         else if (angle >= 180 && angle < 225)
         {
             //Debug.Log("Swipe in Slice 5 (Left)");
-            batterAnim.Play("offDrive");
+            batterAnim.Play("cover");
         }
         else if (angle >= 225 && angle < 270)
         {
             //Debug.Log("Swipe in Slice 6 (Bottom-Left)");
-            batterAnim.Play("straightDrive");
+            batterAnim.Play("offDrive");
         }
         else if (angle >= 270 && angle < 315)
         {
             //Debug.Log("Swipe in Slice 7 (Bottom)");
-            batterAnim.Play("shot");
+            batterAnim.Play("straightDrive");
         }
         else if (angle >= 315 && angle < 360)
         {
             //Debug.Log("Swipe in Slice 8 (Bottom-Right)");
-            batterAnim.Play("legGlance");
+            batterAnim.Play("flick");
         }
     }
 }

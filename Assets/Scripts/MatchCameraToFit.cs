@@ -4,7 +4,7 @@ using UnityEngine;
 public class MatchCameraToFit : MonoBehaviour
 {
     public float targetAspectRatio = 16f / 9f; // Aspect ratio of your reference resolution (1920x1080)
-    public float orthoSize; // For orthographic cameras
+    public float orthoSize = 5f; // For orthographic cameras
     public float fieldOfView; // For perspective cameras
 
     private Camera cam;
@@ -16,13 +16,15 @@ public class MatchCameraToFit : MonoBehaviour
     }
 
     private void OnValidate()
-    {
+    {        
         MatchCamera();
     }
 
     private void MatchCamera()
     {
         if (cam == null) return;
+
+        fieldOfView = cam.fieldOfView;
 
         float currentAspectRatio = (float)Screen.width / Screen.height;
 
@@ -47,16 +49,17 @@ public class MatchCameraToFit : MonoBehaviour
         }
         else
         {
-            float matchFOV = fieldOfView;
-
-            if (currentAspectRatio!=  targetAspectRatio)
+            if (currentAspectRatio > targetAspectRatio)
             {
-                // Adjust the field of view to maintain the width
+                // Pillarbox (wider screens, adjust FOV to maintain horizontal view)
                 float scale = targetAspectRatio / currentAspectRatio;
-                matchFOV = Mathf.Atan(Mathf.Tan(fieldOfView * Mathf.Deg2Rad * 0.5f) / scale) * 2f * Mathf.Rad2Deg;
+                cam.fieldOfView = Mathf.Atan(Mathf.Tan(fieldOfView * Mathf.Deg2Rad * 0.5f) * scale) * 2f * Mathf.Rad2Deg;
             }
-
-            cam.fieldOfView = matchFOV;
+            else
+            {
+                // Letterbox (taller screens, no FOV adjustment needed)
+                cam.fieldOfView = fieldOfView;
+            }
         }
     }
 }

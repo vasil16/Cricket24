@@ -97,6 +97,7 @@ public class Fielder : MonoBehaviour
                 {
                     Debug.Log("run to reeach air");
                     ballRb.isKinematic = true;
+                    Gameplay.instance.Out();
                     reachedBall = true;
                 }
             }
@@ -106,6 +107,7 @@ public class Fielder : MonoBehaviour
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 2f)
             {
                 Debug.Log("run to reeach ground");
+                Gameplay.instance.deliveryDead = true;
                 ballRb.isKinematic = true;
                 reachedBall = true;
             }
@@ -153,6 +155,7 @@ public class Fielder : MonoBehaviour
         if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 10)
         {
             Debug.Log("slowed beyound thrshold reached");
+            Gameplay.instance.deliveryDead = true;
             ballRb.isKinematic = true;
             reachedBall = true;
         }
