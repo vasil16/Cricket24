@@ -14,12 +14,11 @@ public class Fielder : MonoBehaviour
     public bool canReachInTime, startedRun, reachedBall, reachedInterim;
     private bool ballWasAirborne;
     [SerializeField] FieldManager fm;
-    NavMeshAgent agent;
 
     private void OnEnable()
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = 30;
+        //agent = GetComponent<NavMeshAgent>();
+        //agent.speed = 30;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
     }
@@ -82,7 +81,7 @@ public class Fielder : MonoBehaviour
 
     void ReachedBall()
     {
-        agent.isStopped = true;
+        //agent.isStopped = true;
         GetComponent<Animator>().SetTrigger("StopField");
     }
 
@@ -125,7 +124,7 @@ public class Fielder : MonoBehaviour
             }
             else if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2 (targetPosition.x, targetPosition.z)) < 1f && !reachedBall && !reachedInterim)
             {
-                agent.ResetPath();
+                //agent.ResetPath();
                 Debug.Log("reached target go for");
                 StartCoroutine(CollectBall());
                 reachedInterim = true;
@@ -316,8 +315,8 @@ public class Fielder : MonoBehaviour
 
     public void Reset()
     {
-        agent.Stop();
-        agent.ResetPath();
+        //agent.Stop();
+        //agent.ResetPath();
         StopCoroutine(StartField());
         GetComponent<Animator>().SetBool("Stop", true);
         startedRun = false;
