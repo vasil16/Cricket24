@@ -6,7 +6,8 @@ public class BallHit : MonoBehaviour
     Rigidbody rb;
     public bool secondTouch , groundShot;
 
-    [SerializeField] AudioSource shotFx;
+    [SerializeField] AudioSource soundFx;
+    [SerializeField] AudioClip wicketFx, shotFx;
 
     public string lastHit;
 
@@ -42,6 +43,7 @@ public class BallHit : MonoBehaviour
         lastHit = collision.gameObject.tag;
         if(collision.gameObject.CompareTag("Wicket"))
         {
+            soundFx.PlayOneShot(wicketFx);
             Gameplay.instance.Out();
         }
         else if(collision.gameObject.CompareTag("pitch"))
@@ -70,7 +72,7 @@ public class BallHit : MonoBehaviour
                     CameraShake.instance.Shake();
                     //CameraShake.instance.followBall(this.gameObject);                   
                 }
-                shotFx.Play();
+                soundFx.PlayOneShot(shotFx);
                 //VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);                
             }
         }
@@ -93,17 +95,21 @@ public class BallHit : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CheckLegalDelivery();
+        Vector3 contactPoint = transform.position;
+        CheckLegalDelivery(contactPoint);
+        //Gameplay.instance.legalDelivery = false;
     }
 
-    void CheckLegalDelivery()
+    void CheckLegalDelivery(Vector3 enterPos)
     {
-        if(transform.position.z is <= -4.71f or >=1.8f || transform.position.y > 2.96f)
+        if(enterPos.z is <= -4.71f or >=1.8f || enterPos.y > 2.96f)
         {
+            Debug.Log("wideball");
             Gameplay.instance.legalDelivery = false;
         }
         else
         {
+            Debug.Log("goodball");
             Gameplay.instance.legalDelivery = true;
         }
     }

@@ -239,7 +239,7 @@ public class FieldManager : MonoBehaviour
         {
             fielder.Reset();
             fielder.startedRun = false;
-            fielder.enabled = false;
+            //fielder.enabled = false;
         }
         bestFielders.Clear();
     }

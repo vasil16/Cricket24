@@ -121,7 +121,7 @@ public class CameraLookAt : MonoBehaviour
 
     void CamRunUpAnim()
     {
-        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-0.3f, ref dampFact, 1.5f);
+        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-0.9f, ref dampFact, 1.5f);
         transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6f,Time.deltaTime * 0.3f), -90, 0);
     }
 

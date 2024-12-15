@@ -127,7 +127,7 @@ public class MainGame : MonoBehaviour
     {
         batter.position += Vector3.forward * side *0.1f;
         batter.TryGetComponent(out Animator anim);
-        anim.Play("move");
+        //anim.Play("move");
     }
 
   

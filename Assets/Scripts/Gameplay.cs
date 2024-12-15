@@ -9,8 +9,7 @@ public class Gameplay : MonoBehaviour
 {
     public static Gameplay instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler;
-    [SerializeField] AudioSource wicketFx;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler;    
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
@@ -18,7 +17,6 @@ public class Gameplay : MonoBehaviour
     [SerializeField] float speedMult, pitchXOffset, ballStopPoint;
     [SerializeField] public Transform batCenter, currentBall, bb, bowlerPalm, center;
     [SerializeField] Animator machineAnim;
-    [SerializeField] Text overText;
     [SerializeField] List<float> launchSpeeds;
     [SerializeField] Bat batter;
 
@@ -160,14 +158,27 @@ public class Gameplay : MonoBehaviour
             }
 
             yield return new WaitUntil(() => deliveryDead);
+
+            yield return new WaitForSeconds(1);
+
             bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
-            UpdateScoreBoard(ball.GetComponent<BallHit>());
             yield return new WaitForSeconds(2f);
+
+            //legalDelivery = (legalDelivery == true) && (ball.GetComponent<BallHit>().secondTouch == false);
+
+            if(!legalDelivery)
+            {
+                if(ball.GetComponent<BallHit>().secondTouch)
+                {
+                    legalDelivery = true;
+                }
+            }
 
             if(legalDelivery)
             {
                 ballsLaunched++;
             }
+
 
             if (ballsLaunched > 0 && ballsLaunched % 6 == 0)
             {
@@ -176,6 +187,7 @@ public class Gameplay : MonoBehaviour
                 //ShiftEnd();
             }
 
+            UpdateScoreBoard(ball.GetComponent<BallHit>());
             FieldManager.ResetFielder.Invoke();
             foreach (CameraLookAt cam in activeCams)
             {
@@ -183,9 +195,7 @@ public class Gameplay : MonoBehaviour
                 cam.CamReset();
             }
             sideCam.depth = -2;
-            sideCam.enabled = false;
-            StartCoroutine(ResetBall(ball));
-            overText.text = $"{overs}.{ballsLaunched}";
+            sideCam.enabled = false;            
             yield return new WaitForSeconds(1);
             yield return null;
         }
@@ -225,59 +235,6 @@ public class Gameplay : MonoBehaviour
         // Optional: If you want to add torque for spin, you can add it here
         rb.AddTorque(Vector3.forward * -10);
     }
-
-    private Vector3 PredictLandingPosition(Vector3 ballPos, Vector3 force)
-    {
-        Vector3 landingPosition = Vector3.zero;
-
-        Vector3 ballVelocity = force;
-        float gravity = Mathf.Abs(Physics.gravity.y);
-
-        // Ensure ballPos.y is above the ground level
-        float heightDifference = ballPos.y - (-4.427082f);
-
-        if (heightDifference <= 0)
-        {
-            landingPosition = ballPos;
-            landingPosition.y = -4.427082f;
-            return landingPosition;
-        }
-
-        float verticalVelocity = ballVelocity.y;
-
-        // Use kinematic equation: y = vt + 0.5 * at^2 to find time of flight
-        float a = -0.5f * gravity;
-        float b = verticalVelocity;
-        float c = heightDifference;
-
-        float discriminant = (b * b) - (4 * a * c);
-
-        if (discriminant < 0)
-        {
-            return Vector3.zero; // No valid solution for landing point
-        }
-
-        float timeToLand = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
-        if (timeToLand < 0)
-        {
-            timeToLand = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
-        }
-
-        if (timeToLand <= 0)
-        {
-            return Vector3.zero; // Invalid time
-        }
-
-        // Calculate horizontal displacement during timeToLand
-        Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
-        Vector3 horizontalDisplacement = horizontalVelocity * timeToLand;
-
-        landingPosition = ballPos + horizontalDisplacement;
-        landingPosition.y = -4.427082f;
-
-        return landingPosition;
-    }
-
 
     void ShiftEnd()
     {
@@ -340,36 +297,38 @@ public class Gameplay : MonoBehaviour
             switch (ball.lastHit)
             {
                 case "Ground":
-                    if (ballfinal.x < -116 || ballfinal.x > 133 || ballfinal.z > 110 || ballfinal.z < 110)
-                    {
-                        run += 2;
-                    }
-                    else
-                        run += 1;
+                    //if (ballfinal.x < -116 || ballfinal.x > 133 || ballfinal.z > 110 || ballfinal.z < 110)
+                    //{
+                    //    run = 2;
+                    //}
+                    //else
+                    //    run = 1;
                     break;
                 case "boundary":
                     if (ball.groundShot)
-                        run += 4;
+                        run = 4;
                     else
-                        run += 6;
+                        run = 6;
                     break;
                 case "gallery":
-                    run += 6;
+                    run = 6;
                     break;
 
                 default:
                     if (stadiumBounds.Contains(ballfinal))
-                        run += 0;
+                        run = 0;
                     else
-                        run += 6;
+                        run = 6;
                     break;
             }
         }
         else
         {
-            run += legalDelivery ? 0 : 1;
+            run = legalDelivery ? 0 : 1;
         }
-        Scorer.instance.NewScore(run, wickets);
+        string detail = legalDelivery ? run+"" : "wd";
+        Scorer.instance.UpdateScore(run, wickets, overs, ballsLaunched, detail);
+        StartCoroutine(ResetBall(ball.gameObject));
     }
 
     public float miRand, maRand, randomAngle;
@@ -443,8 +402,7 @@ public class Gameplay : MonoBehaviour
     {
         isGameOver = true;
         lostPanel.SetActive(true);
-        pauseBtn.SetActive(false);
-        wicketFx.Play();
+        pauseBtn.SetActive(false);        
         //crowdFx.Play();
         //VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Failure);
     }
@@ -460,12 +418,14 @@ public class Gameplay : MonoBehaviour
 
     public void PauseFn()
     {
+        Time.timeScale = 0;
         isPaused = true;
         gameObject.GetComponent<AudioSource>().Pause();
     }
 
     public void ResumeFn()
     {
+        Time.timeScale = 1;
         isPaused = false;
         gameObject.GetComponent<AudioSource>().Play();
     }
