@@ -7,6 +7,8 @@ public class Bowl : MonoBehaviour
 
     public static Bowl instance;
 
+    public Transform ball;
+
     public bool ready;
 
     public Animator anim;
@@ -23,6 +25,7 @@ public class Bowl : MonoBehaviour
 
     public void Deliver()
     {
-        ready = true;
+        //ball.SetParent(null);
+        ready = true;        
     }
 }

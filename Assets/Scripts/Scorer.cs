@@ -1,58 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Scorer : MonoBehaviour
 {
     public static Scorer instance;
 
     public int score;
-    [SerializeField] TextMeshProUGUI scoreText;
-
+    [SerializeField] Text scoreText, overText, deliveryDetails;
+    string overDetail = "";
+    public int teamScore;
 
     private void Awake()
     {
         instance = this;
     }
 
-    public void NewScore(int runs, int wickets)
+    public void UpdateScore(int runs, int wickets, int overs, int ballsLaunched, string lastDelivery)
     {
-        scoreText.text = runs + " - " + wickets;
-    }
-
-    public void UpdateScore(float angle, bool grounded)
-    {
-        if(angle < 0)
-        {
-            Debug.Log("angle  " + angle);
-            score += 1;
-            scoreText.text = score + "";
-        }
-        else if(angle > 0 && angle < 35)
-        {
-            Debug.Log("angle  " + angle);
-            score += 2;
-            scoreText.text = score + "";
-        }
-        else if (angle > 35 && angle < 50)
-        {
-            Debug.Log("angle  " + angle);
-            score += 4;
-            scoreText.text = score + "";
-        }
-        else if (angle > 50)
-        {
-            Debug.Log("angle  " + angle);
-            if (grounded)
-            {
-                score += 3;
-            }
-            else
-            {
-                score += 6;
-            }
-            scoreText.text = score + "";
-        }
-    }
+        teamScore += runs;
+        scoreText.text = teamScore + " - " + wickets;
+        overText.text = $"{overs}.{ballsLaunched}";
+        Debug.Log("last  " + lastDelivery);
+        overDetail += lastDelivery +"  "; 
+        deliveryDetails.text = overDetail;
+    }    
 }

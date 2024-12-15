@@ -1,9 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+
+
 
 public class MainGame : MonoBehaviour
 {
@@ -16,37 +16,38 @@ public class MainGame : MonoBehaviour
     public static int camIndex;
     [SerializeField] Transform batter;
 
-    [SerializeField] Renderer stadium;
-    [SerializeField] Color[] colors;
-    MaterialPropertyBlock propBlock;
-    [SerializeField] Texture spriteTexture, seatTex;
+    public Renderer stadium;
+    private MaterialPropertyBlock mpb;
+
+    [SerializeField] Color[] color;
+
+    public static MainGame instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+            instance = this;
+    }
+
 
     private void Start()
     {
         camIndex = 1;
         canvas.SetActive(true);
-        propBlock = new MaterialPropertyBlock();
 
-        for(int k = 0; k < stadium.sharedMaterials.Length;k++)
+        mpb = new MaterialPropertyBlock();
+
+        // Assign different colors to each submesh
+        for (int i = 0; i < stadium.sharedMaterials.Length; i++)
         {
 
-            propBlock.SetColor("_Color", colors[k]);
+            mpb.SetColor("_Color", color[i]);
 
             // Apply the MPB to the submesh index
-            stadium.SetPropertyBlock(propBlock, k);
-
-            if(k==10)
-            {
-                propBlock.SetTexture("_MainTex", spriteTexture);
-                stadium.SetPropertyBlock(propBlock, k);
-            }
-            if(k==2||k==3)
-            {
-                propBlock.SetTexture("_MainTex", seatTex);
-                stadium.SetPropertyBlock(propBlock, k);
-            }
+            stadium.SetPropertyBlock(mpb, i);
         }
     }
+
 
     private void OnApplicationQuit()
     {
@@ -67,6 +68,7 @@ public class MainGame : MonoBehaviour
         {
             RenderSettings.skybox = Night;
             lights.SetActive(true);
+            floodLight.EnableKeyword("_EMISSION");
             sun.SetActive(false);
             Debug.Log("night");
         }
@@ -106,7 +108,7 @@ public class MainGame : MonoBehaviour
     {
         homePanel.SetActive(false);
         startObj.SetActive(true);
-        batMovement.started = true;
+        //batMovement.started = true;
     }
 
     public void PlayShot(string shot)
@@ -125,9 +127,25 @@ public class MainGame : MonoBehaviour
     {
         batter.position += Vector3.forward * side *0.1f;
         batter.TryGetComponent(out Animator anim);
-        anim.Play("move");
+        //anim.Play("move");
     }
 
+  
+
+    public void Pull()
+    {     
+        swingAnim.Play("pull");
+    }
+
+    public void vDrive()
+    {
+        swingAnim.Play("shot2");
+    }
+
+    public void loftDrive()
+    {
+        swingAnim.Play("shot");
+    }
 
     IEnumerator DelayBlockAnim(string animName)
     {

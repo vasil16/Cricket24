@@ -95,46 +95,46 @@ public class BatMovement : MonoBehaviour
     public bool started;
     [SerializeField] GameObject batterCam;
 
-    private void Update()
-    {
-        if (started)
-        {
-            if (batterCam.activeInHierarchy)
-            {
-                if (joystick.Direction != Vector2.zero)
-                {
-                    float verticalInput = joystick.Direction.y;
+    //private void Update()
+    //{
+    //    if (started)
+    //    {
+    //        if (batterCam.activeInHierarchy)
+    //        {
+    //            if (joystick.Direction != Vector2.zero)
+    //            {
+    //                float verticalInput = joystick.Direction.y;
 
-                    // Map the full range of joystick to the entire animation clip
-                    float newNormalizedTime = (verticalInput + 1f) / 2f;
+    //                // Map the full range of joystick to the entire animation clip
+    //                float newNormalizedTime = (verticalInput + 1f) / 2f;
 
-                    // Apply the normalized time to the animation clip
-                    animator.Play("shot", 0, Mathf.Clamp01(newNormalizedTime));
-                }
-                else if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-                {
-                    //Stop the animation if the joystick is released and the animation is not complete
-                    animator.Play("shot", 0, 0.2f);
-                }
-            }
-            else
-            {
-                if (joystick.Direction != Vector2.zero)
-                {
-                    float horizontalInput = joystick.Direction.x;
+    //                // Apply the normalized time to the animation clip
+    //                animator.Play("shot", 0, Mathf.Clamp01(newNormalizedTime));
+    //            }
+    //            else if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+    //            {
+    //                //Stop the animation if the joystick is released and the animation is not complete
+    //                animator.Play("shot", 0, 0.2f);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            if (joystick.Direction != Vector2.zero)
+    //            {
+    //                float horizontalInput = joystick.Direction.x;
 
-                    // Map the full range of joystick to the entire animation clip
-                    float newNormalizedTime = (horizontalInput + 1f) / 2f;
+    //                // Map the full range of joystick to the entire animation clip
+    //                float newNormalizedTime = (horizontalInput + 1f) / 2f;
 
-                    // Apply the normalized time to the animation clip
-                    animator.Play("shot", 0, Mathf.Clamp01(newNormalizedTime));
-                }
-                else if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-                {
-                    //Stop the animation if the joystick is released and the animation is not complete
-                    animator.Play("shot", 0, 0.1f);
-                }
-            }
-        }
-    }
+    //                // Apply the normalized time to the animation clip
+    //                animator.Play("shot", 0, Mathf.Clamp01(newNormalizedTime));
+    //            }
+    //            else if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+    //            {
+    //                //Stop the animation if the joystick is released and the animation is not complete
+    //                animator.Play("shot", 0, 0.1f);
+    //            }
+    //        }
+    //    }
+    //}
 }
