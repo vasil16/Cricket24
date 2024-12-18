@@ -18,7 +18,7 @@ public class BallHit : MonoBehaviour
 
     private void Update()
     {
-        if (!Gameplay.instance || MainGame.camIndex!=1) return;
+        if (!Gameplay.instance) return;
 
         if (!Gameplay.instance.stadiumBounds.Contains(transform.position))
         {
@@ -41,57 +41,67 @@ public class BallHit : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         lastHit = collision.gameObject.tag;
-        if(collision.gameObject.CompareTag("Wicket"))
-        {
-            soundFx.PlayOneShot(wicketFx);
-            Gameplay.instance.Out();
-        }
-        else if(collision.gameObject.CompareTag("pitch"))
-        {
-            if (secondTouch)
-            {
-                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y*0.01f, rb.velocity.z);
-            }
-        }
-        else if (collision.gameObject.CompareTag("Bat"))
-        {
-            Debug.Log("spot " + collision.gameObject.name);
-            Gameplay.instance.bb.position = collision.GetContact(0).point;
-            StartCoroutine(waitAndLook());
 
-            if (secondTouch)
-            {
-                return;
-            }
-            secondTouch = true;
-            Rigidbody ballRigidbody = gameObject.GetComponent<Rigidbody>();
-            if (ballRigidbody != null)
-            {
-                if (CameraShake.instance != null)
+        switch (collision.gameObject.tag)
+        {
+            case "Wicket":
+                soundFx.PlayOneShot(wicketFx);
+                Gameplay.instance.Out();
+                break;
+
+            case "pitch":
+                if (secondTouch)
                 {
-                    CameraShake.instance.Shake();
-                    //CameraShake.instance.followBall(this.gameObject);                   
+                    groundShot = true;
+                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.01f, rb.velocity.z);
                 }
-                soundFx.PlayOneShot(shotFx);
-                //VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);                
-            }
-        }
-        else if (collision.gameObject.CompareTag("Ground"))
-        {
-            if (secondTouch)
-            {
-                groundShot = true;
-                //Vector3 vel = gameObject.GetComponent<Rigidbody>().velocity;
-                //gameObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, vel.y * 1 / 4, vel.z);
-            }
-        }
+                break;
 
-        else if (collision.gameObject.CompareTag("boundary"))
-        {
-            Gameplay.instance.deliveryDead = true;
-        }
+            case "Bat":
+                Debug.Log("spot " + collision.gameObject.name);
+                Gameplay.instance.bb.position = collision.GetContact(0).point;
+                //StartCoroutine(waitAndLook());
 
+                if (secondTouch)
+                {
+                    return;
+                }
+
+                secondTouch = true;
+
+                Rigidbody ballRigidbody = gameObject.GetComponent<Rigidbody>();
+                if (ballRigidbody != null)
+                {
+                    if (CameraShake.instance != null)
+                    {
+                        CameraShake.instance.Shake();
+                        // CameraShake.instance.followBall(this.gameObject);
+                    }
+
+                    soundFx.PlayOneShot(shotFx);
+                    // VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);
+                }
+                break;
+
+            case "Ground":
+                if (secondTouch)
+                {
+                    groundShot = true;
+                    // Vector3 vel = gameObject.GetComponent<Rigidbody>().velocity;
+                    // gameObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, vel.y * 1 / 4, vel.z);
+                }
+                break;
+
+            case "boundary":
+                Gameplay.instance.deliveryDead = true;
+                break;
+
+            default:
+                // Handle any other tags if necessary
+                break;
+        }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -122,13 +132,13 @@ public class BallHit : MonoBehaviour
         groundShot = false;
     }
 
-    IEnumerator waitAndLook()
-    {
-        yield return new WaitForSeconds(0.2f);
-        foreach (CameraLookAt cam in Gameplay.instance.activeCams)
-        {
-            if (MainGame.camIndex == 1)
-                cam.ball = this.gameObject;
-        }
-    }
+    //IEnumerator waitAndLook()
+    //{
+    //    yield return new WaitForSeconds(0.2f);
+    //    foreach (CameraLookAt cam in Gameplay.instance.activeCams)
+    //    {
+    //        if (MainGame.instance.camIndex == 1)
+    //            cam.ball = this.gameObject;
+    //    }
+    //}
 }

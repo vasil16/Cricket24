@@ -14,6 +14,7 @@ Material:
   m_ValidKeywords:
   - _DETAIL_MULX2
   - _ENVIRONMENTREFLECTIONS_OFF
+  - _NORMALMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   - _SPECULARHIGHLIGHTS_OFF
   - _SPECULAR_SETUP
@@ -36,7 +37,7 @@ Material:
         m_Scale: {x: 6, y: 1}
         m_Offset: {x: 0, y: 1.97}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: af26d333eb83c4ab1a4e77519922c306, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:

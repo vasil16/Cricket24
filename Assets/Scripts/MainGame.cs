@@ -13,7 +13,7 @@ public class MainGame : MonoBehaviour
     [SerializeField] Animator swingAnim;
     [SerializeField] AnimationClip blockAnim;
     [SerializeField] Material day, Night, floodLight;
-    public static int camIndex;
+    public int camIndex;
     [SerializeField] Transform batter;
 
     public Renderer stadium;

@@ -127,7 +127,7 @@ public class Bat : MonoBehaviour
         else if (angle >= 45 && angle < 90)
         {
             //Debug.Log("Swipe in Slice 2 (Top-Right)");
-            batterAnim.Play("flick");
+            batterAnim.Play("backFlick");
         }
         else if (angle >= 90 && angle < 135)
         {

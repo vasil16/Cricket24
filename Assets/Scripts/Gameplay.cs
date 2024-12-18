@@ -52,7 +52,7 @@ public class Gameplay : MonoBehaviour
     {
         //ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 120;
         activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;
@@ -95,7 +95,7 @@ public class Gameplay : MonoBehaviour
 
             foreach (CameraLookAt cam in activeCams)
             {
-                if (MainGame.camIndex == 3)
+                if (MainGame.instance.camIndex == 3)
                 {
                     cam.transform.rotation = cam.defRotation;
                 }
@@ -103,7 +103,7 @@ public class Gameplay : MonoBehaviour
 
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(4.4f);
 
             CameraLookAt.instance.startingRunUp = true;
 
@@ -157,14 +157,12 @@ public class Gameplay : MonoBehaviour
                 deliveryDead = true;
             }
 
-            yield return new WaitUntil(() => deliveryDead);
+            yield return new WaitUntil(() => deliveryDead);            
 
             yield return new WaitForSeconds(1);
 
             bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
             yield return new WaitForSeconds(2f);
-
-            //legalDelivery = (legalDelivery == true) && (ball.GetComponent<BallHit>().secondTouch == false);
 
             if(!legalDelivery)
             {
@@ -188,7 +186,7 @@ public class Gameplay : MonoBehaviour
             }
 
             UpdateScoreBoard(ball.GetComponent<BallHit>());
-            FieldManager.ResetFielder.Invoke();
+            
             foreach (CameraLookAt cam in activeCams)
             {
                 cam.ball = null;
@@ -197,6 +195,9 @@ public class Gameplay : MonoBehaviour
             sideCam.depth = -2;
             sideCam.enabled = false;            
             yield return new WaitForSeconds(1);
+            FieldManager.ResetFielder.Invoke();
+            batter.batterAnim.ResetTrigger("ToStance");
+            System.GC.Collect();
             yield return null;
         }
     }

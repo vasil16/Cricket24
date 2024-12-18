@@ -10,7 +10,9 @@ public class CameraLookAt : MonoBehaviour
     public GameObject ball;
     public Quaternion defRotation;
     public bool readyToDeliver, startingRunUp;
-    [SerializeField] float distanceThreshold, defFOV, currentDist;
+    [SerializeField] float distanceThreshold, defFOV, currentDist, adjustedSensorX;
+    public float refWidth = 2280, activeScreenWidth, refSensorSize;
+    [SerializeField] Vector2 activeCamSize;
 
     private void OnEnable()
     {
@@ -19,19 +21,19 @@ public class CameraLookAt : MonoBehaviour
         {
             camera = GetComponent<Camera>();
         }
-        else
-        {
-            // Camera component was not found
-        }
-
-        
         defRotation = transform.rotation;
     }
 
     void Start()
     {
         if(camera)
+        {
             defFOV = camera.fieldOfView;
+            activeCamSize = camera.sensorSize;
+            activeScreenWidth = Screen.width;
+            adjustedSensorX = activeCamSize.x * Screen.width / refWidth;
+            camera.sensorSize  = new Vector2((activeCamSize.x * Screen.width) / refWidth,activeCamSize.y) ;
+        }
     }
 
     bool goDown;
@@ -41,7 +43,7 @@ public class CameraLookAt : MonoBehaviour
     {
         if(ball == null)
         {
-            if(MainGame.camIndex==1 && startingRunUp)
+            if(MainGame.instance.camIndex==1 && startingRunUp)
             {
                 CamRunUpAnim();
             }
@@ -53,7 +55,7 @@ public class CameraLookAt : MonoBehaviour
         }
         currentDist = Vector3.Distance(transform.position, ball.transform.position);
 
-        if (MainGame.camIndex==1)
+        if (MainGame.instance.camIndex ==1)
         {
 
             //if (Vector3.Distance(transform.position, ball.transform.position) < 200)
@@ -110,7 +112,7 @@ public class CameraLookAt : MonoBehaviour
             }
         }
 
-        else if(MainGame.camIndex == 3)
+        else if(MainGame.instance.camIndex == 3)
         {
             transform.LookAt(ball.transform);
             //LookAt();
@@ -121,8 +123,8 @@ public class CameraLookAt : MonoBehaviour
 
     void CamRunUpAnim()
     {
-        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-0.9f, ref dampFact, 1.5f);
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6f,Time.deltaTime * 0.3f), -90, 0);
+        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-0.7f, ref dampFact, 1.5f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.4f,Time.deltaTime * 0.3f), -90, 0);
     }
 
     public void CamReset()

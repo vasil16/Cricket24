@@ -133,12 +133,12 @@ public class FieldManager : MonoBehaviour
         Debug.Log("ball speed " + ball.GetComponent<Rigidbody>().velocity.magnitude);
         score += directionScore;
         
-        if (ball.GetComponent<Rigidbody>().velocity.magnitude > 70)
+        if (ball.GetComponent<Rigidbody>().velocity.magnitude > 70 && ball.GetComponent<BallHit>().groundShot)
         {
             if (fielder.CompareTag("DeepFielder"))
             {
                 // Boost score for deep fielders if the shot is fast
-                //score += (directionScore / 2);
+                score += 50;
             }
         }
 
