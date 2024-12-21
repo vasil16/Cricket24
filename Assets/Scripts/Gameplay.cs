@@ -52,8 +52,8 @@ public class Gameplay : MonoBehaviour
     {
         //ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
-        Application.targetFrameRate = 120;
-        activeCams = FindObjectsOfType<CameraLookAt>();
+        Application.targetFrameRate = 60;
+        //activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;
         ballOriginPoint = ball.transform.localPosition;
@@ -142,22 +142,22 @@ public class Gameplay : MonoBehaviour
             {
                 cam.startingRunUp = false;                
             }
+            StartCoroutine(CheckBallDirection());
 
+            //if (ball.GetComponent<BallHit>().secondTouch)
+            //{
+            //    StartCoroutine(CheckBallDirection());
+            //}
+            //else
+            //{
+            //    StartCoroutine(CheckBallDirection());
+            //    //keeper.GetComponent<Fielder>().ball = currentBall;
+            //    //keeper.GetComponent<Fielder>().enabled = true;
+            //}
 
-            if (ball.GetComponent<BallHit>().secondTouch)
-                StartCoroutine(CheckBallDirection());
-            else
-            {
-                while (currentBall.position.x > ballStopPoint)
-                {
-                    yield return null;
-                }
-                yield return null;
-                rb.isKinematic = true;
-                deliveryDead = true;
-            }
+            yield return new WaitUntil(() => deliveryDead);
 
-            yield return new WaitUntil(() => deliveryDead);            
+            Debug.Log("dead");
 
             yield return new WaitForSeconds(1);
 
@@ -278,14 +278,14 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator CheckBallDirection()
     {
-        yield return new WaitForSeconds(0f);
+        yield return null;
         FieldManager.StartCheckField.Invoke(currentBall.transform.position);
     }
 
 
     bool ballPassed(Transform ballT)
     {
-        if (ballT.position.x < -28.8 || ballT.GetComponent<BallHit>().secondTouch)
+        if (ballT.position.x < -31.99f || ballT.GetComponent<BallHit>().secondTouch)
             return true;
         return false;
     }

@@ -115,7 +115,11 @@ public class CameraLookAt : MonoBehaviour
         else if(MainGame.instance.camIndex == 3)
         {
             transform.LookAt(ball.transform);
-            //LookAt();
+            
+        }
+        else
+        {
+            LookAt();
         }
 
 

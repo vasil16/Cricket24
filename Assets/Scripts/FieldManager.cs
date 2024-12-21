@@ -17,7 +17,7 @@ public class FieldManager : MonoBehaviour
 
     Vector3 landPos;
     public float score;
-    public Transform marker;
+    public Transform marker, keeper;
     [SerializeField] MeshRenderer ignoreBounds;
 
     private void Start()
@@ -28,14 +28,37 @@ public class FieldManager : MonoBehaviour
 
     public void AssignBestFielders(Vector3 ballAt)
     {
-        StartCoroutine(AssignFielders(ballAt));
+        ball = Gameplay.instance.currentBall;
+        if(ball.GetComponent<BallHit>().secondTouch)
+        {
+            Debug.Log("fielder");
+            StartCoroutine(AssignFielders(ballAt));
+        }
+        else
+        {
+            Debug.Log("keepr");
+            StartCoroutine(KeeperReceive());
+        }
     }
 
-
+    IEnumerator KeeperReceive()
+    {
+        keeper.GetComponent<Fielder>().enabled = true;
+        keeper.GetComponent<Fielder>().ball = ball;
+        while (Vector2.Distance(new Vector2(keeper.position.x, keeper.position.z), new Vector2(ball.position.x, ball.position.z))>1f)
+        {
+            keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20*Time.deltaTime));
+            yield return null;
+        }
+        ball.GetComponent<Rigidbody>().isKinematic = true;
+        Gameplay.instance.deliveryDead = true;
+        yield return new WaitForSeconds(4);
+        keeper.GetComponent<Fielder>().Reset();
+    }
 
     IEnumerator AssignFielders(Vector3 ballAt)
     {
-        ball = Gameplay.instance.currentBall;
+        
         hitBallPos = ballAt;
         hitVelocity = ball.GetComponent<Rigidbody>().velocity;
         yield return new WaitForSeconds(0.4f);

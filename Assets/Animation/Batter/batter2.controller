@@ -8,7 +8,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: hitGround
-  m_Speed: 1
+  m_Speed: 1.23
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8265934839852979268}
@@ -41,7 +41,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 1.12
+  m_TransitionDuration: 0.5
   m_TransitionOffset: 0
   m_ExitTime: 2
   m_HasExitTime: 1
@@ -63,7 +63,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.39
+  m_TransitionDuration: 0.27
   m_TransitionOffset: 0.31629634
   m_ExitTime: 2.32
   m_HasExitTime: 1
@@ -79,7 +79,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: straightDrive
-  m_Speed: 1
+  m_Speed: 1.17
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -3984504452559920813}
@@ -112,7 +112,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.76
+  m_TransitionDuration: 0.5
   m_TransitionOffset: 0
   m_ExitTime: 1.43
   m_HasExitTime: 1
@@ -210,7 +210,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 1.12
+  m_TransitionDuration: 0.5
   m_TransitionOffset: 0.31
   m_ExitTime: 1.95
   m_HasExitTime: 1
@@ -232,7 +232,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.61
+  m_TransitionDuration: 0.4
   m_TransitionOffset: 0
   m_ExitTime: 2.86
   m_HasExitTime: 1
@@ -386,7 +386,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.79
+  m_TransitionDuration: 0.53
   m_TransitionOffset: 0
   m_ExitTime: 1.93
   m_HasExitTime: 1
@@ -408,7 +408,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.76
+  m_TransitionDuration: 0.4
   m_TransitionOffset: 0
   m_ExitTime: 2.1
   m_HasExitTime: 1
@@ -484,9 +484,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.92
+  m_TransitionDuration: 0.39
   m_TransitionOffset: 0
-  m_ExitTime: 1.07
+  m_ExitTime: 1.37
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -500,7 +500,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: backFlick
-  m_Speed: 1
+  m_Speed: 1.4
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 4003410024201039418}
