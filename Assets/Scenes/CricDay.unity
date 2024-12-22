@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: db305b4246d2d4e1a8f2be0e84f03e5a, type: 2}
+  m_LightingDataAsset: {fileID: 112000000, guid: acd6d3967f0184c4487edd20a700c6f5, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: ddedbea82c68f44998cb94de7a44eabb, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -16930,39 +16930,51 @@ MonoBehaviour:
   m_GameObject: {fileID: 540488397}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a4834896bd86034eb2aacc65cb0c593, type: 3}
+  m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    m_Source: {fileID: 0}
-    m_TwistAxis: 2
-    m_TwistNodes:
-      m_Length: 8
+    m_ConstrainedObject: {fileID: 896372146}
+    m_SourceObjects:
+      m_Length: 1
       m_Item0:
-        transform: {fileID: 1524886641}
+        transform: {fileID: 452844203}
         weight: 1
       m_Item1:
-        transform: {fileID: 288685443}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item2:
-        transform: {fileID: 896372146}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item3:
-        transform: {fileID: 769733510}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item4:
-        transform: {fileID: 373471931}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item5:
-        transform: {fileID: 1032832725}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item6:
-        transform: {fileID: 1050361048}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
       m_Item7:
-        transform: {fileID: 1543280304}
-        weight: 1
+        transform: {fileID: 0}
+        weight: 0
+    m_Offset: {x: 0, y: 0, z: 0}
+    m_MinLimit: -180
+    m_MaxLimit: 180
+    m_AimAxis: 4
+    m_UpAxis: 2
+    m_WorldUpType: 0
+    m_WorldUpObject: {fileID: 0}
+    m_WorldUpAxis: 2
+    m_MaintainOffset: 1
+    m_ConstrainedAxes:
+      x: 1
+      y: 1
+      z: 1
 --- !u!1 &540931580
 GameObject:
   m_ObjectHideFlags: 0
@@ -28737,7 +28749,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 948511502}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
   m_Name: 
@@ -28811,7 +28823,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 948511502}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
   m_Name: 
