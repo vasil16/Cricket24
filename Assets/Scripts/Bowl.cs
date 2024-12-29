@@ -28,4 +28,9 @@ public class Bowl : MonoBehaviour
         //ball.SetParent(null);
         ready = true;        
     }
+
+    public void BatterTrigger()
+    {
+        Gameplay.instance.SetBatter();
+    }
 }

@@ -202,6 +202,11 @@ public class Gameplay : MonoBehaviour
         }
     }
 
+    public void SetBatter()
+    {
+        batter.batterAnim.Play("trigger");
+    }
+
     private void LaunchBallToPitchPoint(Vector3 ballLaunchPos, Vector3 ballPitchPoint)
     {
         // Gravity constant (you can adjust this based on your scene's gravity)
