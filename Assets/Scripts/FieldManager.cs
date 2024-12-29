@@ -45,7 +45,7 @@ public class FieldManager : MonoBehaviour
     {
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
-        while (Vector2.Distance(new Vector2(keeper.position.x, keeper.position.z), new Vector2(ball.position.x, ball.position.z))>1f)
+        while (ball.GetComponent<BallHit>().keeperReceive==false)
         {
             keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20*Time.deltaTime));
             yield return null;
@@ -257,7 +257,6 @@ public class FieldManager : MonoBehaviour
 
     public void ResetFielders()
     {
-        Debug.Log("reeseet called");
         foreach (var fielder in bestFielders)
         {
             fielder.Reset();

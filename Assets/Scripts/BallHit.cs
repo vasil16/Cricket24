@@ -4,7 +4,7 @@ using System.Collections;
 public class BallHit : MonoBehaviour
 {
     Rigidbody rb;
-    public bool secondTouch , groundShot;
+    public bool secondTouch , groundShot, keeperReceive;
 
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
@@ -105,9 +105,17 @@ public class BallHit : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Vector3 contactPoint = transform.position;
-        CheckLegalDelivery(contactPoint);
-        //Gameplay.instance.legalDelivery = false;
+        if(other.gameObject.tag is "keeper")
+        {
+            GetComponent<Rigidbody>().isKinematic = true;
+            keeperReceive = true;
+        }
+        else
+        {
+            Vector3 contactPoint = transform.position;
+            CheckLegalDelivery(contactPoint);
+            //Gameplay.instance.legalDelivery = false;
+        }
     }
 
     void CheckLegalDelivery(Vector3 enterPos)
@@ -130,6 +138,7 @@ public class BallHit : MonoBehaviour
         GetComponent<Rigidbody>().isKinematic = true;    
         secondTouch = false;
         groundShot = false;
+        keeperReceive = false;
     }
 
     //IEnumerator waitAndLook()
