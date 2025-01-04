@@ -9,7 +9,7 @@ public class Gameplay : MonoBehaviour
 {
     public static Gameplay instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler;    
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler, overPanel;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
@@ -19,6 +19,10 @@ public class Gameplay : MonoBehaviour
     [SerializeField] Animator machineAnim;
     [SerializeField] List<float> launchSpeeds;
     [SerializeField] Bat batter;
+    [SerializeField] CameraLookAt broadcastCamComp;
+
+    public float miRand, maRand, randomAngle;
+    [SerializeField] float[] xArr = { -0.37f, -2.05f };
 
     public CameraLookAt[] activeCams;
     public Bounds stadiumBounds;
@@ -67,7 +71,6 @@ public class Gameplay : MonoBehaviour
         batter.batterAnim.SetTrigger("ToWait");
         while (overs < 5 && !isGameOver)
         {
-
             yield return new WaitForSeconds(0.2f);
 
             deliveryDead = false;
@@ -93,19 +96,11 @@ public class Gameplay : MonoBehaviour
 
             //mark.transform.position = ballPitchPoint;
 
-            foreach (CameraLookAt cam in activeCams)
-            {
-                if (MainGame.instance.camIndex == 3)
-                {
-                    cam.transform.rotation = cam.defRotation;
-                }
-            }
-
             batter.batterAnim.SetTrigger("ToStance");
 
             yield return new WaitForSeconds(4.4f);
 
-            CameraLookAt.instance.startingRunUp = true;
+            broadcastCamComp.startingRunUp = true;
 
             Bowl.instance.anim.Play("bowl");
 
@@ -115,7 +110,7 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitUntil(() => Bowl.instance.ready);
 
-            CameraLookAt.instance.readyToDeliver = false;
+            broadcastCamComp.readyToDeliver = false;
             currentBall = ball.transform;
             rb = ball.GetComponent<Rigidbody>();
             rb.isKinematic = false;
@@ -131,33 +126,21 @@ public class Gameplay : MonoBehaviour
             //LaunchBallToPitchPoint(ballLaunchPos, ballPitchPoint);
 
             foreach (CameraLookAt cam in activeCams)
-            {                
+            {
+                if(!cam.enabled)
+                    cam.enabled = true;
                 cam.ball = ball;                
             }
 
             yield return new WaitForSeconds(.7f);
             yield return new WaitUntil(() => ballPassed(ball.transform));
 
-            foreach (CameraLookAt cam in activeCams)
-            {
-                cam.startingRunUp = false;                
-            }
+
+            broadcastCamComp.startingRunUp = false;                
+
             StartCoroutine(CheckBallDirection());
 
-            //if (ball.GetComponent<BallHit>().secondTouch)
-            //{
-            //    StartCoroutine(CheckBallDirection());
-            //}
-            //else
-            //{
-            //    StartCoroutine(CheckBallDirection());
-            //    //keeper.GetComponent<Fielder>().ball = currentBall;
-            //    //keeper.GetComponent<Fielder>().enabled = true;
-            //}
-
             yield return new WaitUntil(() => deliveryDead);
-
-            Debug.Log("dead");
 
             yield return new WaitForSeconds(1);
 
@@ -185,19 +168,17 @@ public class Gameplay : MonoBehaviour
                 //ShiftEnd();
             }
 
-            UpdateScoreBoard(ball.GetComponent<BallHit>());
+            UpdateScoreBoard(ball.GetComponent<BallHit>());            
             
+            sideCam.depth = -2;
+            sideCam.enabled = false;            
+            yield return new WaitForSeconds(1);
+            FieldManager.ResetFielder.Invoke();
             foreach (CameraLookAt cam in activeCams)
             {
                 cam.ball = null;
                 cam.CamReset();
             }
-            sideCam.depth = -2;
-            sideCam.enabled = false;            
-            yield return new WaitForSeconds(1);
-            FieldManager.ResetFielder.Invoke();
-            batter.batterAnim.ResetTrigger("ToStance");
-            System.GC.Collect();
             yield return null;
         }
     }
@@ -303,12 +284,7 @@ public class Gameplay : MonoBehaviour
             switch (ball.lastHit)
             {
                 case "Ground":
-                    //if (ballfinal.x < -116 || ballfinal.x > 133 || ballfinal.z > 110 || ballfinal.z < 110)
-                    //{
-                    //    run = 2;
-                    //}
-                    //else
-                    //    run = 1;
+
                     break;
                 case "boundary":
                     if (ball.groundShot)
@@ -335,22 +311,14 @@ public class Gameplay : MonoBehaviour
         string detail = legalDelivery ? run+"" : "wd";
         Scorer.instance.UpdateScore(run, wickets, overs, ballsLaunched, detail);
         StartCoroutine(ResetBall(ball.gameObject));
-    }
-
-    public float miRand, maRand, randomAngle;
-    [SerializeField] float[] xArr = { -0.37f, -2.05f };
+    }    
 
     IEnumerator ResetBall(GameObject ball)
     {
-        this.ball.SetActive(false);
-        this.ball.transform.position = ballLaunchPos;
+        ball.SetActive(false);
+        transform.position = ballLaunchPos;
         ball.GetComponent<BallHit>().Reset();
-        foreach (CameraLookAt cam in activeCams)
-        {
-            cam.ball = null;
-        }
         yield return new WaitForSeconds(1);
-        this.ball = ball;
     }
 
     #region Old
@@ -418,9 +386,7 @@ public class Gameplay : MonoBehaviour
         yield return new WaitForSeconds(2f);
         gg.GetComponent<Rigidbody>().isKinematic = true;
         gg.SetActive(false);
-    }
-
-    [SerializeField] GameObject overPanel;
+    }    
 
     public void PauseFn()
     {

@@ -107,6 +107,7 @@ public class BallHit : MonoBehaviour
     {
         if(other.gameObject.tag is "keeper")
         {
+            if (secondTouch) return;
             GetComponent<Rigidbody>().isKinematic = true;
             keeperReceive = true;
         }

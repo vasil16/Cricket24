@@ -61,9 +61,17 @@ public class FieldManager : MonoBehaviour
         
         hitBallPos = ballAt;
         hitVelocity = ball.GetComponent<Rigidbody>().velocity;
-        yield return new WaitForSeconds(0.4f);
 
         int fielderCount = 1;
+
+        if (!ball.GetComponent<BallHit>().groundShot)
+        {
+            landPos = PredictLandingPosition(ball);
+            fielderCount = 2;
+            Debug.Log("Air ball detected");
+        }
+
+        yield return new WaitForSeconds(0.4f);
 
         Debug.Log("Assigning fielders...");
         List<Fielder> selectedFielders = new List<Fielder>();
@@ -79,13 +87,7 @@ public class FieldManager : MonoBehaviour
             {
                 fielderCount = 2;
             }
-        }
-        else
-        {
-            landPos = PredictLandingPosition(ball);
-            fielderCount = 2;
-            Debug.Log("Air ball detected");
-        }
+        }        
 
         marker.transform.position = landPos;
 

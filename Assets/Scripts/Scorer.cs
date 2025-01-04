@@ -22,7 +22,6 @@ public class Scorer : MonoBehaviour
         teamScore += runs;
         scoreText.text = teamScore + " - " + wickets;
         overText.text = $"{overs}.{ballsLaunched}";
-        Debug.Log("last  " + lastDelivery);
         overDetail += lastDelivery +"  ";
         overDetail = ballsLaunched == 0 ? "" : overDetail;
         deliveryDetails.text = overDetail;

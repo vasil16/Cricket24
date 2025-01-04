@@ -5,39 +5,38 @@ using UnityEngine;
 public class CameraLookAt : MonoBehaviour
 {
 
-    public static CameraLookAt instance;
-    Camera camera;
     public GameObject ball;
-    public Quaternion defRotation;
+    public Vector3 defRotation;
     public bool readyToDeliver, startingRunUp;
-    [SerializeField] float distanceThreshold, defFOV, currentDist, adjustedSensorX;
     public float refWidth = 2280, activeScreenWidth, refSensorSize;
+    bool goDown;
+    float dampFact = 0;
+    [SerializeField] float distanceThreshold, defFOV, currentDist, adjustedSensorX;
     [SerializeField] Vector2 activeCamSize;
+
+    Camera cam;
 
     private void OnEnable()
     {
-        instance = this;
-        if (TryGetComponent<Camera>(out camera))
+        transform.localRotation = Quaternion.Euler(defRotation);
+        if (TryGetComponent<Camera>(out cam))
         {
-            camera = GetComponent<Camera>();
+            cam = GetComponent<Camera>();
         }
-        defRotation = transform.rotation;
     }
 
     void Start()
     {
-        if(camera)
+        if(cam)
         {
-            defFOV = camera.fieldOfView;
-            activeCamSize = camera.sensorSize;
+            defFOV = cam.fieldOfView;
+            activeCamSize = cam.sensorSize;
             activeScreenWidth = Screen.width;
             adjustedSensorX = activeCamSize.x * Screen.width / refWidth;
-            camera.sensorSize  = new Vector2((activeCamSize.x * Screen.width) / refWidth,activeCamSize.y) ;
+            cam.sensorSize  = new Vector2((activeCamSize.x * Screen.width) / refWidth,activeCamSize.y) ;
         }
     }
-
-    bool goDown;
-    float dampFact = 0;
+    
 
     void Update()
     {
@@ -49,32 +48,27 @@ public class CameraLookAt : MonoBehaviour
             }
             return;
         }
-        else
-        {
-            //CamReset();
-        }
+
         currentDist = Vector3.Distance(transform.position, ball.transform.position);
 
         if (MainGame.instance.camIndex ==1)
         {
-
-            //if (Vector3.Distance(transform.position, ball.transform.position) < 200)
             if (ball.GetComponent<BallHit>().secondTouch)
             {
                 //camera.fieldOfView += ball.GetComponent<Rigidbody>().velocity.magnitude * .2f * Time.deltaTime;
                 if (ball.transform.position.x < -27.03f)
                 {
-                    camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 6, ref dampFact, 0.6f);
+                    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6, ref dampFact, 0.6f);
                 }
                 else
                 {
-                    if (camera.fieldOfView < 10.3f)
+                    if (cam.fieldOfView < 10.3f)
                     {
-                        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 10.3f, ref dampFact, 1f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 10.3f, ref dampFact, 1f);
                     }
                     else
                     {
-                        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 9.1f, ref dampFact, 1f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 9.1f, ref dampFact, 1f);
                     }
                 }
             }
@@ -103,8 +97,8 @@ public class CameraLookAt : MonoBehaviour
                 ////{
                 //    camera.fieldOfView -= .8f * Time.deltaTime;
                 ////}
-                camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, 7.5f / 2, ref dampFact, 0.3f);
-                camera.transform.rotation = Quaternion.Lerp(camera.transform.rotation, Quaternion.Euler(6.064f, -90, 0), 0.3f * Time.deltaTime);
+                cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 7.5f / 2, ref dampFact, 0.3f);
+                cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation, Quaternion.Euler(6.064f, -90, 0), 0.3f * Time.deltaTime);
             }
             else
             {                
@@ -121,30 +115,24 @@ public class CameraLookAt : MonoBehaviour
         {
             LookAt();
         }
-
-
     }
 
     void CamRunUpAnim()
     {
-        camera.fieldOfView = Mathf.SmoothDamp(camera.fieldOfView, camera.fieldOfView-0.7f, ref dampFact, 1.5f);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, cam.fieldOfView-0.7f, ref dampFact, 1.5f);
         transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.4f,Time.deltaTime * 0.3f), -90, 0);
     }
 
     public void CamReset()
     {
-        transform.rotation = defRotation;
-        if (!camera) return;
-        camera.fieldOfView = defFOV;
+        transform.localRotation = Quaternion.Euler(defRotation);
+        if (!cam) return;
+        cam.fieldOfView = defFOV;
+        //this.enabled = false;
     }
 
     public void LookAt()
     {
-        camera.transform.LookAt(ball.transform);        
-    }
-
-    public bool Ready()
-    {
-        return readyToDeliver;
+        cam.transform.LookAt(ball.transform);        
     }
 }

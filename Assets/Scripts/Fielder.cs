@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.EventSystems;
 
 public class Fielder : MonoBehaviour
 {
@@ -15,11 +12,9 @@ public class Fielder : MonoBehaviour
     public bool canReachInTime, startedRun, reachedBall, reachedInterim;
     private bool ballWasAirborne;
     [SerializeField] FieldManager fm;
-    //NavMeshAgent agent;
 
-
-    public Animator animator; // Reference to the Animator
-    public float weight = 1.0f; // Weight of the IK effect
+    public Animator animator;
+    public float weight = 1.0f;
 
     void OnAnimatorIK(int layerIndex)
     {
@@ -71,8 +66,6 @@ public class Fielder : MonoBehaviour
         }
     }
 
-
-
     private void OnEnable()
     {
         //agent = GetComponent<NavMeshAgent>();
@@ -118,13 +111,39 @@ public class Fielder : MonoBehaviour
     {
         while(!reachedBall)
         {
-            if (Gameplay.instance.deliveryDead || reachedBall)
+            if (reachedBall)
             {
                 ReachedBall();
                 yield break;
             }
-                            
-            if(ballComp.groundShot)
+
+            else if(Gameplay.instance.deliveryDead)
+            {
+                ballRb.isKinematic = true;
+                GetComponent<Animator>().SetBool("Stop", true);
+                GetComponent<Animator>().SetTrigger("StopField");
+                yield break;
+            }
+
+            if (!ballComp.groundShot)
+            {
+                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f && !reachedBall && !reachedInterim)
+                {
+                    //agent.ResetPath();
+                    if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 1f)
+                    {
+                        reachedBall = true;
+                        ReachedBall();
+                        yield break;
+                    }
+                    Debug.Log(gameObject.name + " reached target go for");
+                    StartCoroutine(TrackAndCatchBall());
+                    reachedInterim = true;
+                    yield break;
+                }
+            }
+
+            else
             {            
                 if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 3f)
                 {
@@ -149,35 +168,18 @@ public class Fielder : MonoBehaviour
                     yield break;
                 }
             }
-            else
-            {
-                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 3f && !reachedBall && !reachedInterim)
-                {
-                    //agent.ResetPath();
-                    GetComponent<Animator>().SetTrigger("StopField");
-                    GetComponent<Animator>().SetBool("Stop", true);
-                    Debug.Log(gameObject.name + " reached target go for");
-                    StartCoroutine(CollectBall());
-                    reachedInterim = true;
-                    if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 2f)
-                    {
-                        reachedBall = true;
-                        ReachedBall();
-                        ballRb.isKinematic = true;
-                        if (!ballComp.groundShot)
-                        {
-                            Gameplay.instance.Out();
-                        }
-                        Gameplay.instance.deliveryDead = true;
-                    }
-
-                    yield break;
-                }
-            }
+            
             Vector3 moveDirection = (UpdateTargetPosition() - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
-            transform.position = Vector3.MoveTowards(transform.position, UpdateTargetPosition(), runSpeed * Time.deltaTime);
+            if(ShouldChase(ball.position, ballRb.velocity, transform.position)&&ballComp.groundShot)
+            {
+                transform.position = Vector3.MoveTowards(transform.position,new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
+            }
             yield return null;
         }
         Debug.Log("runningtoball");
@@ -235,8 +237,7 @@ public class Fielder : MonoBehaviour
     }
 
     IEnumerator CollectBall()
-    {
-        GetComponent<Animator>().SetTrigger("Slow");
+    {        
         while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 3f)
         {
             if (Gameplay.instance.deliveryDead || reachedBall)
@@ -251,11 +252,27 @@ public class Fielder : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * 0.8f * Time.deltaTime);
             yield return null;
         }
+        
         Debug.Log("reached collection");
         ReachedBall();
         
         reachedBall = true;
         yield return null;
+    }
+
+    IEnumerator TrackAndCatchBall()
+    {
+        if (Gameplay.instance.deliveryDead)
+        {
+            yield break;
+        }
+        GetComponent<Animator>().SetTrigger("Slow");
+        while (ball.position.y>4.5f && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z))>1f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * 0.8f * Time.deltaTime);
+            yield return null;
+        }
+        ReachedBall();
     }
 
     private Vector3 UpdateTargetPosition()
@@ -281,10 +298,11 @@ public class Fielder : MonoBehaviour
         }
         else
         {
-            Debug.Log("ball still air");
+            
 
             if (FielderCanReachOnTime())
             {
+                Debug.Log("ball still air will reach in time");
                 target = targetPosition;
             }
             else
@@ -334,36 +352,16 @@ public class Fielder : MonoBehaviour
         return Vector3.Dot(fielderToBall, ballDirection) < 0;
     }
 
-    public Vector3 CalculateInterceptPosition(Vector3 ballPosition, Vector3 ballVelocity, Vector3 fielderPosition, Vector3 fielderForward)
+    private Vector3 CalculateInterceptPosition(Vector3 ballPos, Vector3 ballVel, Vector3 fielderPos, Vector3 fielderDir)
     {
-        Vector3 ballDirection = Vector3.Normalize(ballVelocity);
+        float timeToIntercept = Vector3.Distance(ballPos, fielderPos) / ballVel.magnitude;
+        Vector3 interceptPosition = ballPos + ballVel * timeToIntercept;
 
-        float denominator = Vector3.Dot(ballDirection, fielderForward);
-
-        if (Math.Abs(denominator) < 0.001f)
-        {
-            Vector3 toFielder = fielderPosition - ballPosition;
-            float projection = Vector3.Dot(toFielder, ballDirection);
-            return ballPosition + ballDirection * projection;
-        }
-
-        Vector3 ballToFielder = fielderPosition - ballPosition;
-
-        float t = Vector3.Dot(ballToFielder, fielderForward) / denominator;
-
-        Vector3 intersectionPoint = ballPosition + ballDirection * t;
-
-        Vector3 toBall = ballPosition - intersectionPoint;
-
-        if (Vector3.Dot(toBall, ballDirection) > 0)
-        {
-            Vector3 toFielder = fielderPosition - ballPosition;
-            float projection = Vector3.Dot(toFielder, ballDirection);
-            return ballPosition + ballDirection * projection;
-        }
-
-        return intersectionPoint;
+        // Adjust based on direction if needed
+        interceptPosition += fielderDir * 1.5f; // Small offset to align with fielder direction
+        return interceptPosition;
     }
+
 
 
     public void Initiate(Vector3 position, Transform ball)
