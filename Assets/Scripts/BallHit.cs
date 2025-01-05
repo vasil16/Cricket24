@@ -59,7 +59,7 @@ public class BallHit : MonoBehaviour
 
             case "Bat":
                 Debug.Log("spot " + collision.gameObject.name);
-                Gameplay.instance.bb.position = collision.GetContact(0).point;
+                //Gameplay.instance.bb.position = collision.GetContact(0).point;
                 //StartCoroutine(waitAndLook());
 
                 if (secondTouch)

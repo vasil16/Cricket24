@@ -180,6 +180,8 @@ public class Gameplay : MonoBehaviour
                 cam.CamReset();
             }
             yield return null;
+
+            batter.batterAnim.ResetTrigger("ToStance");
         }
     }
 

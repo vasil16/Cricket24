@@ -29,7 +29,7 @@ public class FieldManager : MonoBehaviour
     public void AssignBestFielders(Vector3 ballAt)
     {
         ball = Gameplay.instance.currentBall;
-        if(ball.GetComponent<BallHit>().secondTouch)
+        if (ball.GetComponent<BallHit>().secondTouch)
         {
             Debug.Log("fielder");
             StartCoroutine(AssignFielders(ballAt));
@@ -45,9 +45,9 @@ public class FieldManager : MonoBehaviour
     {
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
-        while (ball.GetComponent<BallHit>().keeperReceive==false)
+        while (ball.GetComponent<BallHit>().keeperReceive == false)
         {
-            keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20*Time.deltaTime));
+            keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
             yield return null;
         }
         ball.GetComponent<Rigidbody>().isKinematic = true;
@@ -58,7 +58,7 @@ public class FieldManager : MonoBehaviour
 
     IEnumerator AssignFielders(Vector3 ballAt)
     {
-        
+
         hitBallPos = ballAt;
         hitVelocity = ball.GetComponent<Rigidbody>().velocity;
 
@@ -87,7 +87,7 @@ public class FieldManager : MonoBehaviour
             {
                 fielderCount = 2;
             }
-        }        
+        }
 
         marker.transform.position = landPos;
 
@@ -150,14 +150,14 @@ public class FieldManager : MonoBehaviour
         float fielderAngle = Mathf.Atan2(fielderDirection.z, fielderDirection.x) * Mathf.Rad2Deg;
 
 
-        float angleDifference = Mathf.Abs(ballAngle-fielderAngle);
+        float angleDifference = Mathf.Abs(ballAngle - fielderAngle);
 
         // Direction-based score: Lower angle difference means better positioning
         float directionScore = -angleDifference; // Negative because lower is better
 
         Debug.Log("ball speed " + ball.GetComponent<Rigidbody>().velocity.magnitude);
         score += directionScore;
-        
+
         if (ball.GetComponent<Rigidbody>().velocity.magnitude > 70 && ball.GetComponent<BallHit>().groundShot)
         {
             if (fielder.CompareTag("DeepFielder"))
@@ -167,13 +167,6 @@ public class FieldManager : MonoBehaviour
             }
         }
 
-        //if (!ball.GetComponent<BallHit>().groundShot && !ignoreBounds.bounds.Contains(landPos))
-        //{
-        //    Vector3 toLanding = landPos - fielder.transform.position;
-        //    float distanceToLanding = toLanding.magnitude;
-        //    score -= distanceToLanding;
-        //}
-        
         fielder.score = score;
         fielder.angleDiff = angleDifference;
         return score;
