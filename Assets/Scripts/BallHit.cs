@@ -4,7 +4,7 @@ using System.Collections;
 public class BallHit : MonoBehaviour
 {
     Rigidbody rb;
-    public bool secondTouch , groundShot, keeperReceive;
+    public bool secondTouch , groundShot, keeperReceive, fielderReached, boundary;
 
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
@@ -75,11 +75,9 @@ public class BallHit : MonoBehaviour
                     if (CameraShake.instance != null)
                     {
                         CameraShake.instance.Shake();
-                        // CameraShake.instance.followBall(this.gameObject);
                     }
 
                     soundFx.PlayOneShot(shotFx);
-                    // VibrationManager.instance.HapticVibration(MoreMountains.NiceVibrations.HapticTypes.Success);
                 }
                 break;
 
@@ -87,17 +85,12 @@ public class BallHit : MonoBehaviour
                 if (secondTouch)
                 {
                     groundShot = true;
-                    // Vector3 vel = gameObject.GetComponent<Rigidbody>().velocity;
-                    // gameObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, vel.y * 1 / 4, vel.z);
                 }
                 break;
 
             case "boundary":
+                boundary = true;
                 Gameplay.instance.deliveryDead = true;
-                break;
-
-            default:
-                // Handle any other tags if necessary
                 break;
         }
     }
@@ -110,6 +103,10 @@ public class BallHit : MonoBehaviour
             if (secondTouch) return;
             GetComponent<Rigidbody>().isKinematic = true;
             keeperReceive = true;
+        }
+        else if(other.gameObject.tag is "fielder" or "DeepFielder")
+        {
+            fielderReached = true;
         }
         else
         {
@@ -140,15 +137,7 @@ public class BallHit : MonoBehaviour
         secondTouch = false;
         groundShot = false;
         keeperReceive = false;
+        fielderReached = false;
+        boundary = false;
     }
-
-    //IEnumerator waitAndLook()
-    //{
-    //    yield return new WaitForSeconds(0.2f);
-    //    foreach (CameraLookAt cam in Gameplay.instance.activeCams)
-    //    {
-    //        if (MainGame.instance.camIndex == 1)
-    //            cam.ball = this.gameObject;
-    //    }
-    //}
 }

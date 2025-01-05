@@ -115,7 +115,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaAdjust: 0.306
+    - _AlphaAdjust: 0.378
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -127,8 +127,8 @@ Material:
     - _EdgeFade: 0.089
     - _EdgeFadeLR: 0.066
     - _EdgeFadeTB: 0.14
-    - _EdgeSoftness: 1.22
-    - _EdgeWidth: 0.1
+    - _EdgeSoftness: 0.7
+    - _EdgeWidth: 0.15
     - _EmissionMultiply: 0
     - _FadePower: 0.79
     - _GlossMapScale: 0
@@ -156,7 +156,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _BaseColor: {r: 0.9019608, g: 0.90588236, b: 0.75686276, a: 1}
-    - _Color: {r: 0.8679245, g: 0.81023073, b: 0.6263795, a: 1}
+    - _Color: {r: 0.8679245, g: 0.81023073, b: 0.62637943, a: 0.69411767}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _Tiling: {r: 1, g: 1, b: 1, a: 1}

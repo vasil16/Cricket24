@@ -32,8 +32,6 @@ public class Gameplay : MonoBehaviour
     private Rigidbody rb;
     public Camera sideCam;
 
-    bool isPaused;
-
     public bool isGameOver = false;
     public bool readyToBowl = true;
     public bool deliveryDead, opp, legalDelivery;
@@ -286,7 +284,10 @@ public class Gameplay : MonoBehaviour
             switch (ball.lastHit)
             {
                 case "Ground":
-
+                    if(ball.boundary)
+                    {
+                        run = 4;
+                    }
                     break;
                 case "boundary":
                     if (ball.groundShot)
@@ -393,14 +394,12 @@ public class Gameplay : MonoBehaviour
     public void PauseFn()
     {
         Time.timeScale = 0;
-        isPaused = true;
         gameObject.GetComponent<AudioSource>().Pause();
     }
 
     public void ResumeFn()
     {
         Time.timeScale = 1;
-        isPaused = false;
         gameObject.GetComponent<AudioSource>().Play();
     }
 

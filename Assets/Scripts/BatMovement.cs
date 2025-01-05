@@ -90,7 +90,6 @@ public class BatMovement : MonoBehaviour
     //    }
     //}
 
-    float joystickThreshold = 0.03f;
     [SerializeField] Animator animator;
     public bool started;
     [SerializeField] GameObject batterCam;

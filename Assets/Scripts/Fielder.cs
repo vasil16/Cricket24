@@ -9,7 +9,7 @@ public class Fielder : MonoBehaviour
     BallHit ballComp;
     Rigidbody ballRb;
     public Transform ball;
-    public bool canReachInTime, startedRun, reachedBall, reachedInterim;
+    public bool canReachInTime, startedRun;
     private bool ballWasAirborne;
     [SerializeField] FieldManager fm;
 
@@ -107,7 +107,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator RunToBall()
     {
-        while (!reachedBall)
+        while (!ballComp.fielderReached)
         {
             if (Gameplay.instance.deliveryDead)
             {
@@ -119,33 +119,20 @@ public class Fielder : MonoBehaviour
 
             if (!ballComp.groundShot)
             {
-                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f && !reachedBall && !reachedInterim)
+                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f)
                 {
-                    if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 1f)
-                    {
-                        reachedBall = true;
-                        ReachedBall();
-                        yield break;
-                    }
                     Debug.Log(gameObject.name + " reached target go for");
                     StartCoroutine(TrackAndCatchBall());
-                    reachedInterim = true;
                     yield break;
                 }
             }
 
             else
             {
-                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 3f)
-                {
-                    Debug.Log(gameObject.name + "  reached ball ground");
-                    reachedBall = true;
-                }
-                else if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 3f && !reachedBall && !reachedInterim)
+                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 3f)
                 {
                     Debug.Log(gameObject.name + " reached target go for collection");
 
-                    reachedInterim = true;
                     if (IsBallComingAtFielder())
                     {
                         GetComponent<Animator>().SetBool("Stop", true);
@@ -194,12 +181,12 @@ public class Fielder : MonoBehaviour
     IEnumerator WaitForBall()
     {
         Debug.Log(gameObject.name + "  waiting for ball");
-        while (!reachedBall)
+        while (!ballComp.fielderReached)
         {
             Vector3 moveDirection = (ball.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
-            if (reachedBall || Gameplay.instance.deliveryDead)
+            if (Gameplay.instance.deliveryDead)
             {
                 GetComponent<Animator>().SetTrigger("StopField");
                 GetComponent<Animator>().SetBool("Stop", true);
@@ -210,16 +197,9 @@ public class Fielder : MonoBehaviour
                 Debug.Log("slowed beyound thrshold");
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
             }
-
             else
             {
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, transform.position.y, targetPosition.z), runSpeed * Time.deltaTime);
-            }
-
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) <= 3)
-            {
-                Debug.Log("slowed beyound thrshold reached");
-                reachedBall = true;
             }
             yield return null;
         }
@@ -229,7 +209,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator CollectBall()
     {
-        while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 3f)
+        while (!ballComp.fielderReached)
         {
             if (Gameplay.instance.deliveryDead)
             {
@@ -246,8 +226,6 @@ public class Fielder : MonoBehaviour
 
         Debug.Log("reached collection");
         ReachedBall();
-
-        reachedBall = true;
         yield return null;
     }
 
@@ -260,7 +238,7 @@ public class Fielder : MonoBehaviour
             yield break;
         }
         GetComponent<Animator>().SetTrigger("Slow");
-        while (ball.position.y > 4.5f || Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 1f)
+        while (ball.position.y > 4.5f || !ballComp.fielderReached)
         {
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * 0.8f * Time.deltaTime);
             yield return null;
@@ -356,11 +334,8 @@ public class Fielder : MonoBehaviour
         return interceptPosition;
     }
 
-
-
     public void Initiate(Vector3 position, Transform ball)
     {
-        reachedBall = false;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
         ballComp = ball.GetComponent<BallHit>();
@@ -389,8 +364,6 @@ public class Fielder : MonoBehaviour
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        reachedBall = false;
-        reachedInterim = false;
         GetComponent<Animator>().ResetTrigger("Stop");
         GetComponent<Animator>().ResetTrigger("StopField");
         this.enabled = false;
