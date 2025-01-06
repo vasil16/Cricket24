@@ -19,7 +19,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.265, y: -88.4027, z: -92.811}
+        value: {x: -3.544, y: -88.428, z: -92.053}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -80,7 +80,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 4.381, y: 170.55, z: -29.822}
+        value: {x: 4.943, y: 178.508, z: -28.06}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -141,7 +141,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 1.713, y: 3.751, z: 28.878}
+        value: {x: -4.229, y: 16.052, z: 29.764}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -202,7 +202,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.677, y: 5.447, z: -67.24}
+        value: {x: -1.72, y: -10.171, z: -68.521}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -325,7 +325,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -6.6, y: -166.974, z: -24.581}
+        value: {x: -7.357, y: -148.719, z: -22.501}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -447,7 +447,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 9.67, y: -1.84, z: -64.057}
+        value: {x: 9.467, y: -5.192, z: -63.441}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -508,7 +508,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.2726702, y: 8.551097, z: -34.885147}
+        value: {x: -0.3, y: 13.344, z: -36.017}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -1327,7 +1327,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 50.108, y: 62.462, z: 56.494}
+        value: {x: 50.772, y: 62.417, z: 65.096}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -1700,7 +1700,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0, y: 0, z: 8.603}
+        value: {x: -9.24, y: 9.431, z: 4.786}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -1790,7 +1790,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.017, y: 0.951, z: -0.172}
+        value: {x: 0.052, y: 0.951, z: -0.188}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -3279,6 +3279,15 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
+      path: 1466758931
+      attribute: 4
+      script: {fileID: 0}
+      typeID: 4
+      customType: 4
+      isPPtrCurve: 0
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    - serializedVersion: 2
       path: 210975521
       attribute: 4
       script: {fileID: 0}
@@ -3522,15 +3531,6 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 1466758931
-      attribute: 4
-      script: {fileID: 0}
-      typeID: 4
-      customType: 4
-      isPPtrCurve: 0
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    - serializedVersion: 2
       path: 3636333454
       attribute: 4
       script: {fileID: 0}
@@ -3639,7 +3639,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.017
+        value: 0.052
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -3771,7 +3771,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.172
+        value: -0.188
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -3837,7 +3837,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.265
+        value: -3.544
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -3903,7 +3903,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -88.4027
+        value: -88.428
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -3969,7 +3969,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -92.811
+        value: -92.053
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4233,7 +4233,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 4.381
+        value: 4.943
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4299,7 +4299,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 170.55
+        value: 178.508
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4365,7 +4365,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -29.822
+        value: -28.06
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4629,7 +4629,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1.713
+        value: -4.229
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4695,7 +4695,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 3.751
+        value: 16.052
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4761,7 +4761,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 28.878
+        value: 29.764
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5025,7 +5025,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.677
+        value: -1.72
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5091,7 +5091,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 5.447
+        value: -10.171
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5157,7 +5157,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -67.24
+        value: -68.521
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5622,7 +5622,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -6.6
+        value: -7.357
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5688,7 +5688,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -166.974
+        value: -148.719
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -5754,7 +5754,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -24.581
+        value: -22.501
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6414,7 +6414,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 9.67
+        value: 9.467
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6480,7 +6480,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -1.84
+        value: -5.192
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6546,7 +6546,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -64.057
+        value: -63.441
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6810,7 +6810,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -0.2726702
+        value: -0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6876,7 +6876,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 8.551097
+        value: 13.344
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -6942,7 +6942,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -34.885147
+        value: -36.017
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -11271,7 +11271,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 50.108
+        value: 50.772
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -11338,7 +11338,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 62.462
+        value: 62.417
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -11405,7 +11405,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 56.494
+        value: 65.096
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -13488,7 +13488,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
+        value: -9.24
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -13555,7 +13555,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
+        value: 9.431
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -13622,7 +13622,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 8.603
+        value: 4.786
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -13789,7 +13789,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanNeck
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
+      HumanLPalm/Base HumanLFinger51
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13802,7 +13803,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanNeck
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
+      HumanLPalm/Base HumanLFinger51
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13815,7 +13817,8 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanNeck
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
+      HumanLPalm/Base HumanLFinger51
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13827,7 +13830,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanRThigh
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot/Base
+      HumanLToe11
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13839,7 +13843,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanRThigh
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot/Base
+      HumanLToe11
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13851,7 +13856,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanRThigh
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot/Base
+      HumanLToe11
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13864,7 +13870,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm
+      HumanRibcage/Base HumanLCollarbone
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13877,7 +13883,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm
+      HumanRibcage/Base HumanLCollarbone
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13890,7 +13896,49 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm
+      HumanRibcage/Base HumanLCollarbone
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
+      HumanLPalm/Base HumanLFinger21/Base HumanLFinger22
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
+      HumanLPalm/Base HumanLFinger21/Base HumanLFinger22
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
+      HumanLPalm/Base HumanLFinger21/Base HumanLFinger22
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13946,7 +13994,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger31/Base HumanLFinger32
+      HumanLPalm/Base HumanLFinger41
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13960,7 +14008,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger31/Base HumanLFinger32
+      HumanLPalm/Base HumanLFinger41
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13974,7 +14022,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger31/Base HumanLFinger32
+      HumanLPalm/Base HumanLFinger41
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -13988,7 +14036,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger51
+      HumanLPalm/Base HumanLFinger21
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14002,7 +14050,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger51
+      HumanLPalm/Base HumanLFinger21
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14016,7 +14064,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger51
+      HumanLPalm/Base HumanLFinger21
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14029,8 +14077,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger21/Base HumanLFinger22
+      HumanRibcage/Base HumanRCollarbone
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14043,8 +14090,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger21/Base HumanLFinger22
+      HumanRibcage/Base HumanRCollarbone
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14057,8 +14103,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger21/Base HumanLFinger22
+      HumanRibcage/Base HumanRCollarbone
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14071,7 +14116,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm
+      HumanRibcage
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14084,7 +14129,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm
+      HumanRibcage
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14097,7 +14142,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm
+      HumanRibcage
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14110,7 +14155,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14123,7 +14168,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14136,7 +14181,115 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanRThigh/Base HumanRCalf/Base HumanRFoot
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanRThigh/Base HumanRCalf/Base HumanRFoot
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanRThigh/Base HumanRCalf/Base HumanRFoot
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanLThigh
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanLThigh
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanLThigh
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14220,156 +14373,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot/Base
-      HumanLToe11
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot/Base
-      HumanLToe11
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot/Base
-      HumanLToe11
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanLThigh
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanLThigh
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanLThigh
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm/bat (1)
+      HumanRPalm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14383,7 +14389,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm/bat (1)
+      HumanRPalm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14397,7 +14403,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm/bat (1)
+      HumanRPalm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14411,7 +14417,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger41
+      HumanLPalm/Base HumanLFinger31/Base HumanLFinger32
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14425,7 +14431,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger41
+      HumanLPalm/Base HumanLFinger31/Base HumanLFinger32
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14439,7 +14445,235 @@ AnimationClip:
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger41
+      HumanLPalm/Base HumanLFinger31/Base HumanLFinger32
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanRThigh
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanRThigh
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanRThigh
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanNeck/Base HumanHead
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanNeck/Base HumanHead
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanNeck/Base HumanHead
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanNeck
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanNeck
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanNeck
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14529,8 +14763,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14542,8 +14775,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14555,8 +14787,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone
+    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14569,7 +14800,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanNeck/Base HumanHead
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14582,7 +14813,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanNeck/Base HumanHead
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14595,7 +14826,7 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanNeck/Base HumanHead
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14607,8 +14838,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14620,8 +14850,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14633,236 +14862,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger21
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger21
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanLCollarbone/Base HumanLUpperarm/Base HumanLForearm/Base
-      HumanLPalm/Base HumanLFinger21
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanRThigh/Base HumanRCalf/Base HumanRFoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanRThigh/Base HumanRCalf/Base HumanRFoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanRThigh/Base HumanRCalf/Base HumanRFoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanLThigh/Base HumanLCalf/Base HumanLFoot
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14876,7 +14876,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.x
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm
+      HumanRPalm/bat (1)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14890,7 +14890,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.y
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm
+      HumanRPalm/bat (1)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -14904,7 +14904,7 @@ AnimationClip:
     attribute: m_LocalEulerAngles.z
     path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
       HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm
+      HumanRPalm/bat (1)
     classID: 4
     script: {fileID: 0}
     flags: 0

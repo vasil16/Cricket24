@@ -19,6 +19,7 @@ public class FieldManager : MonoBehaviour
     public float score;
     public Transform marker, keeper;
     [SerializeField] MeshRenderer ignoreBounds;
+    public bool ballWasAirBorne;
 
     private void Start()
     {
@@ -29,6 +30,7 @@ public class FieldManager : MonoBehaviour
     public void AssignBestFielders(Vector3 ballAt)
     {
         ball = Gameplay.instance.currentBall;
+        ballWasAirBorne = ball.GetComponent<BallHit>().groundShot = false;
         if (ball.GetComponent<BallHit>().secondTouch)
         {
             Debug.Log("fielder");
@@ -58,7 +60,6 @@ public class FieldManager : MonoBehaviour
 
     IEnumerator AssignFielders(Vector3 ballAt)
     {
-
         hitBallPos = ballAt;
         hitVelocity = ball.GetComponent<Rigidbody>().velocity;
 
@@ -67,7 +68,8 @@ public class FieldManager : MonoBehaviour
         if (!ball.GetComponent<BallHit>().groundShot)
         {
             landPos = PredictLandingPosition(ball);
-            fielderCount = 2;
+            marker.transform.position = landPos;
+            //fielderCount = 2;
             Debug.Log("Air ball detected");
         }
 
@@ -78,8 +80,7 @@ public class FieldManager : MonoBehaviour
 
         if (ball.GetComponent<BallHit>().groundShot)
         {
-            landPos = BallStopPos(ball.GetComponent<Rigidbody>());
-            if (ball.GetComponent<Rigidbody>().velocity.magnitude > 68)
+            if (ball.GetComponent<Rigidbody>().velocity.magnitude > 88)
             {
                 fielderCount = 3;
             }
@@ -107,7 +108,7 @@ public class FieldManager : MonoBehaviour
             {
                 if (ball.GetComponent<BallHit>().groundShot)
                 {
-                    if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().velocity.magnitude > 50)
+                    if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().velocity.magnitude > 88)
                     {
                         if (!selectedFielders.Contains(fielder))
                         {
@@ -131,7 +132,7 @@ public class FieldManager : MonoBehaviour
             {
                 fielder.enabled = true;
                 fielder.startedRun = true;
-                fielder.Initiate(landPos, ball);
+                fielder.Initiate(landPos,ball);
             }
         }
 
@@ -162,7 +163,6 @@ public class FieldManager : MonoBehaviour
         {
             if (fielder.CompareTag("DeepFielder"))
             {
-                // Boost score for deep fielders if the shot is fast
                 score += 50;
             }
         }
@@ -170,18 +170,6 @@ public class FieldManager : MonoBehaviour
         fielder.score = score;
         fielder.angleDiff = angleDifference;
         return score;
-    }
-
-    private Vector3 BallStopPos(Rigidbody ballRb)
-    {
-        Vector3 initialPosition = ballRb.transform.position;
-        Vector3 initialVelocity = ballRb.velocity;
-        float timeToStop = -initialVelocity.magnitude / Physics.gravity.y;
-
-        Vector3 finalPosition = initialPosition + (initialVelocity * timeToStop) + (0.5f * Physics.gravity * timeToStop * timeToStop);
-        finalPosition.y = fielders[0].transform.position.y;
-
-        return finalPosition;
     }
 
     private Vector3 PredictLandingPosition(Transform ball)
@@ -195,60 +183,69 @@ public class FieldManager : MonoBehaviour
             return landingPosition;
         }
 
+        // Ball initial position (where it started its flight)
+        Vector3 ballStartPosition = hitBallPos; // Use the position at the moment of bat contact
         Vector3 ballVelocity = ballRb.velocity;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
-        float heightDifference = ball.position.y - (-4.437081f);
+        // Height difference between ball's starting height and ground
+        float startHeight = ballStartPosition.y;
+        float groundHeight = -4.437081f; // Adjust this based on your ground level
+        float heightDifference = startHeight - groundHeight;
 
         if (heightDifference <= 0)
         {
-            landingPosition = ball.position;
-            landingPosition.y = fielders[0].transform.position.y;
+            Debug.LogWarning("Ball is already on or below the ground level.");
+            landingPosition = ballStartPosition;
+            landingPosition.y = fielders[3].transform.position.y;
             return landingPosition;
         }
 
+        // Vertical velocity component
         float verticalVelocity = ballVelocity.y;
 
-        float a = -0.5f * gravity;
-        float b = verticalVelocity;
-        float c = heightDifference;
+        // Solve for time of flight using the quadratic equation: y = vt + 0.5at^2
+        float a = -0.5f * gravity; // Acceleration due to gravity
+        float b = verticalVelocity; // Initial vertical velocity
+        float c = heightDifference; // Height to ground
 
         float discriminant = (b * b) - (4 * a * c);
 
         if (discriminant < 0)
         {
-            float timeToGround = heightDifference / Mathf.Abs(verticalVelocity);
-            if (!float.IsNaN(timeToGround) && timeToGround > 0)
-            {
-                Vector3 horVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
-                landingPosition = ball.position + horVelocity * timeToGround;
-                landingPosition.y = fielders[0].transform.position.y;
-                return landingPosition;
-            }
+            Debug.LogError("No valid solution for time of flight. Ball may never reach the ground.");
             return Vector3.zero;
         }
 
-        float timeToLand = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
+        // Solve for time to land (positive root only)
+        float timeToLand = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
         if (timeToLand < 0)
         {
-            timeToLand = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
+            timeToLand = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
         }
 
         if (float.IsNaN(timeToLand) || timeToLand <= 0)
         {
+            Debug.LogError("Invalid time to land calculated.");
             return Vector3.zero;
         }
 
+        // Calculate horizontal displacement
         Vector3 horizontalVelocity = new Vector3(ballVelocity.x, 0, ballVelocity.z);
         Vector3 horizontalDisplacement = horizontalVelocity * timeToLand;
 
-        landingPosition = ball.position + horizontalDisplacement;
-        landingPosition.y = fielders[0].transform.position.y;
+        // Final landing position
+        landingPosition = ballStartPosition + horizontalDisplacement;
+        landingPosition.y = fielders[0].transform.position.y; // Align with fielder's height
 
-        Debug.DrawLine(Gameplay.instance.center.position, landingPosition, Color.green);
+        // Debug visuals
+        Debug.DrawLine(ballStartPosition, landingPosition, Color.green, 2f);
         marker.position = landingPosition;
+
+        Debug.Log($"Predicted landing position: {landingPosition} (Time to land: {timeToLand}s)");
         return landingPosition;
     }
+
 
     public void ResetFielders()
     {

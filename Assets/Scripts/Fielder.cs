@@ -10,7 +10,6 @@ public class Fielder : MonoBehaviour
     Rigidbody ballRb;
     public Transform ball;
     public bool canReachInTime, startedRun;
-    private bool ballWasAirborne;
     [SerializeField] FieldManager fm;
 
     public Animator animator;
@@ -66,10 +65,48 @@ public class Fielder : MonoBehaviour
         }
     }
 
+    void ResetToDefaultPose()
+    {
+        //if (animator && gameObject.name == "keeper")
+        //{
+        //    // Reset IK for all body parts to stop influencing the character
+        //    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0);
+
+        //    // Reset LookAt weight
+        //    animator.SetLookAtWeight(0);
+
+        //    // Optionally reset any other body parts
+        //    // For example, reset spine and chest rotations if needed
+        //    Transform chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
+        //    if (chestBone != null)
+        //    {
+        //        chestBone.rotation = Quaternion.identity; // Reset to neutral pose
+        //    }
+
+        //    // Reset other bones if needed (e.g., head, arms)
+        //    Transform headBone = animator.GetBoneTransform(HumanBodyBones.Head);
+        //    if (headBone != null)
+        //    {
+        //        headBone.rotation = Quaternion.identity; // Reset head rotation
+        //    }
+
+        //    // You can add similar logic for other body parts if required
+        //}
+    }
+
+
     private void OnEnable()
     {
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
+        ResetToDefaultPose();
     }
 
     IEnumerator StartField()
@@ -85,12 +122,6 @@ public class Fielder : MonoBehaviour
             Debug.Log("away from fielder");
             GetComponent<Animator>().Play("running");
             StartCoroutine(RunToBall());
-            Vector3 moveDirection = (targetPosition - transform.position).normalized;
-            if (moveDirection != Vector3.zero)
-            {
-                Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
-            }
         }
         yield break;
     }
@@ -107,8 +138,22 @@ public class Fielder : MonoBehaviour
 
     IEnumerator RunToBall()
     {
+        Vector3 moveDirection = (ball.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+        lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+
         while (!ballComp.fielderReached)
         {
+            if(ShouldChase(ball.position,ballRb.velocity,transform.position)&&ballComp.groundShot)
+            {
+                Debug.Log("chasee");
+                StartCoroutine(CollectBall());
+                yield break;
+            }           
+            
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
+            
             if (Gameplay.instance.deliveryDead)
             {
                 GetComponent<Animator>().SetBool("Stop", true);
@@ -121,6 +166,12 @@ public class Fielder : MonoBehaviour
             {
                 if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f)
                 {
+                    if(ballComp.fielderReached)
+                    {
+                        ReachedBall();
+                        StopAllCoroutines();
+                        yield break;
+                    }
                     Debug.Log(gameObject.name + " reached target go for");
                     StartCoroutine(TrackAndCatchBall());
                     yield break;
@@ -132,6 +183,12 @@ public class Fielder : MonoBehaviour
                 if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 3f)
                 {
                     Debug.Log(gameObject.name + " reached target go for collection");
+                    if(ballComp.fielderReached)
+                    {
+                        ReachedBall();
+                        StopAllCoroutines();
+                        yield break;
+                    }
 
                     if (IsBallComingAtFielder())
                     {
@@ -145,19 +202,7 @@ public class Fielder : MonoBehaviour
                     }
                     yield break;
                 }
-            }
-
-            Vector3 moveDirection = (UpdateTargetPosition() - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
-            if (ShouldChase(ball.position, ballRb.velocity, transform.position) && ballComp.groundShot)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
-            }
+            }  
             yield return null;
         }
         Debug.Log("runningtoball");
@@ -185,21 +230,17 @@ public class Fielder : MonoBehaviour
         {
             Vector3 moveDirection = (ball.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+
             if (Gameplay.instance.deliveryDead)
             {
-                GetComponent<Animator>().SetTrigger("StopField");
-                GetComponent<Animator>().SetBool("Stop", true);
                 yield break;
             }
-            if (ballRb.velocity.magnitude < 35)
+            if (ballRb.velocity.magnitude < 5)
             {
                 Debug.Log("slowed beyound thrshold");
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
-            }
-            else
-            {
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(targetPosition.x, transform.position.y, targetPosition.z), runSpeed * Time.deltaTime);
             }
             yield return null;
         }
@@ -208,7 +249,7 @@ public class Fielder : MonoBehaviour
     }
 
     IEnumerator CollectBall()
-    {
+    {        
         while (!ballComp.fielderReached)
         {
             if (Gameplay.instance.deliveryDead)
@@ -219,7 +260,9 @@ public class Fielder : MonoBehaviour
             }
             Vector3 moveDirection = (ball.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
             yield return null;
         }
@@ -231,15 +274,21 @@ public class Fielder : MonoBehaviour
 
     IEnumerator TrackAndCatchBall()
     {
-        if (Gameplay.instance.deliveryDead)
-        {
-            GetComponent<Animator>().SetBool("Stop", true);
-            GetComponent<Animator>().SetTrigger("StopField");
-            yield break;
-        }
-        GetComponent<Animator>().SetTrigger("Slow");
+        //GetComponent<Animator>().SetTrigger("Slow");
+        if (!ball) yield break;
         while (ball.position.y > 4.5f || !ballComp.fielderReached)
         {
+            if (Gameplay.instance.deliveryDead)
+            {
+                GetComponent<Animator>().SetBool("Stop", true);
+                GetComponent<Animator>().SetTrigger("StopField");
+                yield break;
+            }
+            Vector3 moveDirection = (ball.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * 0.8f * Time.deltaTime);
             yield return null;
         }
@@ -255,33 +304,9 @@ public class Fielder : MonoBehaviour
             target = ball.position;
         }
         else
-        {
-            if (ballComp.groundShot)
-            {
-                if (ballWasAirborne || ShouldChase(ball.position, ballRb.velocity, transform.position))
-                {
-                    target = ball.position;
-                    target.y = transform.position.y;
-                }
-                else
-                {
-                    target = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
-                    target.y = transform.position.y;
-                }
-            }
-            else
-            {
-                if (FielderCanReachOnTime())
-                {
-                    Debug.Log("ball still air will reach in time");
-                    target = targetPosition;
-                }
-                else
-                {
-                    target = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
-                    target.y = transform.position.y;
-                }
-            }
+        {                        
+            target = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.right);
+            target.y = transform.position.y;            
         }
 
         if (!Gameplay.instance.stadiumBounds.Contains(target))
@@ -299,39 +324,106 @@ public class Fielder : MonoBehaviour
         return target;
     }
 
-    bool FielderCanReachOnTime()
+    bool FielderCanReachOnTime(Vector3 position)
     {
-        float distance = Vector2.Distance(new Vector2(fm.marker.position.x, fm.marker.position.z), new Vector2(transform.position.x, transform.position.z)) - 0.3f;
+        float distance = Vector2.Distance(new Vector2(position.x, position.z), new Vector2(transform.position.x, transform.position.z)) + 0.57f;
         float timeReq = distance / runSpeed;
         Vector3 positionAtReqTime = PredictBallPosition(FieldManager.hitBallPos, FieldManager.hitVelocity, timeReq);
         float fielderDistanceToPredictedPos = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(positionAtReqTime.x, positionAtReqTime.z));
         return fielderDistanceToPredictedPos / runSpeed <= timeReq;
     }
 
-    public Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float time)
+    Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float time)
     {
         Vector3 returnVec = initialPosition + velocity * time;
         returnVec.y = transform.position.y;
         return returnVec;
     }
 
-    public static bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity, Vector3 fielderPosition)
+    //bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity, Vector3 fielderPosition)
+    //{
+    //    Vector3 fielderToBall = ballPosition - fielderPosition;
+
+    //    Vector3 ballDirection = Vector3.Normalize(ballVelocity);
+
+    //    return Vector3.Dot(fielderToBall, ballDirection) < 0;
+    //}
+
+    bool ShouldChase(Vector3 ballPosition, Vector3 ballVelocity, Vector3 fielderPosition)
     {
-        Vector3 fielderToBall = ballPosition - fielderPosition;
+        // Convert to 2D for ground movement
+        Vector2 fielderToBall = new Vector2(ballPosition.x, ballPosition.z) - new Vector2(fielderPosition.x, fielderPosition.z);
+        Vector2 ballDirection = new Vector2(ballVelocity.x, ballVelocity.z).normalized;
 
-        Vector3 ballDirection = Vector3.Normalize(ballVelocity);
+        // Check if the ball is moving in the direction of the fielder and has passed the fielder
+        float distanceAlongDirection = Vector2.Dot(fielderToBall, ballDirection);
 
-        return Vector3.Dot(fielderToBall, ballDirection) < 0;
+        // The fielder should chase the ball if the ball is moving past the fielder in the direction of travel
+        return distanceAlongDirection > 0;
     }
 
-    private Vector3 CalculateInterceptPosition(Vector3 ballPos, Vector3 ballVel, Vector3 fielderPos, Vector3 fielderDir)
+
+    private void OnDrawGizmos()
     {
-        float timeToIntercept = Vector2.Distance(new Vector2(ballPos.x, ballPos.z), new Vector2(fielderPos.x, fielderPos.z)) / ballVel.magnitude;
+        //Debug.DrawRay(FieldManager.hitBallPos, ball.position - FieldManager.hitBallPos, Color.red);
+    }
+
+    private Vector3 CalculateInterceptPosition(Vector3 ballPos, Vector3 ballVel, Vector3 fielderPos, Vector3 fielderRight)
+    {
+        Vector3 boundaryHitPoint = Vector3.zero;
+        // Step 1: Check if the ball velocity is high enough to consider boundary interception
+        Debug.Log("Speed at calc " + ballVel.magnitude);
+        if (ballVel.magnitude > 68f && this.tag is "DeepFielder") // Adjust threshold as needed for gameplay
+        {
+            Debug.Log("High ball velocity, calculating boundary interception for fielder." + gameObject.name);
+            Vector3 rayDirection = ballPos - FieldManager.hitBallPos;
+            rayDirection.y = 0; // Flatten the direction to ensure it's straight in the horizontal plane
+
+            Ray ballRay = new Ray(FieldManager.hitBallPos, rayDirection.normalized);
+
+            Debug.DrawRay(FieldManager.hitBallPos, (ballPos - FieldManager.hitBallPos).normalized * 1100f, Color.red, 5f);
+
+            RaycastHit hitInfo;
+
+            if (Physics.Raycast(ballRay, out hitInfo, 1100f))
+            {
+                if (hitInfo.collider.gameObject.CompareTag("boundary"))
+                {
+                    boundaryHitPoint = hitInfo.point;
+                    boundaryHitPoint.y = fielderPos.y; // Align with the fielder's height
+                    Debug.DrawLine(ballPos, boundaryHitPoint, Color.blue, 2f); // For visualization
+                    Debug.Log("hitt at " + boundaryHitPoint);
+                }
+            }
+            Debug.Log("no hitt");
+        }
+
+        // Step 2: Fallback to normal interception logic for fielders closer to the ball
+        float timeToIntercept = Vector3.Distance(fielderPos, ballPos) / (runSpeed + ballVel.magnitude);
         Vector3 interceptPosition = ballPos + ballVel * timeToIntercept;
 
-        // Adjust based on direction if needed
-        interceptPosition += fielderDir * 1.5f; // Small offset to align with fielder direction
-        return interceptPosition;
+        // Adjust intercept point with fielder's lateral movement
+        Vector3 lateralOffset = fielderRight * Vector3.Dot((interceptPosition - fielderPos), fielderRight.normalized);
+        interceptPosition += lateralOffset * 0.23f; // Fine-tune lateral alignment
+
+        // Clamp intercept position within stadium bounds
+        if (!Gameplay.instance.stadiumBounds.Contains(interceptPosition))
+        {
+            interceptPosition = Gameplay.instance.stadiumBounds.ClosestPoint(interceptPosition);
+        }
+
+        interceptPosition.y = fielderPos.y; // Align with fielder height
+        Debug.DrawLine(fielderPos, interceptPosition, Color.green, 2f); // For visualization
+
+        if(FielderCanReachOnTime(interceptPosition) || boundaryHitPoint == Vector3.zero)
+        {            
+            return interceptPosition;
+        }
+        else
+        {
+            return boundaryHitPoint;
+        }
+
     }
 
     public void Initiate(Vector3 position, Transform ball)
@@ -341,17 +433,26 @@ public class Fielder : MonoBehaviour
         ballComp = ball.GetComponent<BallHit>();
         ballRb = ball.GetComponent<Rigidbody>();
         this.ball = ball;
-        ballWasAirborne = ballComp.groundShot == false;
-        if (ballWasAirborne)
+        if(!ballComp.groundShot && FielderCanReachOnTime(position))
         {
+            if (!Gameplay.instance.stadiumBounds.Contains(position))
+            {
+                Vector3 direction = (position - transform.position).normalized;
+
+                Vector3 boundaryPoint = Gameplay.instance.stadiumBounds.ClosestPoint(position);
+
+                Vector3 offset = -direction * 3f;
+                position = boundaryPoint + offset;
+
+            }
             targetPosition = position;
+            targetPosition.y = transform.position.y;
+            Debug.Log("ball still air will reach in time");
         }
         else
         {
-            targetPosition = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
-            //targetPosition = UpdateTargetPosition();
-        }
-        targetPosition.y = transform.position.y;
+            targetPosition = UpdateTargetPosition();
+        }        
         StartCoroutine(StartField());
     }
 

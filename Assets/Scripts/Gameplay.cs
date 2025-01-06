@@ -36,12 +36,6 @@ public class Gameplay : MonoBehaviour
     public bool readyToBowl = true;
     public bool deliveryDead, opp, legalDelivery;
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(ball.transform.position, helperdir);
-    }
-
     private void Awake()
     {
         instance = this;
@@ -60,9 +54,6 @@ public class Gameplay : MonoBehaviour
         bowlerPalm = ball.transform.parent;
         ballOriginPoint = ball.transform.localPosition;
     }
-
-    Vector3 helperdir;
-
 
     IEnumerator LaunchBallsWithDelay()
     {

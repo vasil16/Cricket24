@@ -58,6 +58,8 @@ public class BallHit : MonoBehaviour
                 break;
 
             case "Bat":
+                FieldManager.hitBallPos = transform.position;
+                FieldManager.hitVelocity = rb.velocity;
                 Debug.Log("spot " + collision.gameObject.name);
                 //Gameplay.instance.bb.position = collision.GetContact(0).point;
                 //StartCoroutine(waitAndLook());
@@ -100,7 +102,11 @@ public class BallHit : MonoBehaviour
     {
         if(other.gameObject.tag is "keeper")
         {
-            if (secondTouch) return;
+            if (secondTouch)
+            {
+                fielderReached = true;
+                return;
+            }
             GetComponent<Rigidbody>().isKinematic = true;
             keeperReceive = true;
         }
