@@ -17,7 +17,7 @@ public class FieldManager : MonoBehaviour
 
     Vector3 landPos;
     public float score;
-    public Transform marker, keeper;
+    public Transform marker, keeper, stumps;
     [SerializeField] MeshRenderer ignoreBounds;
     public bool ballWasAirBorne;
 
@@ -45,6 +45,7 @@ public class FieldManager : MonoBehaviour
 
     IEnumerator KeeperReceive()
     {
+        keeper.GetComponent<Animator>().enabled = true;
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
         while (ball.GetComponent<BallHit>().keeperReceive == false)
@@ -52,10 +53,9 @@ public class FieldManager : MonoBehaviour
             keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
             yield return null;
         }
+        keeper.GetComponent<Fielder>().KeeperRecieve();
         ball.GetComponent<Rigidbody>().isKinematic = true;
-        Gameplay.instance.deliveryDead = true;
-        yield return new WaitForSeconds(4);
-        keeper.GetComponent<Fielder>().Reset();
+        Gameplay.instance.deliveryDead = true;        
     }
 
     IEnumerator AssignFielders(Vector3 ballAt)
@@ -69,7 +69,7 @@ public class FieldManager : MonoBehaviour
         {
             landPos = PredictLandingPosition(ball);
             marker.transform.position = landPos;
-            //fielderCount = 2;
+            fielderCount = 2;
             Debug.Log("Air ball detected");
         }
 
@@ -108,14 +108,14 @@ public class FieldManager : MonoBehaviour
             {
                 if (ball.GetComponent<BallHit>().groundShot)
                 {
-                    if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().velocity.magnitude > 88)
-                    {
-                        if (!selectedFielders.Contains(fielder))
-                        {
-                            selectedFielders.Add(fielder);
-                            Debug.Log("Deep fielder added: " + fielder.name);
-                        }
-                    }
+                    //if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().velocity.magnitude > 88)
+                    //{
+                    //    if (!selectedFielders.Contains(fielder))
+                    //    {
+                    //        selectedFielders.Add(fielder);
+                    //        Debug.Log("Deep fielder added: " + fielder.name);
+                    //    }
+                    //}
                 }
 
                 if (!selectedFielders.Contains(fielder))
@@ -135,8 +135,30 @@ public class FieldManager : MonoBehaviour
                 fielder.Initiate(landPos,ball);
             }
         }
-
         bestFielders = selectedFielders;
+        if (!bestFielders.Contains(fielders[0]))
+        {
+            StartCoroutine(KeeperRunToRecieve());
+        }
+    }
+
+    IEnumerator KeeperRunToRecieve()
+    {
+        keeper.GetComponent<Animator>().enabled = true;
+        keeper.GetComponent<Fielder>().enabled = true;
+        keeper.GetComponent<Fielder>().ball = ball;
+        keeper.GetComponent<Animator>().Play("running");
+
+        while (Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z),new Vector2(stumps.position.x, stumps.position.z))>2f)
+        {
+            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+            keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+            keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
+            yield return null;
+        }
+        keeper.GetComponent<Animator>().SetTrigger("StopField");
     }
 
     private float CalculateFielderScore(Fielder fielder)
@@ -249,6 +271,7 @@ public class FieldManager : MonoBehaviour
 
     public void ResetFielders()
     {
+        keeper.GetComponent<Fielder>().KeeperReset();
         foreach (var fielder in bestFielders)
         {
             fielder.Reset();

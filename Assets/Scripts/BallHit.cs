@@ -5,7 +5,7 @@ public class BallHit : MonoBehaviour
 {
     Rigidbody rb;
     public bool secondTouch , groundShot, keeperReceive, fielderReached, boundary;
-
+    public GameObject fieldedPlayer;
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
 
@@ -45,6 +45,7 @@ public class BallHit : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Wicket":
+                if (fielderReached) return;
                 soundFx.PlayOneShot(wicketFx);
                 Gameplay.instance.Out();
                 break;
@@ -66,21 +67,10 @@ public class BallHit : MonoBehaviour
 
                 if (secondTouch)
                 {
-                    return;
+                    break;
                 }
-
                 secondTouch = true;
-
-                Rigidbody ballRigidbody = gameObject.GetComponent<Rigidbody>();
-                if (ballRigidbody != null)
-                {
-                    if (CameraShake.instance != null)
-                    {
-                        CameraShake.instance.Shake();
-                    }
-
-                    soundFx.PlayOneShot(shotFx);
-                }
+                soundFx.PlayOneShot(shotFx);
                 break;
 
             case "Ground":
@@ -102,19 +92,31 @@ public class BallHit : MonoBehaviour
     {
         if(other.gameObject.tag is "keeper")
         {
+            GetComponent<Rigidbody>().isKinematic = true;
+            keeperReceive = true;
             if (secondTouch)
             {
+                rb.isKinematic = true;
+                fieldedPlayer = other.gameObject;
                 fielderReached = true;
                 return;
             }
-            GetComponent<Rigidbody>().isKinematic = true;
+            
             keeperReceive = true;
         }
         else if(other.gameObject.tag is "fielder" or "DeepFielder")
         {
-            fielderReached = true;
+            if (secondTouch)
+            {
+                if(!fielderReached)
+                {
+                    rb.isKinematic = true;
+                    fieldedPlayer = other.gameObject;
+                    fielderReached = true;
+                }
+            }
         }
-        else
+        else if(other.gameObject.name is "overHead")
         {
             Vector3 contactPoint = transform.position;
             CheckLegalDelivery(contactPoint);

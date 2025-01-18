@@ -68,26 +68,27 @@ public class Gameplay : MonoBehaviour
 
             //Vector3 ballPitchPoint = pitchPoints[randPitch];
 
+            ball.transform.parent = bowlerPalm;
+
             Vector3 ballPitchPoint = GetRandomPointWithinBounds();
 
             ball.transform.localPosition = ballOriginPoint;
 
             ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
 
-            ball.SetActive(false);
-            ball.transform.position = ballLaunchPos;
-
             Vector3 direction = (ballPitchPoint - ballLaunchPos).normalized;
 
-            float speed = 80 * 0.22f;
+            float speed = 80 * 0.25f;
 
             Vector3 force = direction * speed;
 
             //mark.transform.position = ballPitchPoint;
 
+            yield return new WaitForSeconds(1f);
+
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(4.4f);
+            yield return new WaitForSeconds(4.1f);
 
             broadcastCamComp.startingRunUp = true;
 
@@ -96,16 +97,16 @@ public class Gameplay : MonoBehaviour
             //mark.transform.position = PredictLandingPosition(ball.transform.position, force * 10);
 
             mark.transform.position = ballPitchPoint;
-
-            yield return new WaitUntil(() => Bowl.instance.ready);
-
-            broadcastCamComp.readyToDeliver = false;
-            currentBall = ball.transform;
             rb = ball.GetComponent<Rigidbody>();
-            rb.isKinematic = false;
-            ball.SetActive(true);
+            yield return new WaitUntil(() => Bowl.instance.ready);
             ball.transform.SetParent(null);
             ball.transform.position = ballLaunchPos;
+            rb.isKinematic = true;
+            broadcastCamComp.readyToDeliver = false;
+            currentBall = ball.transform;
+            rb.isKinematic = false;
+            ball.SetActive(true);
+            
 
             Bowl.instance.ready = false;
             rb.WakeUp();
@@ -309,7 +310,6 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator ResetBall(GameObject ball)
     {
-        ball.SetActive(false);
         transform.position = ballLaunchPos;
         ball.GetComponent<BallHit>().Reset();
         yield return new WaitForSeconds(1);
