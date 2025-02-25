@@ -53,8 +53,11 @@ public class FieldManager : MonoBehaviour
             keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
             yield return null;
         }
-        keeper.GetComponent<Fielder>().KeeperRecieve();
-        ball.GetComponent<Rigidbody>().isKinematic = true;
+        while (ball.GetComponent<BallHit>().stopTriggered == false)
+        {
+            keeper.GetComponent<Fielder>().KeeperRecieve();
+            yield return null;
+        }
         Gameplay.instance.deliveryDead = true;        
     }
 

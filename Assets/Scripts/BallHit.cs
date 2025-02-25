@@ -4,7 +4,7 @@ using System.Collections;
 public class BallHit : MonoBehaviour
 {
     Rigidbody rb;
-    public bool secondTouch , groundShot, keeperReceive, fielderReached, boundary;
+    public bool secondTouch , groundShot, keeperReceive, fielderReached, boundary, stopTriggered;
     public GameObject fieldedPlayer;
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
@@ -92,11 +92,10 @@ public class BallHit : MonoBehaviour
     {
         if(other.gameObject.tag is "keeper")
         {
-            GetComponent<Rigidbody>().isKinematic = true;
             keeperReceive = true;
             if (secondTouch)
             {
-                rb.isKinematic = true;
+                //rb.isKinematic = true;
                 fieldedPlayer = other.gameObject;
                 fielderReached = true;
                 return;
@@ -115,6 +114,12 @@ public class BallHit : MonoBehaviour
                     fielderReached = true;
                 }
             }
+        }
+        else if (other.gameObject.tag is "stop")
+        {
+            transform.position = other.transform.position;
+            stopTriggered = true;
+            rb.isKinematic = true;
         }
         else if(other.gameObject.name is "overHead")
         {
@@ -147,5 +152,6 @@ public class BallHit : MonoBehaviour
         keeperReceive = false;
         fielderReached = false;
         boundary = false;
+        stopTriggered = false;
     }
 }

@@ -373,7 +373,7 @@ public class Fielder : MonoBehaviour
         leftShoulderIk.weight = 0;
         spineIk.weight = 0;
         GetComponent<Animator>().ResetTrigger("StopField");
-        GetComponent<Animator>().enabled = false;
+        //GetComponent<Animator>().enabled = false;
         this.enabled = false;
     }
 
@@ -428,7 +428,7 @@ public class Fielder : MonoBehaviour
         yield return new WaitForSeconds(0.21f);
 
         // Calculate direction and distance
-        Vector3 direction = (fm.stumps.position - ball.position).normalized;
+        Vector3 direction = (fm.keeper.position - ball.position).normalized;
         float distance = Vector3.Distance(ball.position, fm.stumps.position);
 
         // Adjust speed relative to distance (tweak multiplier as needed)
@@ -589,7 +589,7 @@ public class Fielder : MonoBehaviour
 
     public void Initiate(Vector3 position, Transform ball)
     {
-        GetComponent<Animator>().enabled = true;
+        //GetComponent<Animator>().enabled = true;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
         ballComp = ball.GetComponent<BallHit>();
@@ -638,7 +638,7 @@ public class Fielder : MonoBehaviour
         leftShoulderIk.weight = 0;
         spineIk.weight = 0;
         GetComponent<Animator>().ResetTrigger("StopField");
-        GetComponent<Animator>().enabled = false;
+        //GetComponent<Animator>().enabled = false;
         this.enabled = false;
     }
 }
