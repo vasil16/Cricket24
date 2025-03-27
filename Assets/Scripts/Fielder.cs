@@ -434,7 +434,7 @@ public class Fielder : MonoBehaviour
 
         // Adjust speed relative to distance (tweak multiplier as needed)
         float baseSpeed = 1f; // Adjust as per your game
-        float speed = baseSpeed + distance * 0.15f; // Example scaling
+        float speed = baseSpeed + distance * 0.1f; // Example scaling
 
         // Calculate force
         Vector3 force = direction * speed;

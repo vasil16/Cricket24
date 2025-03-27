@@ -59,28 +59,29 @@ public class BallHit : MonoBehaviour
                 break;
 
             case "Bat":
-                FieldManager.hitBallPos = transform.position;
-                FieldManager.hitVelocity = rb.velocity;
-                Debug.Log("spot " + collision.gameObject.name);
-                //Gameplay.instance.bb.position = collision.GetContact(0).point;
-                //StartCoroutine(waitAndLook());
-
                 if (secondTouch)
                 {
                     break;
                 }
+                FieldManager.hitBallPos = transform.position;
+                FieldManager.hitVelocity = rb.velocity;
+                Debug.Log("spot " + collision.gameObject.name);
+                //Gameplay.instance.bb.position = collision.GetContact(0).point;
+                //StartCoroutine(waitAndLook());                
                 secondTouch = true;
                 soundFx.PlayOneShot(shotFx);
                 break;
 
             case "Ground":
-                if (secondTouch)
-                {
-                    groundShot = true;
-                }
+                //if (secondTouch)
+                //{
+                //    groundShot = true;
+                //}
+                groundShot = true;
                 break;
 
             case "boundary":
+                stopTriggered = true;
                 boundary = true;
                 Gameplay.instance.deliveryDead = true;
                 break;
@@ -99,6 +100,12 @@ public class BallHit : MonoBehaviour
                 fieldedPlayer = other.gameObject;
                 fielderReached = true;
                 return;
+            }
+            else
+            {
+                transform.position = other.transform.position;
+                stopTriggered = true;
+                rb.isKinematic = true;
             }
             
             keeperReceive = true;

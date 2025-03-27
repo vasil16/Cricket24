@@ -55,6 +55,7 @@ public class FieldManager : MonoBehaviour
         }
         while (ball.GetComponent<BallHit>().stopTriggered == false)
         {
+            if (ball.GetComponent<BallHit>().fielderReached) break;
             keeper.GetComponent<Fielder>().KeeperRecieve();
             yield return null;
         }
@@ -141,7 +142,11 @@ public class FieldManager : MonoBehaviour
         bestFielders = selectedFielders;
         if (!bestFielders.Contains(fielders[0]))
         {
-            StartCoroutine(KeeperRunToRecieve());
+            //StartCoroutine(KeeperRunToRecieve());
+            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+            keeper.transform.rotation = lookRotation;
         }
     }
 
