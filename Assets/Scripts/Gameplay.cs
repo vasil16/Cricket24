@@ -48,7 +48,7 @@ public class Gameplay : MonoBehaviour
     {
         //ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
-        Application.targetFrameRate = 60;
+        //Application.targetFrameRate = 60;
         //activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;

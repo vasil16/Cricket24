@@ -347,6 +347,7 @@ public class Fielder : MonoBehaviour
 
     public void KeeperRecieve()
     {
+        Debug.Log("nam  " + gameObject.name);
         rightHand.position = leftHand.position = ball.position;
         leftHandIk.weight = rightHandIk.weight = 1;
         rightShoulder.position = leftShoulder.position = ball.position;
