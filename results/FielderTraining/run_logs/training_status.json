@@ -1,0 +1,29 @@
+{
+    "FielderAI": {
+        "checkpoints": [
+            {
+                "steps": 76800,
+                "file_path": "results/FielderTraining/FielderAI/FielderAI-76800.onnx",
+                "reward": null,
+                "creation_time": 1743186796.419828,
+                "auxillary_file_paths": [
+                    "results/FielderTraining/FielderAI/FielderAI-76800.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 76800,
+            "file_path": "results/FielderTraining/FielderAI.onnx",
+            "reward": null,
+            "creation_time": 1743186796.419828,
+            "auxillary_file_paths": [
+                "results/FielderTraining/FielderAI/FielderAI-76800.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "1.11.0"
+    }
+}

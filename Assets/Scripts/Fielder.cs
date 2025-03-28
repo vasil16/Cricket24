@@ -14,6 +14,53 @@ public class Fielder : MonoBehaviour
     public bool canReachInTime, startedRun, reachedBall, reachedInterim;
     private bool ballWasAirborne;
     [SerializeField] FieldManager fm;
+<<<<<<< Updated upstream
+=======
+    [SerializeField] AnimationClip runClip;
+    [SerializeField] Transform rightHand, leftHand, rightShoulder, leftShoulder, spineTarget;
+    [SerializeField] TwoBoneIKConstraint leftHandIk, rightHandIk;
+    [SerializeField] MultiAimConstraint rightShoulderIk, leftShoulderIk, spineIk;
+
+    public Animator animator;
+    public float weight = 1.0f;
+
+
+    void ResetToDefaultPose()
+    {
+        //if (animator && gameObject.name == "keeper")
+        //{
+        //    // Reset IK for all body parts to stop influencing the character
+        //    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0);
+
+        //    // Reset LookAt weight
+        //    animator.SetLookAtWeight(0);
+
+        //    // Optionally reset any other body parts
+        //    // For example, reset spine and chest rotations if needed
+        //    Transform chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
+        //    if (chestBone != null)
+        //    {
+        //        chestBone.rotation = Quaternion.identity; // Reset to neutral pose
+        //    }
+
+        //    // Reset other bones if needed (e.g., head, arms)
+        //    Transform headBone = animator.GetBoneTransform(HumanBodyBones.Head);
+        //    if (headBone != null)
+        //    {
+        //        headBone.rotation = Quaternion.identity; // Reset head rotation
+        //    }
+
+        //    // You can add similar logic for other body parts if required
+        //}
+    }
+>>>>>>> Stashed changes
 
     private void OnEnable()
     {
@@ -21,6 +68,69 @@ public class Fielder : MonoBehaviour
         //agent.speed = 30;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
+<<<<<<< Updated upstream
+=======
+        idleRightHand = rightHand.localPosition;
+        idleLeftHand = leftHand.localPosition;
+        idleRightShoulder = rightShoulder.localPosition;
+        idleLeftShoulder = leftShoulder.localPosition;
+        idleSpine = spineTarget.localPosition;
+        ResetToDefaultPose();
+
+        if (runClip != null)
+        {
+            //AddKeyframesFromComponent(transform, runClip);
+        }
+    }    
+
+    void AddKeyframesFromComponent(Component component, AnimationClip clip)
+    {
+        // Get all public properties of the component
+        PropertyInfo[] properties = component.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+        // Loop through all properties
+        foreach (PropertyInfo property in properties)
+        {
+            // Check if it's a property that can be animated (i.e., numeric types like float, Vector3, etc.)
+            if (property.PropertyType == typeof(Vector3))
+            {
+                Vector3 value = (Vector3)property.GetValue(component);
+                AddKeyframeForVector3(property.Name, value, clip);
+            }
+            else if (property.PropertyType == typeof(Quaternion))
+            {
+                Quaternion value = (Quaternion)property.GetValue(component);
+                AddKeyframeForQuaternion(property.Name, value, clip);
+            }
+            else if (property.PropertyType == typeof(float))
+            {
+                float value = (float)property.GetValue(component);
+                AddKeyframeForFloat(property.Name, value, clip);
+            }
+            // Add more property types as needed (e.g., Color, etc.)
+        }
+    }
+
+    void AddKeyframeForVector3(string propertyName, Vector3 value, AnimationClip clip)
+    {
+        clip.SetCurve("", typeof(Transform), propertyName + ".x", new AnimationCurve(new Keyframe(0f, value.x)));
+        clip.SetCurve("", typeof(Transform), propertyName + ".y", new AnimationCurve(new Keyframe(0f, value.y)));
+        clip.SetCurve("", typeof(Transform), propertyName + ".z", new AnimationCurve(new Keyframe(0f, value.z)));
+    }
+
+    void AddKeyframeForQuaternion(string propertyName, Quaternion value, AnimationClip clip)
+    {
+        // Quaternion can be split into four components: x, y, z, w
+        clip.SetCurve("", typeof(Transform), propertyName + ".x", new AnimationCurve(new Keyframe(0f, value.x)));
+        clip.SetCurve("", typeof(Transform), propertyName + ".y", new AnimationCurve(new Keyframe(0f, value.y)));
+        clip.SetCurve("", typeof(Transform), propertyName + ".z", new AnimationCurve(new Keyframe(0f, value.z)));
+        clip.SetCurve("", typeof(Transform), propertyName + ".w", new AnimationCurve(new Keyframe(0f, value.w)));
+    }
+
+    void AddKeyframeForFloat(string propertyName, float value, AnimationClip clip)
+    {
+        clip.SetCurve("", typeof(Transform), propertyName, new AnimationCurve(new Keyframe(0f, value)));
+>>>>>>> Stashed changes
     }
 
     IEnumerator StartField()

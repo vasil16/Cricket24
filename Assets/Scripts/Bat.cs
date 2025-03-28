@@ -55,10 +55,20 @@ public class Bat : MonoBehaviour
                     }
                 }
             }
+            else if (Input.GetMouseButtonDown(0))  // Mouse Input for Mac
+            {
+                startPoint = Input.mousePosition;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                endPoint = Input.mousePosition;
+                ProcessSwipe(startPoint, endPoint);
+            }
         }
     }
     
 
+<<<<<<< Updated upstream
     //void CheckDirection(Vector3 direction)
     //{
     //    // Calculate the angle of the swipe
@@ -109,6 +119,17 @@ public class Bat : MonoBehaviour
     //        batterAnim.Play("flick");
     //    }
     //}
+=======
+    void ProcessSwipe(Vector3 start, Vector3 end)
+    {
+        float diss = Vector3.Distance(end, start);
+        if (diss <= 30) return;
+
+        Vector3 direction = end - start;
+        CheckDirection(direction);
+    }
+
+>>>>>>> Stashed changes
 
     void CheckDirection(Vector3 direction)
     {

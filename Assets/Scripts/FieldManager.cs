@@ -1,7 +1,7 @@
 using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class FieldManager : MonoBehaviour
 {
@@ -10,8 +10,8 @@ public class FieldManager : MonoBehaviour
     public float fieldingRange = 1.5f;
 
     public List<Fielder> bestFielders = new List<Fielder>();
-    public static Action<Vector3> StartCheckField;
-    public static Action ResetFielder;
+    public static Action<Vector3> StartCheckField,startLearn;
+    public static Action ResetFielder, resetML;
 
     public static Vector3 hitBallPos, hitVelocity;
 
@@ -24,6 +24,8 @@ public class FieldManager : MonoBehaviour
     {
         StartCheckField = AssignBestFielders;
         ResetFielder = ResetFielders;
+        startLearn = AssignForML;
+        resetML = ResetField;
     }
 
     public void AssignBestFielders(Vector3 ballAt)
@@ -31,7 +33,38 @@ public class FieldManager : MonoBehaviour
         StartCoroutine(AssignFielders(ballAt));
     }
 
+<<<<<<< Updated upstream
 
+=======
+    public void AssignForML(Vector3 ballAt)
+    {
+        ball = Gameplay.instance.currentBall;
+        ballWasAirBorne = ball.GetComponent<BallHit>().groundShot = false;
+        {
+            Debug.Log("fielder");
+            StartCoroutine(AssignFielders(ballAt));
+        }
+    }
+
+    IEnumerator KeeperReceive()
+    {
+        keeper.GetComponent<Animator>().enabled = true;
+        keeper.GetComponent<Fielder>().enabled = true;
+        keeper.GetComponent<Fielder>().ball = ball;
+        while (ball.GetComponent<BallHit>().keeperReceive == false)
+        {
+            keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
+            yield return null;
+        }
+        while (ball.GetComponent<BallHit>().stopTriggered == false)
+        {
+            if (ball.GetComponent<BallHit>().fielderReached) break;
+            keeper.GetComponent<Fielder>().KeeperRecieve();
+            yield return null;
+        }
+        Gameplay.instance.deliveryDead = true;        
+    }
+>>>>>>> Stashed changes
 
     IEnumerator AssignFielders(Vector3 ballAt)
     {
@@ -108,9 +141,42 @@ public class FieldManager : MonoBehaviour
                 fielder.startedRun = true;
                 fielder.Initiate(landPos, ball);
             }
+
+            //FielderAgent bestFielder = fielder.GetComponent<FielderAgent>();  // Your existing selection logic
+            //bestFielder.ActivateFielder(ball);
         }
 
         bestFielders = selectedFielders;
+<<<<<<< Updated upstream
+=======
+        if (!bestFielders.Contains(fielders[0]))
+        {
+            StartCoroutine(KeeperRunToRecieve());
+            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+            keeper.transform.rotation = lookRotation;
+        }
+    }
+
+    IEnumerator KeeperRunToRecieve()
+    {
+        keeper.GetComponent<Animator>().enabled = true;
+        keeper.GetComponent<Fielder>().enabled = true;
+        keeper.GetComponent<Fielder>().ball = ball;
+        keeper.GetComponent<Animator>().Play("running");
+
+        while (Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z),new Vector2(stumps.position.x, stumps.position.z))>2f)
+        {
+            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+            keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+            keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
+            yield return null;
+        }
+        keeper.GetComponent<Animator>().SetTrigger("StopField");
+>>>>>>> Stashed changes
     }
 
     private float CalculateFielderScore(Fielder fielder)
@@ -240,6 +306,15 @@ public class FieldManager : MonoBehaviour
             fielder.Reset();
             fielder.startedRun = false;
             //fielder.enabled = false;
+        }
+        bestFielders.Clear();
+    }
+
+    public void ResetField()
+    {
+        foreach (var fielder in bestFielders)
+        {
+            fielder.gameObject.GetComponent<FielderAgent>().Reset();
         }
         bestFielders.Clear();
     }

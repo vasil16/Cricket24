@@ -1,0 +1,34 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2821
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 behaviors:\
+  FielderAI:\
+    trainer_type: ppo  # Proximal Policy Optimization (PPO)\
+    hyperparameters:\
+      batch_size: 64\
+      buffer_size: 2048\
+      learning_rate: 3.0e-4\
+      beta: 5.0e-3\
+      epsilon: 0.2\
+      lambd: 0.95\
+      num_epoch: 3\
+      learning_rate_schedule: linear\
+\
+    network_settings:\
+      normalize: true\
+      hidden_units: 128\
+      num_layers: 2\
+\
+    reward_signals:\
+      extrinsic:\
+        gamma: 0.99\
+        strength: 1.0\
+\
+    keep_checkpoints: 5\
+    max_steps: 5000000\
+    time_horizon: 64\
+    summary_freq: 10000}

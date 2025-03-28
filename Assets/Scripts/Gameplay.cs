@@ -51,6 +51,7 @@ public class Gameplay : MonoBehaviour
     void Start()
     {
         //ShiftEnd();
+        //StartCoroutine(launchfortraining());
         StartCoroutine(LaunchBallsWithDelay());
         Application.targetFrameRate = 60;
         activeCams = FindObjectsOfType<CameraLookAt>();
@@ -59,7 +60,84 @@ public class Gameplay : MonoBehaviour
         ballOriginPoint = ball.transform.localPosition;
     }
 
+<<<<<<< Updated upstream
     Vector3 helperdir;
+=======
+    IEnumerator launchfortraining()
+    {
+        while (overs < 5 && !isGameOver)
+        {
+            yield return new WaitForSeconds(0.2f);
+
+            deliveryDead = false;
+
+            // 🔹 Base Position for All Throws (No Bowler Involvement)
+            Vector3 basePosition = ballLaunchPos;
+            ball.transform.position = basePosition;
+            ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
+            ball.SetActive(true);
+
+            // 🔹 Randomize Direction (Left, Right, Center)
+            float angleOffset = Random.Range(-20f, 20f);
+            Vector3 direction = Random.insideUnitSphere.normalized;
+            direction.y = Mathf.Abs(direction.y); // Ensure the ball isn't thrown downward
+
+            // 🔹 Randomize Speed
+            float speed = Random.Range(60f, 80f) * 0.1f;
+
+            // 🔹 Randomly Decide Grounded or Airborne
+            bool isAirborne = Random.value > 0.5f;
+            if (isAirborne)
+            {
+                direction.y = Random.Range(0.2f, 0.6f); // Add height
+            }
+
+            Vector3 force = direction * speed;
+
+            // 🔹 Get Rigidbody
+            rb = ball.GetComponent<Rigidbody>();
+            rb.isKinematic = false;
+            rb.WakeUp();
+            currentBall = ball.transform;
+            // 🔹 Apply Random Spin
+            float spin = Random.Range(-15f, 15f);
+            rb.AddTorque(Vector3.forward * spin);
+
+            // 🔹 Apply Force
+            rb.AddForce(force, ForceMode.Impulse);
+
+            // Start Checking Ball Direction
+            StartCoroutine(CheckBallDirection());
+
+            yield return new WaitUntil(() => deliveryDead);
+            //while (deliveryDead == false)
+            //{
+            //    yield return null;
+            //    if (rb.velocity.magnitude < 0.5f)
+            //    {
+            //        deliveryDead = true;
+            //        break;
+            //    }
+            //}
+            yield return new WaitForSeconds(1);
+
+            if (legalDelivery)
+            {
+                ballsLaunched++;
+            }
+
+            if (ballsLaunched > 0 && ballsLaunched % 6 == 0)
+            {
+                overs++;
+                ballsLaunched = 0;
+            }
+
+            yield return new WaitForSeconds(1);
+            FieldManager.resetML.Invoke();
+            yield return null;
+        }
+    }
+>>>>>>> Stashed changes
 
 
     IEnumerator LaunchBallsWithDelay()
@@ -277,8 +355,14 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator CheckBallDirection()
     {
+<<<<<<< Updated upstream
         yield return new WaitForSeconds(0f);
         FieldManager.StartCheckField.Invoke(currentBall.transform.position);
+=======
+        yield return null;
+        //FieldManager.startLearn(currentBall.transform.position);
+        FieldManager.StartCheckField(currentBall.transform.position);
+>>>>>>> Stashed changes
     }
 
 

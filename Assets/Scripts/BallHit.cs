@@ -25,6 +25,11 @@ public class BallHit : MonoBehaviour
             Gameplay.instance.deliveryDead = true;
         }
 
+        //if(rb.velocity.magnitude< 0.2f)
+        //{
+        //    Gameplay.instance.deliveryDead = true;
+        //}
+
         if (!secondTouch) return;
         if (transform.position.x > 80 && transform.position.z < 24)
         {

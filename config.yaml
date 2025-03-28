@@ -1,0 +1,28 @@
+behaviors:
+  FielderAI:
+    trainer_type: ppo  # Using Proximal Policy Optimization (PPO)
+
+    hyperparameters:
+      batch_size: 128  # Increased for stability
+      buffer_size: 4096  # Increased for better generalization
+      learning_rate: 3.0e-4
+      beta: 5.0e-3
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+
+    network_settings:
+      normalize: true
+      hidden_units: 256  # Increased for better learning capacity
+      num_layers: 2
+
+    reward_signals:
+      extrinsic:
+        gamma: 0.99
+        strength: 1.0
+
+    keep_checkpoints: 5
+    max_steps: 3000000  # Adjusted for reasonable training time
+    time_horizon: 128  # Increased for long-term movement learning
+    summary_freq: 10000
