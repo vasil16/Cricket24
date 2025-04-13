@@ -96,7 +96,7 @@ public class BallHit : MonoBehaviour
             keeperReceive = true;
             if (secondTouch)
             {
-                //rb.isKinematic = true;
+                rb.isKinematic = true;
                 fieldedPlayer = other.gameObject;
                 fielderReached = true;
                 return;

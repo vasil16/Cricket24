@@ -14,9 +14,8 @@ public class Fielder : MonoBehaviour
     public bool canReachInTime, startedRun;
     [SerializeField] FieldManager fm;
     [SerializeField] AnimationClip runClip;
-    [SerializeField] Transform rightHand, leftHand, rightShoulder, leftShoulder, spineTarget;
+    [SerializeField] Transform rightHand, leftHand;
     [SerializeField] TwoBoneIKConstraint leftHandIk, rightHandIk;
-    [SerializeField] MultiAimConstraint rightShoulderIk, leftShoulderIk, spineIk;
 
     public Animator animator;
     public float weight = 1.0f;
@@ -113,9 +112,6 @@ public class Fielder : MonoBehaviour
         actualRot = transform.rotation.eulerAngles;
         idleRightHand = rightHand.localPosition;
         idleLeftHand = leftHand.localPosition;
-        idleRightShoulder = rightShoulder.localPosition;
-        idleLeftShoulder = leftShoulder.localPosition;
-        idleSpine = spineTarget.localPosition;
         ResetToDefaultPose();
 
         if (runClip != null)
@@ -350,10 +346,6 @@ public class Fielder : MonoBehaviour
         Debug.Log("nam  " + gameObject.name);
         rightHand.position = leftHand.position = ball.position;
         leftHandIk.weight = rightHandIk.weight = 1;
-        rightShoulder.position = leftShoulder.position = ball.position;
-        rightShoulderIk.weight = leftShoulderIk.weight = 1;
-        spineTarget.position = ball.position;
-        spineIk.weight = 1;
     }
 
     public void KeeperReset()
@@ -361,32 +353,31 @@ public class Fielder : MonoBehaviour
         Debug.Log("reset ");
         rightHand.localPosition = idleRightHand;
         leftHand.localPosition = idleLeftHand;
-        rightShoulder.localPosition = idleRightShoulder;
-        leftShoulder.localPosition = idleLeftShoulder;
-        spineTarget.localPosition = idleSpine;
         ball = null;
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
         leftHandIk.weight = 0;
         rightHandIk.weight = 0;
-        rightShoulderIk.weight = 0;
-        leftShoulderIk.weight = 0;
-        spineIk.weight = 0;
         GetComponent<Animator>().ResetTrigger("StopField");
         //GetComponent<Animator>().enabled = false;
         this.enabled = false;
     }
 
     void ReachedBall()
-    {
-        ballRb.isKinematic = true;        
+    {            
         GetComponent<Animator>().SetTrigger("StopField");
         if (!ballComp.groundShot)
         {
+            rightHand.position = leftHand.position = ball.position;
+            leftHandIk.weight = rightHandIk.weight = 1;
             Gameplay.instance.deliveryDead = true;
             Gameplay.instance.Out();
             return;
+        }
+        else
+        {
+            ballRb.isKinematic = true;
         }
         if(ballComp.fieldedPlayer == this.gameObject)
         {
@@ -395,6 +386,7 @@ public class Fielder : MonoBehaviour
         else
         {
             StopAllCoroutines();
+            return;
         }
     }
 
@@ -402,10 +394,6 @@ public class Fielder : MonoBehaviour
     {
         rightHand.position = leftHand.position = ball.position;
         leftHandIk.weight = rightHandIk.weight = 1;
-        rightShoulder.position = leftShoulder.position = ball.position;
-        rightShoulderIk.weight = leftShoulderIk.weight = 1;
-        spineTarget.position = ball.position;
-        spineIk.weight = 1;
 
         if (this.name == "keeper")
         {
@@ -626,18 +614,12 @@ public class Fielder : MonoBehaviour
         StopCoroutine(StartField());
         rightHand.localPosition = idleRightHand;
         leftHand.localPosition = idleLeftHand;
-        rightShoulder.localPosition = idleRightShoulder;
-        leftShoulder.localPosition = idleLeftShoulder;
-        spineTarget.localPosition = idleSpine;
         ball = null;
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
         leftHandIk.weight = 0;
         rightHandIk.weight = 0;
-        rightShoulderIk.weight = 0;
-        leftShoulderIk.weight = 0;
-        spineIk.weight = 0;
         GetComponent<Animator>().ResetTrigger("StopField");
         //GetComponent<Animator>().enabled = false;
         this.enabled = false;
