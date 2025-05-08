@@ -88,7 +88,7 @@ public class Gameplay : MonoBehaviour
 
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(4.1f);
+            yield return new WaitForSeconds(5f);
 
             broadcastCamComp.startingRunUp = true;
 
