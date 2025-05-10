@@ -9,7 +9,7 @@ public class Gameplay : MonoBehaviour
 {
     public static Gameplay instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler, overPanel;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler, overPanel, keeper;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
@@ -97,6 +97,8 @@ public class Gameplay : MonoBehaviour
             broadcastCamComp.startingRunUp = true;
 
             Bowl.instance.anim.Play("bowl");
+
+            //keeper.GetComponent<Animator>().SetTrigger("KeeperSteady");
 
             //mark.transform.position = PredictLandingPosition(ball.transform.position, force * 10);
 

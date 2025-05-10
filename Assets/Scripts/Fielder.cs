@@ -360,6 +360,10 @@ public class Fielder : MonoBehaviour
     public void KeeperRecieve(Vector3 targetPosition)
     {
         Debug.Log("nam  " + gameObject.name);
+        if(targetPosition.y>6f)
+        {
+            animator.Play("jump");
+        }
         rightHand.position = leftHand.position = targetPosition;
         leftHandIk.weight = rightHandIk.weight = 1;
     }
@@ -381,12 +385,10 @@ public class Fielder : MonoBehaviour
     }
 
     void ReachedBall()
-    {            
-        GetComponent<Animator>().SetTrigger("StopField");
+    {
         if (!ballComp.groundShot)
         {
-            rightHand.position = leftHand.position = ball.position;
-            leftHandIk.weight = rightHandIk.weight = 1;
+            GetComponent<Animator>().SetTrigger("StopField");
             Gameplay.instance.deliveryDead = true;
             Gameplay.instance.Out();
             return;
@@ -395,26 +397,34 @@ public class Fielder : MonoBehaviour
         {
             ballRb.isKinematic = true;
         }
+        rightHand.position = leftHand.position = ball.position;
+        leftHandIk.weight = rightHandIk.weight = 1;
         if(ballComp.fieldedPlayer == this.gameObject)
         {
+            //GetComponent<Animator>().SetTrigger("Pick");
             StartCoroutine(FielderPickupThrow());
         }
-        else if(ballComp.fieldedPlayer == this.gameObject.gameObject)
+        else if(ballComp.fieldedPlayer == fm.keeper.gameObject)
         {
             Gameplay.instance.deliveryDead = true;
         }
         else
         {
+            GetComponent<Animator>().SetTrigger("StopField");
             StopAllCoroutines();
             return;
         }
     }
 
+    bool canThrow;
+
+    public void ReadyToThrow()
+    {
+        canThrow = true;
+    }
+
     IEnumerator FielderPickupThrow()
     {
-        rightHand.position = leftHand.position = ball.position;
-        leftHandIk.weight = rightHandIk.weight = 1;
-
         if (this.name == "keeper")
         {
             Debug.Log("fld done");
@@ -422,19 +432,20 @@ public class Fielder : MonoBehaviour
             StopAllCoroutines();
             yield break;
         }
-
+       
         Vector3 lookDirection = (fm.stumps.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
         lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
         transform.rotation = lookRotation;
         yield return new WaitForSeconds(0.4f);
 
-        ball.position = new Vector3(ball.position.x, 4f, ball.position.z);
+        //ball.position = new Vector3(ball.position.x, 4f, ball.position.z);
 
         // Play the throw animation
-        GetComponent<Animator>().Play("throwBall");
 
-        yield return new WaitForSeconds(0.21f);
+        //yield return new WaitUntil(()=>ballComp.stopTriggered);
+
+        //yield return new WaitUntil(() => canThrow);
 
         // Calculate direction and distance
         Vector3 direction = (fm.keeper.position - ball.position).normalized;
@@ -450,6 +461,8 @@ public class Fielder : MonoBehaviour
         // Apply force to the ball
         ballRb.isKinematic = false;
         ballRb.AddForce(force, ForceMode.Impulse);
+
+        leftHandIk.weight = rightHandIk.weight = 0;
 
         //fm.keeper.GetComponent<Fielder>().KeeperRecieve(ball.position);
 
@@ -628,6 +641,7 @@ public class Fielder : MonoBehaviour
     {
         //agent.Stop();
         //agent.ResetPath();
+        canThrow = false;
         StopCoroutine(StartField());
         rightHand.localPosition = idleRightHand;
         leftHand.localPosition = idleLeftHand;
@@ -638,6 +652,8 @@ public class Fielder : MonoBehaviour
         leftHandIk.weight = 0;
         rightHandIk.weight = 0;
         GetComponent<Animator>().ResetTrigger("StopField");
+        GetComponent<Animator>().ResetTrigger("Throw");
+        GetComponent<Animator>().ResetTrigger("Pick");
         //GetComponent<Animator>().enabled = false;
         this.enabled = false;
     }

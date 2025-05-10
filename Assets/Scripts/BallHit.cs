@@ -132,6 +132,7 @@ public class BallHit : MonoBehaviour
                 Gameplay.instance.deliveryDead = true;
             }
             rb.isKinematic = true;
+            transform.SetParent(other.transform, true);
             transform.position = other.transform.position;
             stopTriggered = true;
         }

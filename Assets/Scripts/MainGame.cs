@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -46,6 +48,33 @@ public class MainGame : MonoBehaviour
         //    // Apply the MPB to the submesh index
         //    stadium.SetPropertyBlock(mpb, i);
         //}
+
+        #if UNITY_IOS
+                Application.targetFrameRate = 90;
+        #endif
+    }
+
+    public Text fpsText;            // Assign in inspector
+    public float updateInterval = 0.5f;
+
+    private float timeAccum = 0f;
+    private int frames = 0;
+    private float timer = 0f;
+
+    void Update()
+    {
+        timeAccum += Time.unscaledDeltaTime;
+        frames++;
+        timer += Time.unscaledDeltaTime;
+
+        if (timer >= updateInterval)
+        {
+            float fps = frames / timeAccum;
+            fpsText.text = $"FPS: {fps:F1}";
+            timer = 0f;
+            timeAccum = 0f;
+            frames = 0;
+        }
     }
 
 
