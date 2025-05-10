@@ -35,17 +35,17 @@ public class MainGame : MonoBehaviour
         camIndex = 1;
         canvas.SetActive(true);
 
-        mpb = new MaterialPropertyBlock();
+        //mpb = new MaterialPropertyBlock();
 
-        // Assign different colors to each submesh
-        for (int i = 0; i < stadium.sharedMaterials.Length; i++)
-        {
+        //// Assign different colors to each submesh
+        //for (int i = 0; i < stadium.sharedMaterials.Length; i++)
+        //{
 
-            mpb.SetColor("_BaseColor", color[i]);
+        //    mpb.SetColor("_BaseColor", color[i]);
 
-            // Apply the MPB to the submesh index
-            stadium.SetPropertyBlock(mpb, i);
-        }
+        //    // Apply the MPB to the submesh index
+        //    stadium.SetPropertyBlock(mpb, i);
+        //}
     }
 
 

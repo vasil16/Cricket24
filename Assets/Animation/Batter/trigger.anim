@@ -54,17 +54,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: {x: 4.381, y: 170.55, z: -29.822}
-        inSlope: {x: 0, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 0}
+        inSlope: {x: 1.6400003, y: 20, z: 4.3600082}
+        outSlope: {x: 1.6400003, y: 20, z: 4.3600082}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.1
-        value: {x: 4.381, y: 170.55, z: -29.822}
-        inSlope: {x: 2.4085705, y: 34.105682, z: 7.551433}
-        outSlope: {x: 2.4085705, y: 34.105682, z: 7.551433}
+        value: {x: 4.545, y: 172.55, z: -29.386}
+        inSlope: {x: 2.5257134, y: 35.534256, z: 7.862862}
+        outSlope: {x: 2.5257134, y: 35.534256, z: 7.862862}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -72,8 +72,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.21666667
         value: {x: 4.943, y: 178.508, z: -28.06}
-        inSlope: {x: 4.817141, y: 68.211365, z: 15.102866}
-        outSlope: {x: 4.817141, y: 68.211365, z: 15.102866}
+        inSlope: {x: 3.4114265, y: 51.06851, z: 11.365716}
+        outSlope: {x: 3.4114265, y: 51.06851, z: 11.365716}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -200,17 +200,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.1
         value: {x: -7.357, y: -148.719, z: -22.501}
-        inSlope: {x: -3.7849998, y: 91.275024, z: 21.935005}
-        outSlope: {x: -3.7849998, y: 91.275024, z: 21.935005}
+        inSlope: {x: -1.4278581, y: 52.472164, z: 12.7421465}
+        outSlope: {x: -1.4278581, y: 52.472164, z: 12.7421465}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.21666667
-        value: {x: -7.357, y: -148.719, z: -22.501}
-        inSlope: {x: 0, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 0}
+        value: {x: -6.807, y: -157.773, z: -24.646}
+        inSlope: {x: 4.7142835, y: -77.60572, z: -18.385717}
+        outSlope: {x: 4.7142835, y: -77.60572, z: -18.385717}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -2641,17 +2641,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 4.381
-        inSlope: 0
-        outSlope: 0
+        inSlope: 1.6400003
+        outSlope: 1.6400003
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.1
-        value: 4.381
-        inSlope: 2.4085705
-        outSlope: 2.4085705
+        value: 4.545
+        inSlope: 2.5257134
+        outSlope: 2.5257134
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -2659,8 +2659,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.21666667
         value: 4.943
-        inSlope: 4.817141
-        outSlope: 4.817141
+        inSlope: 3.4114265
+        outSlope: 3.4114265
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -2680,17 +2680,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 170.55
-        inSlope: 0
-        outSlope: 0
+        inSlope: 20
+        outSlope: 20
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.1
-        value: 170.55
-        inSlope: 34.105682
-        outSlope: 34.105682
+        value: 172.55
+        inSlope: 35.534256
+        outSlope: 35.534256
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -2698,8 +2698,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.21666667
         value: 178.508
-        inSlope: 68.211365
-        outSlope: 68.211365
+        inSlope: 51.06851
+        outSlope: 51.06851
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -2719,17 +2719,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: -29.822
-        inSlope: 0
-        outSlope: 0
+        inSlope: 4.3600082
+        outSlope: 4.3600082
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.1
-        value: -29.822
-        inSlope: 7.551433
-        outSlope: 7.551433
+        value: -29.386
+        inSlope: 7.862862
+        outSlope: 7.862862
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -2737,8 +2737,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.21666667
         value: -28.06
-        inSlope: 15.102866
-        outSlope: 15.102866
+        inSlope: 11.365716
+        outSlope: 11.365716
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -3472,17 +3472,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.1
         value: -7.357
-        inSlope: -3.7849998
-        outSlope: -3.7849998
+        inSlope: -1.4278581
+        outSlope: -1.4278581
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.21666667
-        value: -7.357
-        inSlope: 0
-        outSlope: 0
+        value: -6.807
+        inSlope: 4.7142835
+        outSlope: 4.7142835
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -3511,17 +3511,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.1
         value: -148.719
-        inSlope: 91.275024
-        outSlope: 91.275024
+        inSlope: 52.472164
+        outSlope: 52.472164
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.21666667
-        value: -148.719
-        inSlope: 0
-        outSlope: 0
+        value: -157.773
+        inSlope: -77.60572
+        outSlope: -77.60572
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -3550,17 +3550,17 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.1
         value: -22.501
-        inSlope: 21.935005
-        outSlope: 21.935005
+        inSlope: 12.7421465
+        outSlope: 12.7421465
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.21666667
-        value: -22.501
-        inSlope: 0
-        outSlope: 0
+        value: -24.646
+        inSlope: -18.385717
+        outSlope: -18.385717
         tangentMode: 34
         weightedMode: 0
         inWeight: 0.33333334
@@ -8577,7 +8577,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanRThigh
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
+      HumanRPalm/bat (1)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8589,7 +8591,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanRThigh
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
+      HumanRPalm/bat (1)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8601,7 +8605,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanRThigh
+    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
+      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
+      HumanRPalm/bat (1)
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8613,7 +8619,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanLThigh
+    path: Base HumanPelvis/Base HumanRThigh
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8625,7 +8631,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanLThigh
+    path: Base HumanPelvis/Base HumanRThigh
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -8637,7 +8643,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanLThigh
+    path: Base HumanPelvis/Base HumanRThigh
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -9474,9 +9480,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm/bat (1)
+    path: Base HumanPelvis/Base HumanLThigh
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -9488,9 +9492,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm/bat (1)
+    path: Base HumanPelvis/Base HumanLThigh
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -9502,9 +9504,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Base HumanPelvis/Base HumanSpine1/Base HumanSpine2/Base HumanSpine3/Base
-      HumanRibcage/Base HumanRCollarbone/Base HumanRUpperarm/Base HumanRForearm/Base
-      HumanRPalm/bat (1)
+    path: Base HumanPelvis/Base HumanLThigh
     classID: 4
     script: {fileID: 0}
     flags: 0

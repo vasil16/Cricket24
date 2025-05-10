@@ -48,14 +48,14 @@ public class FieldManager : MonoBehaviour
         keeper.GetComponent<Animator>().enabled = true;
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
-        while (ball.GetComponent<BallHit>().keeperReceive == false)
-        {
-            keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
-            yield return null;
-        }
+        //while (ball.GetComponent<BallHit>().keeperReceive == false)
+        //{
+        //    keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
+        //    yield return null;
+        //}
         while (ball.GetComponent<BallHit>().stopTriggered == false)
         {
-            if (ball.GetComponent<BallHit>().fielderReached) break;
+            if (ball.GetComponent<BallHit>().fielderReached) break;            
             keeper.GetComponent<Fielder>().KeeperRecieve();
             yield return null;
         }
@@ -135,6 +135,7 @@ public class FieldManager : MonoBehaviour
             if (!fielder.startedRun)
             {
                 fielder.enabled = true;
+                fielder.GetComponent<Animator>().enabled = true;
                 fielder.startedRun = true;
                 fielder.Initiate(landPos,ball);
             }
@@ -284,6 +285,7 @@ public class FieldManager : MonoBehaviour
         {
             fielder.Reset();
             fielder.startedRun = false;
+            fielder.GetComponent<Animator>().enabled = true;
             //fielder.enabled = false;
         }
         bestFielders.Clear();

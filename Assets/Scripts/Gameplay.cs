@@ -13,7 +13,7 @@ public class Gameplay : MonoBehaviour
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
-    [SerializeField] Vector3 ballLaunchPos, bound1, bound2, bound3, bound4, ballOriginPoint;
+    [SerializeField] Vector3 ballLaunchPos, bound1, bound2, bound3, bound4, ballOriginPoint, ballScale;
     [SerializeField] float speedMult, pitchXOffset, ballStopPoint;
     [SerializeField] public Transform batCenter, currentBall, bb, bowlerPalm, center;
     [SerializeField] Animator machineAnim;
@@ -53,6 +53,7 @@ public class Gameplay : MonoBehaviour
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;
         ballOriginPoint = ball.transform.localPosition;
+        ballScale = ball.transform.localScale;
     }
 
     IEnumerator LaunchBallsWithDelay()
@@ -68,7 +69,10 @@ public class Gameplay : MonoBehaviour
 
             //Vector3 ballPitchPoint = pitchPoints[randPitch];
 
-            ball.transform.parent = bowlerPalm;
+
+            ball.transform.SetParent(bowlerPalm,true);
+
+            ball.transform.localScale = ballScale;
 
             Vector3 ballPitchPoint = GetRandomPointWithinBounds();
 
@@ -99,7 +103,7 @@ public class Gameplay : MonoBehaviour
             mark.transform.position = ballPitchPoint;
             rb = ball.GetComponent<Rigidbody>();
             yield return new WaitUntil(() => Bowl.instance.ready);
-            ball.transform.SetParent(null);
+            ball.transform.SetParent(null,true);
             ball.transform.position = ballLaunchPos;
             rb.isKinematic = true;
             broadcastCamComp.readyToDeliver = false;

@@ -19,6 +19,60 @@ public class Fielder : MonoBehaviour
 
     public Animator animator;
     public float weight = 1.0f;
+   
+
+    void ResetToDefaultPose()
+    {
+        //if (animator && gameObject.name == "keeper")
+        //{
+        //    // Reset IK for all body parts to stop influencing the character
+        //    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0);
+        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 0);
+        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0);
+
+        //    // Reset LookAt weight
+        //    animator.SetLookAtWeight(0);
+
+        //    // Optionally reset any other body parts
+        //    // For example, reset spine and chest rotations if needed
+        //    Transform chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
+        //    if (chestBone != null)
+        //    {
+        //        chestBone.rotation = Quaternion.identity; // Reset to neutral pose
+        //    }
+
+        //    // Reset other bones if needed (e.g., head, arms)
+        //    Transform headBone = animator.GetBoneTransform(HumanBodyBones.Head);
+        //    if (headBone != null)
+        //    {
+        //        headBone.rotation = Quaternion.identity; // Reset head rotation
+        //    }
+
+        //    // You can add similar logic for other body parts if required
+        //}
+    }
+
+    private void OnEnable()
+    {
+        actualPos = transform.position;
+        actualRot = transform.rotation.eulerAngles;
+        idleRightHand = rightHand.localPosition;
+        idleLeftHand = leftHand.localPosition;
+        ResetToDefaultPose();
+
+        if (runClip != null)
+        {
+            // Get all properties of the Transform component (or other components if needed)
+            //AddKeyframesFromComponent(transform, runClip);
+        }
+    }
+
+    #region Animator
 
     //void OnAnimatorIK(int layerIndex)
     //{
@@ -70,57 +124,6 @@ public class Fielder : MonoBehaviour
     //    }
     //}
 
-    void ResetToDefaultPose()
-    {
-        //if (animator && gameObject.name == "keeper")
-        //{
-        //    // Reset IK for all body parts to stop influencing the character
-        //    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
-        //    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
-        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
-        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
-        //    animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, 0);
-        //    animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, 0);
-        //    animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 0);
-        //    animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 0);
-
-        //    // Reset LookAt weight
-        //    animator.SetLookAtWeight(0);
-
-        //    // Optionally reset any other body parts
-        //    // For example, reset spine and chest rotations if needed
-        //    Transform chestBone = animator.GetBoneTransform(HumanBodyBones.Chest);
-        //    if (chestBone != null)
-        //    {
-        //        chestBone.rotation = Quaternion.identity; // Reset to neutral pose
-        //    }
-
-        //    // Reset other bones if needed (e.g., head, arms)
-        //    Transform headBone = animator.GetBoneTransform(HumanBodyBones.Head);
-        //    if (headBone != null)
-        //    {
-        //        headBone.rotation = Quaternion.identity; // Reset head rotation
-        //    }
-
-        //    // You can add similar logic for other body parts if required
-        //}
-    }
-
-    private void OnEnable()
-    {
-        actualPos = transform.position;
-        actualRot = transform.rotation.eulerAngles;
-        idleRightHand = rightHand.localPosition;
-        idleLeftHand = leftHand.localPosition;
-        ResetToDefaultPose();
-
-        if (runClip != null)
-        {
-            // Get all properties of the Transform component (or other components if needed)
-            //AddKeyframesFromComponent(transform, runClip);
-        }
-    }    
-
     void AddKeyframesFromComponent(Component component, AnimationClip clip)
     {
         // Get all public properties of the component
@@ -170,8 +173,11 @@ public class Fielder : MonoBehaviour
         clip.SetCurve("", typeof(Transform), propertyName, new AnimationCurve(new Keyframe(0f, value)));
     }
 
+    #endregion
+
     IEnumerator StartField()
     {
+        yield return new WaitForSeconds(0.2f);
         if (IsBallComingAtFielder() && ballComp.groundShot)
         {
             Debug.Log("Coming to fielder");
@@ -382,6 +388,10 @@ public class Fielder : MonoBehaviour
         if(ballComp.fieldedPlayer == this.gameObject)
         {
             StartCoroutine(FielderPickupThrow());
+        }
+        else if(ballComp.fieldedPlayer == this.gameObject.gameObject)
+        {
+            Gameplay.instance.deliveryDead = true;
         }
         else
         {

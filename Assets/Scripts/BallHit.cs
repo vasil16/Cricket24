@@ -54,7 +54,7 @@ public class BallHit : MonoBehaviour
                 if (secondTouch)
                 {
                     groundShot = true;
-                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.01f, rb.velocity.z);
+                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.04f, rb.velocity.z);
                 }
                 break;
 
@@ -73,10 +73,6 @@ public class BallHit : MonoBehaviour
                 break;
 
             case "Ground":
-                //if (secondTouch)
-                //{
-                //    groundShot = true;
-                //}
                 groundShot = true;
                 break;
 
