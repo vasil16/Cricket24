@@ -129,10 +129,7 @@ public class Gameplay : MonoBehaviour
             yield return new WaitForSeconds(.7f);
             yield return new WaitUntil(() => ballPassed(ball.transform));
 
-
             broadcastCamComp.startingRunUp = false;                
-
-            StartCoroutine(CheckBallDirection());
 
             yield return new WaitUntil(() => deliveryDead);
 
@@ -257,13 +254,6 @@ public class Gameplay : MonoBehaviour
 
         return new Vector3(randomX, -4.427082f, randomZ);
     }
-
-    IEnumerator CheckBallDirection()
-    {
-        yield return null;
-        FieldManager.StartCheckField.Invoke(currentBall.transform.position);
-    }
-
 
     bool ballPassed(Transform ballT)
     {

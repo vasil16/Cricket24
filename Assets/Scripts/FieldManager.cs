@@ -31,35 +31,27 @@ public class FieldManager : MonoBehaviour
     {
         ball = Gameplay.instance.currentBall;
         ballWasAirBorne = ball.GetComponent<BallHit>().groundShot = false;
-        if (ball.GetComponent<BallHit>().secondTouch)
-        {
-            Debug.Log("fielder");
-            StartCoroutine(AssignFielders(ballAt));
-        }
-        else
-        {
-            Debug.Log("keepr");
-            StartCoroutine(KeeperReceive());
-        }
+        Debug.Log("fielder");
+        StartCoroutine(AssignFielders(ballAt));             
     }
 
     IEnumerator KeeperReceive()
     {
-        keeper.GetComponent<Animator>().enabled = true;
-        keeper.GetComponent<Fielder>().enabled = true;
-        keeper.GetComponent<Fielder>().ball = ball;
-        while (ball.GetComponent<BallHit>().keeperReceive == false)
-        {
-            keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
+        //keeper.GetComponent<Animator>().enabled = true;
+        //keeper.GetComponent<Fielder>().enabled = true;
+        //keeper.GetComponent<Fielder>().ball = ball;
+        //while (ball.GetComponent<BallHit>().keeperReceive == false)
+        //{
+        //    keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
+        //    yield return null;
+        //}
+        //while (ball.GetComponent<BallHit>().stopTriggered == false)
+        //{
+        //    if (ball.GetComponent<BallHit>().fielderReached) break;            
+        //    keeper.GetComponent<Fielder>().KeeperRecieve();
             yield return null;
-        }
-        while (ball.GetComponent<BallHit>().stopTriggered == false)
-        {
-            if (ball.GetComponent<BallHit>().fielderReached) break;            
-            keeper.GetComponent<Fielder>().KeeperRecieve();
-            yield return null;
-        }
-        Gameplay.instance.deliveryDead = true;        
+        //}
+        //Gameplay.instance.deliveryDead = true;        
     }
 
     IEnumerator AssignFielders(Vector3 ballAt)

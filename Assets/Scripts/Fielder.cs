@@ -7,7 +7,7 @@ using UnityEngine.Animations.Rigging;
 public class Fielder : MonoBehaviour
 {
     public float runSpeed, score, angleDiff, timeToReachLanding;
-    private Vector3 targetPosition, actualPos, actualRot, idleRightHand, idleLeftHand, idleRightShoulder, idleLeftShoulder,idleSpine;
+    private Vector3 targetPosition, actualPos, actualRot, idleRightHand, idleLeftHand;
     BallHit ballComp;
     Rigidbody ballRb;
     public Transform ball;
@@ -177,7 +177,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator StartField()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
         if (IsBallComingAtFielder() && ballComp.groundShot)
         {
             Debug.Log("Coming to fielder");
@@ -357,10 +357,10 @@ public class Fielder : MonoBehaviour
         ReachedBall();
     }
 
-    public void KeeperRecieve()
+    public void KeeperRecieve(Vector3 targetPosition)
     {
         Debug.Log("nam  " + gameObject.name);
-        rightHand.position = leftHand.position = ball.position;
+        rightHand.position = leftHand.position = targetPosition;
         leftHandIk.weight = rightHandIk.weight = 1;
     }
 
@@ -451,6 +451,8 @@ public class Fielder : MonoBehaviour
         ballRb.isKinematic = false;
         ballRb.AddForce(force, ForceMode.Impulse);
 
+        //fm.keeper.GetComponent<Fielder>().KeeperRecieve(ball.position);
+
         // Wait until the ball reaches close to the keeper
         while (!ballComp.keeperReceive)
         {
@@ -459,7 +461,7 @@ public class Fielder : MonoBehaviour
         }
         Debug.Log("fld done");
         // Mark the delivery as complete
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.3f);
         Gameplay.instance.deliveryDead = true;
 
         // Stop any other coroutines related to the fielder
@@ -526,12 +528,6 @@ public class Fielder : MonoBehaviour
 
         // The fielder should chase the ball if the ball is moving past the fielder in the direction of travel
         return distanceAlongDirection > 0;
-    }
-
-
-    private void OnDrawGizmos()
-    {
-        //Debug.DrawRay(FieldManager.hitBallPos, ball.position - FieldManager.hitBallPos, Color.red);
     }
 
     private Vector3 CalculateInterceptPosition(Vector3 ballPos, Vector3 ballVel, Vector3 fielderPos, Vector3 fielderRight)
@@ -618,6 +614,7 @@ public class Fielder : MonoBehaviour
             }
             targetPosition = position;
             targetPosition.y = transform.position.y;
+            //targetPosition = ballComp.shootMarker.transform.position;
             Debug.Log("ball still air will reach in time");
         }
         else
