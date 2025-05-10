@@ -92,16 +92,16 @@ public class BallHit : MonoBehaviour
             keeperReceive = true;
             if (secondTouch)
             {
-                rb.isKinematic = true;
+                //rb.isKinematic = true;
                 fieldedPlayer = other.gameObject;
                 fielderReached = true;
                 return;
             }
             else
             {
-                transform.position = other.transform.position;
-                stopTriggered = true;
-                rb.isKinematic = true;
+                //transform.position = other.transform.position;
+                //stopTriggered = true;
+                //rb.isKinematic = true;
             }
             
             keeperReceive = true;
@@ -112,7 +112,7 @@ public class BallHit : MonoBehaviour
             {
                 if(!fielderReached)
                 {
-                    rb.isKinematic = true;
+                    //rb.isKinematic = true;
                     fieldedPlayer = other.gameObject;
                     fielderReached = true;
                 }

@@ -205,7 +205,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator RunToBall()
     {
-        Vector3 moveDirection = (ball.position - transform.position).normalized;
+        Vector3 moveDirection = (targetPosition - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
         lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
         lookRotation.x = actualRot.x;
@@ -213,6 +213,11 @@ public class Fielder : MonoBehaviour
 
         while (!ballComp.fielderReached)
         {
+            if (ballComp.keeperReceive)
+            {
+                Gameplay.instance.deliveryDead = true;
+                break;
+            }
             if(ShouldChase(ball.position,ballRb.velocity,transform.position)&&ballComp.groundShot)
             {
                 Debug.Log("chasee");
@@ -281,6 +286,11 @@ public class Fielder : MonoBehaviour
         Debug.Log(gameObject.name + "  waiting for ball");
         while (!ballComp.fielderReached)
         {
+            if (ballComp.keeperReceive)
+            {
+                Gameplay.instance.deliveryDead = true;
+                break;
+            }
             Vector3 moveDirection = (ball.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
             lookRotation.x = actualRot.x;
