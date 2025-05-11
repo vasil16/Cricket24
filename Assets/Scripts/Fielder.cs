@@ -362,7 +362,7 @@ public class Fielder : MonoBehaviour
         animator.enabled = true;
         this.ball = ball;
         Debug.Log("nam  " + gameObject.name);
-        if(targetPosition.y>6f)
+        if(targetPosition.y>6.5f)
         {
             animator.Play("jump");
         }
@@ -448,8 +448,6 @@ public class Fielder : MonoBehaviour
         {
             rightHand.position = leftHand.position = ball.position;
             leftHandIk.weight = rightHandIk.weight = 1;
-            animator.SetIKPosition(AvatarIKGoal.RightHand, ball.position);
-            animator.SetIKPosition(AvatarIKGoal.LeftHand, ball.position);
             Vector3 toBall = ball.position - transform.position;
             float distance = toBall.magnitude;
             Vector3 toBallNormalized = toBall.normalized;
@@ -461,6 +459,19 @@ public class Fielder : MonoBehaviour
             float sideThresholdToDive = 0.5f;
             float diveDistanceThreshold = 2.5f;
             float frontThreshold = 0.6f;
+
+            if (!ballComp.groundShot)
+            {
+                animator.SetTrigger("StopField");
+                ballRb.isKinematic = true;
+                Gameplay.instance.deliveryDead = true;
+                Gameplay.instance.Out();
+                return;
+            }
+            else
+            {
+                //ballRb.isKinematic = true;
+            }
 
             if (forward > frontThreshold)
             {
@@ -495,17 +506,7 @@ public class Fielder : MonoBehaviour
             }
 
 
-            if (!ballComp.groundShot)
-            {
-                ballRb.isKinematic = true;
-                Gameplay.instance.deliveryDead = true;
-                Gameplay.instance.Out();
-                return;
-            }
-            else
-            {
-                //ballRb.isKinematic = true;
-            }            
+                        
             StartCoroutine(FielderPickupThrow());
         }
         else if(ballComp.fieldedPlayer == fm.keeper.gameObject)
@@ -544,6 +545,12 @@ public class Fielder : MonoBehaviour
         {
             timer += Time.deltaTime;
             yield return null; // wait for next frame
+        }
+
+        if(!ballComp.stopTriggered)
+        {
+            Gameplay.instance.deliveryDead = true;
+            yield break;
         }
 
         Vector3 lookDirection = (fm.stumps.position - transform.position).normalized;

@@ -2,14 +2,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Unity.Burst.Intrinsics;
+
 
 public class Gameplay : MonoBehaviour
 {
     public static Gameplay instance;
 
-    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler, overPanel, keeper;
+    [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler, overPanel, keeper, nonStrike;
     [SerializeField] RectTransform dragRect;
     [SerializeField] Vector3[] pitchPoints;
     [SerializeField] int balls, overs, wickets, randPitch;
@@ -20,6 +19,9 @@ public class Gameplay : MonoBehaviour
     [SerializeField] List<float> launchSpeeds;
     [SerializeField] Bat batter;
     [SerializeField] CameraLookAt broadcastCamComp;
+
+    [SerializeField] Vector3 [] ballDeliverPoint;
+    [SerializeField] int ballDeliverType;
 
     public float miRand, maRand, randomAngle;
     [SerializeField] float[] xArr = { -0.37f, -2.05f };
@@ -46,7 +48,7 @@ public class Gameplay : MonoBehaviour
 
     void Start()
     {
-        //ShiftEnd();
+        ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
         //Application.targetFrameRate = 60;
         //activeCams = FindObjectsOfType<CameraLookAt>();
@@ -59,6 +61,7 @@ public class Gameplay : MonoBehaviour
     IEnumerator LaunchBallsWithDelay()
     {
         batter.batterAnim.SetTrigger("ToWait");
+
         while (overs < 5 && !isGameOver)
         {
             yield return new WaitForSeconds(0.2f);
@@ -96,7 +99,14 @@ public class Gameplay : MonoBehaviour
 
             broadcastCamComp.startingRunUp = true;
 
-            Bowl.instance.anim.Play("bowl");
+            if (ballDeliverType == 0 || ballDeliverType == 2)
+            {
+                bowler.GetComponent<Animator>().Play("bowl");
+            }
+            else
+            {
+                bowler.GetComponent<Animator>().Play("bowlAround");
+            }
 
             //keeper.GetComponent<Animator>().SetTrigger("KeeperSteady");
 
@@ -158,7 +168,7 @@ public class Gameplay : MonoBehaviour
             {
                 overs++;
                 ballsLaunched = 0;
-                //ShiftEnd();
+                ShiftEnd();
             }
 
             UpdateScoreBoard(ball.GetComponent<BallHit>());            
@@ -220,16 +230,34 @@ public class Gameplay : MonoBehaviour
 
     void ShiftEnd()
     {
-        opp = Random.Range(0, 2) == 0;
-        if(opp)
+        //ballDeliverType = Random.Range(0, 4);
+
+        ballLaunchPos = ballDeliverPoint[ballDeliverType];
+        Vector3 nonStrikerPos = nonStrike.transform.position;
+        
+        switch (ballDeliverType)
         {
-            ballLaunchPos.z = 2.35f;
-            bowler.transform.position =  new Vector3(bowler.transform.position.x, bowler.transform.position.y, 2.466186f);
-        }
-        else
-        {
-            ballLaunchPos.z = -1.64f;
-            bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, -2.999954f);            
+            case 0:
+                
+                nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, -4f);
+                bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, 4.48f);
+                break;
+
+            case 1:
+                nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, -3.7f);
+                bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, 4.48f);
+                break;
+
+            case 2:
+                nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, 4.26f);
+                bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, -4f);
+                break;
+
+            case 3:
+                nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, -3.7f);
+                bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, 4.48f);
+                bowler = null;
+                break;
         }
     }
 

@@ -14,6 +14,8 @@ Material:
   m_ValidKeywords:
   - _ENVIRONMENTREFLECTIONS_OFF
   - _NORMALMAP
+  - _OCCLUSIONMAP
+  - _PARALLAXMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   - _SPECULARHIGHLIGHTS_OFF
   - _SPECULAR_SETUP
@@ -36,7 +38,7 @@ Material:
         m_Scale: {x: 6, y: 1}
         m_Offset: {x: 0, y: 1.97}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: af26d333eb83c4ab1a4e77519922c306, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3aab0d213ea9c4c769ff8c38ced9a4df, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -64,11 +66,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 92351a375e4a1440f82b0c8a559bca21, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 92351a375e4a1440f82b0c8a559bca21, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
