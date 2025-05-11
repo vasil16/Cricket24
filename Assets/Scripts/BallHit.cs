@@ -204,8 +204,6 @@ public class BallHit : MonoBehaviour
         return new Vector3(x, groundY, z);
     }
 
-
-
     IEnumerator checkTrajectory()
     {
         Debug.Log("startcheck");
@@ -241,7 +239,8 @@ public class BallHit : MonoBehaviour
                     Debug.Log("yess");
                     //shootMarker.transform.position = new Vector3(-82.23507f, hit.point.y, hit.point.z);
                     ballCatchPoint = new Vector3(-82.23507f, hit.point.y, hit.point.z);
-                    keeper.KeeperRecieve(ballCatchPoint);
+                    keeper.GetComponent<Fielder>().enabled = true;
+                    keeper.KeeperRecieve(ballCatchPoint, this.transform);
                     break; // stop if you found keeper
                 }
                 else

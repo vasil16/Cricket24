@@ -136,10 +136,6 @@ public class FieldManager : MonoBehaviour
         if (!bestFielders.Contains(fielders[0]))
         {
             StartCoroutine(KeeperRunToRecieve());
-            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
-            lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
-            keeper.transform.rotation = lookRotation;
         }
     }
 
@@ -152,7 +148,7 @@ public class FieldManager : MonoBehaviour
 
         while (Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z),new Vector2(stumps.position.x, stumps.position.z))>2f)
         {
-            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
+            Vector3 moveDirection = (ball.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
             lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
             keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);

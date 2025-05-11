@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Reflection;
 using UnityEngine;
@@ -16,10 +15,28 @@ public class Fielder : MonoBehaviour
     [SerializeField] AnimationClip runClip;
     [SerializeField] Transform rightHand, leftHand;
     [SerializeField] TwoBoneIKConstraint leftHandIk, rightHandIk;
+    [SerializeField] MultiAimConstraint headAim, neckAim;
+
+    string[] allTriggers = { "StopField", "Throw", "Pick", "DiveLeft", "DiveRight", "PickLeft", "PickRight" };
 
     public Animator animator;
     public float weight = 1.0f;
-   
+
+    private void OnEnable()
+    {
+        actualPos = transform.position;
+        actualRot = transform.rotation.eulerAngles;
+        idleRightHand = rightHand.localPosition;
+        idleLeftHand = leftHand.localPosition;
+        animator = GetComponent<Animator>();
+        if (runClip != null)
+        {
+            // Get all properties of the Transform component (or other components if needed)
+            //AddKeyframesFromComponent(transform, runClip);
+        }
+    }
+
+    #region AnimatioHelper
 
     void ResetToDefaultPose()
     {
@@ -56,23 +73,6 @@ public class Fielder : MonoBehaviour
         //    // You can add similar logic for other body parts if required
         //}
     }
-
-    private void OnEnable()
-    {
-        actualPos = transform.position;
-        actualRot = transform.rotation.eulerAngles;
-        idleRightHand = rightHand.localPosition;
-        idleLeftHand = leftHand.localPosition;
-        ResetToDefaultPose();
-
-        if (runClip != null)
-        {
-            // Get all properties of the Transform component (or other components if needed)
-            //AddKeyframesFromComponent(transform, runClip);
-        }
-    }
-
-    #region Animator
 
     //void OnAnimatorIK(int layerIndex)
     //{
@@ -187,7 +187,7 @@ public class Fielder : MonoBehaviour
         else
         {
             Debug.Log("away from fielder");
-            GetComponent<Animator>().Play("running");
+            animator.Play("running");
             StartCoroutine(RunToBall());
         }
         yield break;
@@ -229,7 +229,7 @@ public class Fielder : MonoBehaviour
             
             if (Gameplay.instance.deliveryDead)
             {
-                GetComponent<Animator>().SetTrigger("StopField");
+                animator.SetTrigger("StopField");
                 StopAllCoroutines();
                 yield break;
             }
@@ -264,7 +264,7 @@ public class Fielder : MonoBehaviour
 
                     if (IsBallComingAtFielder())
                     {
-                        GetComponent<Animator>().SetTrigger("StopField");
+                        animator.SetTrigger("StopField");
                         StartCoroutine(WaitForBall());
                     }
                     else
@@ -317,7 +317,7 @@ public class Fielder : MonoBehaviour
         {
             if (Gameplay.instance.deliveryDead)
             {
-                GetComponent<Animator>().SetTrigger("StopField");
+                animator.SetTrigger("StopField");
                 yield break;
             }
             Vector3 moveDirection = (ball.position - transform.position).normalized;
@@ -336,13 +336,13 @@ public class Fielder : MonoBehaviour
 
     IEnumerator TrackAndCatchBall()
     {
-        //GetComponent<Animator>().SetTrigger("Slow");
+        animator.SetTrigger("Slow");
         if (!ball) yield break;
         while (!ballComp.fielderReached)
         {
             if (Gameplay.instance.deliveryDead)
             {
-                GetComponent<Animator>().SetTrigger("StopField");
+                animator.SetTrigger("StopField");
                 yield break;
             }
             Vector3 moveDirection = (ball.position - transform.position).normalized;
@@ -357,15 +357,71 @@ public class Fielder : MonoBehaviour
         ReachedBall();
     }
 
-    public void KeeperRecieve(Vector3 targetPosition)
+    public void KeeperRecieve(Vector3 targetPosition, Transform ball)
     {
+        animator.enabled = true;
+        this.ball = ball;
         Debug.Log("nam  " + gameObject.name);
         if(targetPosition.y>6f)
         {
             animator.Play("jump");
         }
+        if(targetPosition.z > -2.13f)
+        {
+            //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
+            animator.Play("moveLeft");
+        }
+        if (targetPosition.z < -6.44f)
+        {
+            animator.Play("moveRight");
+        }
+        StartCoroutine(SetTarget());
         rightHand.position = leftHand.position = targetPosition;
         leftHandIk.weight = rightHandIk.weight = 1;
+        StartCoroutine(ReleaseTarget(targetPosition.z));
+    }
+
+    IEnumerator SetTarget()
+    {
+        Debug.Log("recive start");
+        float time = 0;
+        float duration = .4f;
+        float lerpValue = 0;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            lerpValue = Mathf.Lerp(0, 1, time / duration);
+            leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = lerpValue;
+            yield return null;
+        }
+    }
+
+    IEnumerator ReleaseTarget(float z)
+    {
+        while(!ball.GetComponent<BallHit>().stopTriggered)
+        {
+            yield return null;
+        }
+        float time = 0;
+        float duration = 0.5f;
+        float lerpValue=1;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            lerpValue = Mathf.Lerp(1, 0, time / duration);
+            leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = lerpValue;
+            yield return null;
+        }
+        if (z > -2.13f)
+        {
+            //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
+            animator.SetTrigger("MoveBackLeft");
+        }
+        if (z < -6.44f)
+        {
+            animator.SetTrigger("MoveBackRight");
+        }
+        Debug.Log("recive done");
     }
 
     public void KeeperReset()
@@ -377,40 +433,89 @@ public class Fielder : MonoBehaviour
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        leftHandIk.weight = 0;
-        rightHandIk.weight = 0;
-        GetComponent<Animator>().ResetTrigger("StopField");
-        //GetComponent<Animator>().enabled = false;
+        leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = 0;
+        foreach (string trigger in allTriggers)
+        {
+            animator.ResetTrigger(trigger);
+        }
+        animator.enabled = false;
         this.enabled = false;
     }
 
     void ReachedBall()
-    {
-        if (!ballComp.groundShot)
+    {        
+        if (ballComp.fieldedPlayer == this.gameObject)
         {
-            GetComponent<Animator>().SetTrigger("StopField");
-            Gameplay.instance.deliveryDead = true;
-            Gameplay.instance.Out();
-            return;
-        }
-        else
-        {
-            ballRb.isKinematic = true;
-        }
-        rightHand.position = leftHand.position = ball.position;
-        leftHandIk.weight = rightHandIk.weight = 1;
-        if(ballComp.fieldedPlayer == this.gameObject)
-        {
-            //GetComponent<Animator>().SetTrigger("Pick");
+            rightHand.position = leftHand.position = ball.position;
+            leftHandIk.weight = rightHandIk.weight = 1;
+            animator.SetIKPosition(AvatarIKGoal.RightHand, ball.position);
+            animator.SetIKPosition(AvatarIKGoal.LeftHand, ball.position);
+            Vector3 toBall = ball.position - transform.position;
+            float distance = toBall.magnitude;
+            Vector3 toBallNormalized = toBall.normalized;
+
+            float side = Vector3.Dot(transform.right, toBallNormalized);     // + right, - left
+            float forward = Vector3.Dot(transform.forward, toBallNormalized); // + in front, - behind
+
+            // Set some tuning thresholds
+            float sideThresholdToDive = 0.5f;
+            float diveDistanceThreshold = 2.5f;
+            float frontThreshold = 0.6f;
+
+            if (forward > frontThreshold)
+            {
+                if (Mathf.Abs(side) > sideThresholdToDive && distance > diveDistanceThreshold)
+                {
+                    // Ball is far to the side → dive
+                    if (side > 0)
+                        animator.SetTrigger("DiveRight");
+                    else
+                        animator.SetTrigger("DiveLeft");
+                }
+                else
+                {
+                    // Ball is close or centered → pick from front
+                    if(ball.position.y>6f)
+                    {
+                        animator.Play("jump");
+                    }
+                    else
+                    {
+                        animator.SetTrigger("Pick");
+                    }
+                }
+            }
+            else
+            {
+                // Ball is on side or behind, close enough to pick
+                if (side > 0)
+                    animator.SetTrigger("Pick");
+                else
+                    animator.SetTrigger("Pick");
+            }
+
+
+            if (!ballComp.groundShot)
+            {
+                ballRb.isKinematic = true;
+                Gameplay.instance.deliveryDead = true;
+                Gameplay.instance.Out();
+                return;
+            }
+            else
+            {
+                //ballRb.isKinematic = true;
+            }            
             StartCoroutine(FielderPickupThrow());
         }
         else if(ballComp.fieldedPlayer == fm.keeper.gameObject)
         {
+            animator.SetTrigger("StopField");
             Gameplay.instance.deliveryDead = true;
         }
         else
         {
-            GetComponent<Animator>().SetTrigger("StopField");
+            animator.SetTrigger("StopField");
             StopAllCoroutines();
             return;
         }
@@ -432,11 +537,22 @@ public class Fielder : MonoBehaviour
             StopAllCoroutines();
             yield break;
         }
-       
+
+        float timer = 0;
+
+        while (!ballComp.stopTriggered && timer < 2f)
+        {
+            timer += Time.deltaTime;
+            yield return null; // wait for next frame
+        }
+
         Vector3 lookDirection = (fm.stumps.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
         lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
         transform.rotation = lookRotation;
+
+        animator.SetTrigger("Throw");
+
         yield return new WaitForSeconds(0.4f);
 
         //ball.position = new Vector3(ball.position.x, 4f, ball.position.z);
@@ -607,7 +723,7 @@ public class Fielder : MonoBehaviour
 
     public void Initiate(Vector3 position, Transform ball)
     {
-        //GetComponent<Animator>().enabled = true;
+        animator.enabled = true;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
         ballComp = ball.GetComponent<BallHit>();
@@ -642,6 +758,7 @@ public class Fielder : MonoBehaviour
         //agent.Stop();
         //agent.ResetPath();
         canThrow = false;
+        animator.SetTrigger("StopField");
         StopCoroutine(StartField());
         rightHand.localPosition = idleRightHand;
         leftHand.localPosition = idleLeftHand;
@@ -649,12 +766,15 @@ public class Fielder : MonoBehaviour
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        leftHandIk.weight = 0;
-        rightHandIk.weight = 0;
-        GetComponent<Animator>().ResetTrigger("StopField");
-        GetComponent<Animator>().ResetTrigger("Throw");
-        GetComponent<Animator>().ResetTrigger("Pick");
-        //GetComponent<Animator>().enabled = false;
+        leftHandIk.weight = rightHandIk.weight = 0;
+        animator.ResetTrigger("StopField");
+        animator.ResetTrigger("Throw");
+        animator.ResetTrigger("Pick");
+        foreach (string trigger in allTriggers)
+        {
+            animator.ResetTrigger(trigger);
+        }
+        animator.enabled = false;
         this.enabled = false;
     }
 }
