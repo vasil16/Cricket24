@@ -363,10 +363,7 @@ public class Fielder : MonoBehaviour
         animator.enabled = true;
         this.ball = ball;
         Debug.Log("nam  " + gameObject.name);
-        if (targetPosition.y > 6.5f)
-        {
-            animator.Play("jump");
-        }
+
         if (targetPosition.z > -2.13f)
         {
             //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
@@ -376,6 +373,10 @@ public class Fielder : MonoBehaviour
         {
             animator.Play("moveRight");
         }
+        if (targetPosition.y > 6.5f)
+        {
+            animator.Play("jump");
+        }        
 
         //float side = 0;
         //float jump = 0;

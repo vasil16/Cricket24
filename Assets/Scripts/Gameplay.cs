@@ -231,7 +231,7 @@ public class Gameplay : MonoBehaviour
     void ShiftEnd()
     {
         bowler.GetComponent<Animator>().enabled = false;
-        ballDeliverType = Random.Range(0, 4);
+        ballDeliverType = Random.Range(0, 3);
         ballLaunchPos = ballDeliverPoint[ballDeliverType];
         Vector3 nonStrikerPos = nonStrike.transform.position;
         
