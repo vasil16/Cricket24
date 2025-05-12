@@ -29,29 +29,62 @@ public class FieldManager : MonoBehaviour
 
     public void AssignBestFielders(Vector3 ballAt)
     {
+        bestFielders.Clear();
         ball = Gameplay.instance.currentBall;
         ballWasAirBorne = ball.GetComponent<BallHit>().groundShot = false;
         Debug.Log("fielder");
-        StartCoroutine(AssignFielders(ballAt));             
+        //StartCoroutine(AssignFielders(ballAt));
+        StartCoroutine(DelayAndCheck(ballAt));
+
     }
 
-    IEnumerator KeeperReceive()
+    IEnumerator DelayAndCheck(Vector3 ballAt)
     {
-        //keeper.GetComponent<Animator>().enabled = true;
-        //keeper.GetComponent<Fielder>().enabled = true;
-        //keeper.GetComponent<Fielder>().ball = ball;
-        //while (ball.GetComponent<BallHit>().keeperReceive == false)
-        //{
-        //    keeper.transform.position = new Vector3(keeper.transform.position.x, keeper.transform.position.y, Mathf.MoveTowards(keeper.position.z, ball.position.z, 20 * Time.deltaTime));
-        //    yield return null;
-        //}
-        //while (ball.GetComponent<BallHit>().stopTriggered == false)
-        //{
-        //    if (ball.GetComponent<BallHit>().fielderReached) break;            
-        //    keeper.GetComponent<Fielder>().KeeperRecieve();
-            yield return null;
-        //}
-        //Gameplay.instance.deliveryDead = true;        
+        yield return new WaitForSeconds(0.2f);
+        Vector2 ballPos2D = new Vector2(ball.position.x, ball.position.z);
+        Vector2 ballAt2D = new Vector2(ballAt.x, ballAt.z);
+        Vector2 dir2D = (ballPos2D - ballAt2D).normalized;
+
+        // Convert to Vector3 flat ray
+        Vector3 flatDirection = new Vector3(dir2D.x, 0, dir2D.y);
+        Ray ballPath = new Ray(new Vector3(ballAt.x, 0.2f, ballAt.z), flatDirection);
+
+        RaycastHit[] hits = Physics.RaycastAll(ballPath, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
+        foreach (var hit in hits)
+        {
+            if (hit.collider.CompareTag("rayTest"))
+            {
+                Debug.Log("Added fielder  " + hit.collider.gameObject.name);
+                Fielder fielder = hit.collider.transform.parent.GetComponent<Fielder>();
+                fielder.enabled = true;
+                fielder.targetPosition = hit.point;
+                bestFielders.Add(fielder);
+            }
+            else
+            {
+                Debug.Log("sum else");
+            }
+        }
+        foreach (var fielder in bestFielders)
+        {
+            if (!fielder.startedRun)
+            {                
+                fielder.GetComponent<Animator>().enabled = true;
+                fielder.startedRun = true;
+                fielder.Initiate(landPos, ball);
+            }
+        }
+        if (!bestFielders.Contains(fielders[0]))
+        {
+            StartCoroutine(KeeperRunToRecieve());
+        }
+        else
+        {
+            if(bestFielders.Count>=3)
+            {
+                bestFielders.Remove(fielders[0]);
+            }
+        }
     }
 
     IEnumerator AssignFielders(Vector3 ballAt)
@@ -258,7 +291,6 @@ public class FieldManager : MonoBehaviour
         landingPosition.y = fielders[0].transform.position.y; // Align with fielder's height
 
         // Debug visuals
-        Debug.DrawLine(ballStartPosition, landingPosition, Color.green, 2f);
         marker.position = landingPosition;
 
         Debug.Log($"Predicted landing position: {landingPosition} (Time to land: {timeToLand}s)");

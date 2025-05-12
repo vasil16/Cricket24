@@ -38,7 +38,8 @@ public class CameraLookAt : MonoBehaviour
 
     void Update()
     {
-        if(ball == null)
+        if (Gameplay.instance && Gameplay.instance.isGameOver) this.enabled=false;
+        if (ball == null)
         {
             if(MainGame.instance.camIndex==1 && startingRunUp)
             {
@@ -130,7 +131,7 @@ public class CameraLookAt : MonoBehaviour
     }
 
     public void LookAt()
-    {
+    {        
         cam.transform.LookAt(ball.transform);        
     }
 }

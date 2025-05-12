@@ -34,8 +34,7 @@ public class Gameplay : MonoBehaviour
     public Camera sideCam;
 
     public bool isGameOver = false;
-    public bool readyToBowl = true;
-    public bool deliveryDead, opp, legalDelivery;
+    public bool deliveryDead, opp, legalDelivery, readyToBowl;
 
     private void Awake()
     {
@@ -48,7 +47,6 @@ public class Gameplay : MonoBehaviour
     void Start()
     {
         ballerTrueScale = bowler.transform.localScale;
-        Debug.Log("b sca " + bowler.transform.localScale);
         ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
         //activeCams = FindObjectsOfType<CameraLookAt>();
@@ -72,7 +70,9 @@ public class Gameplay : MonoBehaviour
 
             ball.transform.localScale = ballScale;
 
-            Vector3 ballPitchPoint = pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+            Vector3 ballPitchPoint = GetRandomPointWithinBounds();
+
+            //Vector3 ballPitchPoint = pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
 
             ball.transform.localPosition = ballOriginPoint;
 
@@ -107,7 +107,7 @@ public class Gameplay : MonoBehaviour
 
             mark.transform.position = ballPitchPoint;
             rb = ball.GetComponent<Rigidbody>();
-            yield return new WaitUntil(() => Bowl.instance.ready);
+            yield return new WaitUntil(() => readyToBowl);
             ball.transform.SetParent(null,true);
             ball.transform.position = ballLaunchPos;
             rb.isKinematic = true;
@@ -117,7 +117,7 @@ public class Gameplay : MonoBehaviour
             ball.SetActive(true);
             
 
-            Bowl.instance.ready = false;
+            readyToBowl = false;
 
             //----------------------------------
             {
@@ -231,7 +231,7 @@ public class Gameplay : MonoBehaviour
     void ShiftEnd()
     {
         bowler.GetComponent<Animator>().enabled = false;
-        ballDeliverType = Random.Range(0, 3);
+        //ballDeliverType = Random.Range(0, 3);
         ballLaunchPos = ballDeliverPoint[ballDeliverType];
         Vector3 nonStrikerPos = nonStrike.transform.position;
         

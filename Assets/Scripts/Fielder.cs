@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
 public class Fielder : MonoBehaviour
 {
     public float runSpeed, score, angleDiff, timeToReachLanding;
-    private Vector3 targetPosition, actualPos, actualRot, idleRightHand, idleLeftHand;
+    private Vector3 actualPos, actualRot, idleRightHand, idleLeftHand;
+    public Vector3 targetPosition;
     BallHit ballComp;
     Rigidbody ballRb;
     public Transform ball;
@@ -376,7 +378,11 @@ public class Fielder : MonoBehaviour
         if (targetPosition.y > 6.5f)
         {
             animator.Play("jump");
-        }        
+        }
+        else if(targetPosition.z < 0.27f)
+        {
+            animator.SetTrigger("CrouchForward");
+        }
 
         //float side = 0;
         //float jump = 0;
@@ -431,15 +437,16 @@ public class Fielder : MonoBehaviour
         }
         //animator.SetFloat("Side", 0);
         //animator.SetFloat("Jump", 0);
-        if (z > -2.13f)
-        {
-            //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
-            animator.SetTrigger("MoveBackLeft");
-        }
-        if (z < -6.44f)
-        {
-            animator.SetTrigger("MoveBackRight");
-        }
+        //if (z > -2.13f)
+        //{
+        //    //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
+        //    animator.SetTrigger("MoveBackLeft");
+        //}
+        //if (z < -6.44f)
+        //{
+        //    animator.SetTrigger("MoveBackRight");
+        //}
+        animator.SetTrigger("StopField");
         Debug.Log("recive done");
     }
 
@@ -453,7 +460,7 @@ public class Fielder : MonoBehaviour
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = 0;
+        leftHandIk.weight = rightHandIk.weight = 0;
         foreach (string trigger in allTriggers)
         {
             animator.ResetTrigger(trigger);
@@ -702,8 +709,6 @@ public class Fielder : MonoBehaviour
 
             Ray ballRay = new Ray(FieldManager.hitBallPos, rayDirection.normalized);
 
-            Debug.DrawRay(FieldManager.hitBallPos, (ballPos - FieldManager.hitBallPos).normalized * 1100f, Color.red, 5f);
-
             RaycastHit hitInfo;
 
             if (Physics.Raycast(ballRay, out hitInfo, 1100f))
@@ -712,7 +717,6 @@ public class Fielder : MonoBehaviour
                 {
                     boundaryHitPoint = hitInfo.point;
                     boundaryHitPoint.y = fielderPos.y; // Align with the fielder's height
-                    Debug.DrawLine(ballPos, boundaryHitPoint, Color.blue, 2f); // For visualization
                     Debug.Log("hitt at " + boundaryHitPoint);
                 }
             }
@@ -738,7 +742,6 @@ public class Fielder : MonoBehaviour
         }
 
         interceptPosition.y = fielderPos.y; // Align with fielder height
-        Debug.DrawLine(fielderPos, interceptPosition, Color.green, 2f); // For visualization
 
         if (FielderCanReachOnTime(interceptPosition) || boundaryHitPoint == Vector3.zero)
         {            
@@ -771,7 +774,7 @@ public class Fielder : MonoBehaviour
                 position = boundaryPoint + offset;
 
             }
-            targetPosition = position;
+            //targetPosition = position;
             targetPosition.y = transform.position.y;
             //targetPosition = ballComp.shootMarker.transform.position;
             Debug.Log("ball still air will reach in time");

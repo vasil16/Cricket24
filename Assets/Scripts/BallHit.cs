@@ -211,28 +211,11 @@ public class BallHit : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         Vector3 lodgePosition = transform.position;
         Ray ray = new Ray(pitchPoint, lodgePosition - pitchPoint);
-        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 10f);
-
-        //if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide))
-        //{
-        //    Debug.Log("summn");
-        //    if (hit.collider.gameObject.CompareTag("keeper"))
-        //    {
-        //        Debug.Log("yess");
-        //        shootMarker.transform.position = new Vector3(-84.23507f, hit.point.y, hit.point.z);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log(hit.collider.gameObject.name);
-        //    }
-        //}
 
         RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
 
         if (hits.Length > 0)
         {
-            Debug.Log("something was hit");
-
             foreach (var hit in hits)
             {
                 if (hit.collider.CompareTag("keeper"))
@@ -243,10 +226,6 @@ public class BallHit : MonoBehaviour
                     keeper.GetComponent<Fielder>().enabled = true;
                     keeper.KeeperRecieve(ballCatchPoint, this.transform);
                     break; // stop if you found keeper
-                }
-                else
-                {
-                    Debug.Log("Hit: " + hit.collider.name);
                 }
             }
         }
