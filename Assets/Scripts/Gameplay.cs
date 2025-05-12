@@ -10,13 +10,13 @@ public class Gameplay : MonoBehaviour
 
     [SerializeField] GameObject lostPanel, pauseBtn, mark, bails, ball, groundBounds, bat, bowler, overPanel, keeper, nonStrike;
     [SerializeField] RectTransform dragRect;
-    [SerializeField] Vector3[] pitchPoints;
-    [SerializeField] int balls, overs, wickets, randPitch;
-    [SerializeField] Vector3 ballLaunchPos, bound1, bound2, bound3, bound4, ballOriginPoint, ballScale;
+    [SerializeField] int balls, overs, wickets;
+    [SerializeField] Vector3 ballLaunchPos, bound1, bound2, bound3, bound4, ballOriginPoint, ballScale, ballerTrueScale;
     [SerializeField] float speedMult, pitchXOffset, ballStopPoint;
     [SerializeField] public Transform batCenter, currentBall, bb, bowlerPalm, center;
     [SerializeField] Animator machineAnim;
     [SerializeField] List<float> launchSpeeds;
+    [SerializeField] List<PitchPoints> pitchPoints;
     [SerializeField] Bat batter;
     [SerializeField] CameraLookAt broadcastCamComp;
 
@@ -24,7 +24,6 @@ public class Gameplay : MonoBehaviour
     [SerializeField] int ballDeliverType;
 
     public float miRand, maRand, randomAngle;
-    [SerializeField] float[] xArr = { -0.37f, -2.05f };
 
     public CameraLookAt[] activeCams;
     public Bounds stadiumBounds;
@@ -48,9 +47,10 @@ public class Gameplay : MonoBehaviour
 
     void Start()
     {
+        ballerTrueScale = bowler.transform.localScale;
+        Debug.Log("b sca " + bowler.transform.localScale);
         ShiftEnd();
         StartCoroutine(LaunchBallsWithDelay());
-        //Application.targetFrameRate = 60;
         //activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;
@@ -68,16 +68,11 @@ public class Gameplay : MonoBehaviour
 
             deliveryDead = false;
 
-            randPitch = Random.Range(0, 20);
-
-            //Vector3 ballPitchPoint = pitchPoints[randPitch];
-
-
             ball.transform.SetParent(bowlerPalm,true);
 
             ball.transform.localScale = ballScale;
 
-            Vector3 ballPitchPoint = GetRandomPointWithinBounds();
+            Vector3 ballPitchPoint = pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
 
             ball.transform.localPosition = ballOriginPoint;
 
@@ -85,11 +80,10 @@ public class Gameplay : MonoBehaviour
 
             Vector3 direction = (ballPitchPoint - ballLaunchPos).normalized;
 
-            float speed = 80 * 0.25f;
+            float speed = 142;
 
             Vector3 force = direction * speed;
 
-            //mark.transform.position = ballPitchPoint;
 
             yield return new WaitForSeconds(1f);
 
@@ -99,6 +93,7 @@ public class Gameplay : MonoBehaviour
 
             broadcastCamComp.startingRunUp = true;
 
+            bowler.GetComponent<Animator>().enabled = true;
             if (ballDeliverType == 0 || ballDeliverType == 2)
             {
                 bowler.GetComponent<Animator>().Play("bowl");
@@ -109,8 +104,6 @@ public class Gameplay : MonoBehaviour
             }
 
             //keeper.GetComponent<Animator>().SetTrigger("KeeperSteady");
-
-            //mark.transform.position = PredictLandingPosition(ball.transform.position, force * 10);
 
             mark.transform.position = ballPitchPoint;
             rb = ball.GetComponent<Rigidbody>();
@@ -125,11 +118,52 @@ public class Gameplay : MonoBehaviour
             
 
             Bowl.instance.ready = false;
-            rb.WakeUp();
-            rb.AddTorque(Vector3.forward * -10);
-            rb.AddForce(force, ForceMode.Impulse);
 
-            //LaunchBallToPitchPoint(ballLaunchPos, ballPitchPoint);
+            //----------------------------------
+            {
+                Vector3 toTarget = ballPitchPoint - ballLaunchPos;
+                Vector3 toTargetXZ = new Vector3(toTarget.x, 0, toTarget.z);
+                float y = toTarget.y; // This should be negative if the target is below
+                float xz = toTargetXZ.magnitude;
+                float gravity = Mathf.Abs(Physics.gravity.y);
+                float speedSquared = speed * speed;
+
+                // Proper discriminant formula for projectile motion from height
+                float discriminant = speedSquared * speedSquared - gravity * (gravity * xz * xz + 2 * y * speedSquared);
+
+                Debug.Log($"y = {y}, xz = {xz}, speed = {speed}, discriminant = {discriminant}");
+
+                if (discriminant < 0f)
+                {
+                    Debug.LogWarning("No valid firing solution: speed too low or target too far.");
+                    yield break; // Exit early
+                }
+
+                float discRoot = Mathf.Sqrt(discriminant);
+
+                // Use lower angle for a flatter arc
+                float angle = Mathf.Atan2(speedSquared - discRoot, gravity * xz);
+
+                // Compose launch velocity vector
+                Vector3 velocity = toTargetXZ.normalized * Mathf.Cos(angle) * speed;
+                velocity.y = Mathf.Sin(angle) * speed;
+
+                // Reset and apply to Rigidbody
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.WakeUp();
+                rb.AddForce(velocity, ForceMode.VelocityChange);
+                rb.AddTorque(Vector3.forward * -10f, ForceMode.Impulse);
+            }
+            //----------------------------------
+
+
+
+
+            //rb.WakeUp();
+            //rb.AddTorque(Vector3.forward * -10);
+            //rb.AddForce(force, ForceMode.Impulse);
+
 
             foreach (CameraLookAt cam in activeCams)
             {
@@ -193,72 +227,41 @@ public class Gameplay : MonoBehaviour
         batter.batterAnim.Play("trigger");
     }
 
-    private void LaunchBallToPitchPoint(Vector3 ballLaunchPos, Vector3 ballPitchPoint)
-    {
-        // Gravity constant (you can adjust this based on your scene's gravity)
-        float landDistance = Mathf.Abs(ballLaunchPos.x - ballPitchPoint.x);
-
-        float gravity = Physics.gravity.y;
-
-        // Distance from the launch position to the target pitch point
-        float distance = Vector3.Distance(ballLaunchPos, ballPitchPoint);
-
-        // The desired time to reach the target (this is an estimate, adjust as needed)
-        float timeToReachTarget = 0.58f; // Change this based on how fast you want the ball to travel
-
-        Debug.Log("speeed" + timeToReachTarget);
-
-        // Calculate the initial velocity required to reach the target point
-        float verticalSpeed = (ballPitchPoint.y - ballLaunchPos.y - 0.5f * gravity * Mathf.Pow(timeToReachTarget, 2)) / timeToReachTarget;
-
-        // Calculate the horizontal velocity (ignoring gravity in horizontal direction)
-        Vector3 horizontalDirection = (ballPitchPoint - ballLaunchPos);
-        horizontalDirection.y = 0; // Ignore vertical direction for horizontal velocity calculation
-        Vector3 horizontalVelocity = horizontalDirection.normalized * (distance / timeToReachTarget);
-
-        // Combine vertical and horizontal components to get the final velocity
-        Vector3 initialVelocity = horizontalVelocity;
-        initialVelocity.y = verticalSpeed;
-
-        // Apply the velocity to the ball's Rigidbody
-        Rigidbody rb = ball.GetComponent<Rigidbody>();
-        rb.velocity = initialVelocity; // Directly set the velocity to simulate the launch
-
-        // Optional: If you want to add torque for spin, you can add it here
-        rb.AddTorque(Vector3.forward * -10);
-    }
 
     void ShiftEnd()
     {
-        //ballDeliverType = Random.Range(0, 4);
-
+        bowler.GetComponent<Animator>().enabled = false;
+        ballDeliverType = Random.Range(0, 4);
         ballLaunchPos = ballDeliverPoint[ballDeliverType];
         Vector3 nonStrikerPos = nonStrike.transform.position;
         
         switch (ballDeliverType)
         {
-            case 0:
-                
-                nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, -4f);
-                bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, 4.48f);
+            case 0:                
+                nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, 4.26f);
+                bowler.transform.localScale = ballerTrueScale;
+                bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, -4f);
                 break;
 
             case 1:
                 nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, -3.7f);
+                bowler.transform.localScale = ballerTrueScale;
                 bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, 4.48f);
                 break;
 
             case 2:
                 nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, 4.26f);
+                bowler.transform.localScale = new Vector3(ballerTrueScale.x * -1,ballerTrueScale.y, ballerTrueScale.z);
                 bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, -4f);
                 break;
 
             case 3:
                 nonStrike.transform.position = new Vector3(nonStrikerPos.x, nonStrikerPos.y, -3.7f);
+                bowler.transform.localScale = new Vector3(ballerTrueScale.x * -1, ballerTrueScale.y, ballerTrueScale.z);
                 bowler.transform.position = new Vector3(bowler.transform.position.x, bowler.transform.position.y, 4.48f);
-                bowler = null;
                 break;
         }
+        //bowler.GetComponent<Animator>().enabled = true;
     }
 
     Vector3 GenerateRandomPointOnPlane()
@@ -424,4 +427,10 @@ public class Gameplay : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+}
+
+[System.Serializable]
+public class PitchPoints
+{
+    public Vector3[] points;
 }

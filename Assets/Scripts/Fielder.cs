@@ -337,6 +337,7 @@ public class Fielder : MonoBehaviour
     IEnumerator TrackAndCatchBall()
     {
         animator.SetTrigger("Slow");
+        animator.SetTrigger("StopField");
         if (!ball) yield break;
         while (!ballComp.fielderReached)
         {
@@ -362,11 +363,11 @@ public class Fielder : MonoBehaviour
         animator.enabled = true;
         this.ball = ball;
         Debug.Log("nam  " + gameObject.name);
-        if(targetPosition.y>6.5f)
+        if (targetPosition.y > 6.5f)
         {
             animator.Play("jump");
         }
-        if(targetPosition.z > -2.13f)
+        if (targetPosition.z > -2.13f)
         {
             //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
             animator.Play("moveLeft");
@@ -375,6 +376,18 @@ public class Fielder : MonoBehaviour
         {
             animator.Play("moveRight");
         }
+
+        //float side = 0;
+        //float jump = 0;
+
+        //if (targetPosition.z < -6.44) side = 1; 
+        //else if (targetPosition.z > -2) side = -1;
+
+        //if (targetPosition.y > 6.5f) jump = 1;
+
+        //animator.SetFloat("Side", side);
+        //animator.SetFloat("Jump", jump);
+
         StartCoroutine(SetTarget());
         rightHand.position = leftHand.position = targetPosition;
         leftHandIk.weight = rightHandIk.weight = 1;
@@ -389,6 +402,7 @@ public class Fielder : MonoBehaviour
         float lerpValue = 0;
         while (time <= duration)
         {
+            if (ball.GetComponent<BallHit>().secondTouch) yield break;
             time += Time.deltaTime;
             lerpValue = Mathf.Lerp(0, 1, time / duration);
             leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = lerpValue;
@@ -398,8 +412,10 @@ public class Fielder : MonoBehaviour
 
     IEnumerator ReleaseTarget(float z)
     {
-        while(!ball.GetComponent<BallHit>().stopTriggered)
+        float timer = 0;
+        while(!ball.GetComponent<BallHit>().stopTriggered&&timer<3f&&!Gameplay.instance.deliveryDead)
         {
+            timer += Time.deltaTime;
             yield return null;
         }
         float time = 0;
@@ -412,6 +428,8 @@ public class Fielder : MonoBehaviour
             leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = lerpValue;
             yield return null;
         }
+        //animator.SetFloat("Side", 0);
+        //animator.SetFloat("Jump", 0);
         if (z > -2.13f)
         {
             //animator.SetIKPosition(AvatarIKGoal.LeftFoot,)
@@ -427,6 +445,7 @@ public class Fielder : MonoBehaviour
     public void KeeperReset()
     {
         Debug.Log("reset ");
+        animator.SetTrigger("StopField");
         rightHand.localPosition = idleRightHand;
         leftHand.localPosition = idleLeftHand;
         ball = null;
@@ -443,7 +462,7 @@ public class Fielder : MonoBehaviour
     }
 
     void ReachedBall()
-    {        
+    {
         if (ballComp.fieldedPlayer == this.gameObject)
         {
             rightHand.position = leftHand.position = ball.position;
@@ -486,7 +505,7 @@ public class Fielder : MonoBehaviour
                 else
                 {
                     // Ball is close or centered → pick from front
-                    if(ball.position.y>6f)
+                    if (ball.position.y > 6f)
                     {
                         animator.Play("jump");
                     }
@@ -505,21 +524,24 @@ public class Fielder : MonoBehaviour
                     animator.SetTrigger("Pick");
             }
 
-
-                        
             StartCoroutine(FielderPickupThrow());
         }
-        else if(ballComp.fieldedPlayer == fm.keeper.gameObject)
-        {
-            animator.SetTrigger("StopField");
-            Gameplay.instance.deliveryDead = true;
-        }
+
         else
         {
             animator.SetTrigger("StopField");
             StopAllCoroutines();
-            return;
+            if (ballComp.fieldedPlayer == fm.keeper.gameObject)
+            {
+               Gameplay.instance.deliveryDead = true;
+            }
+            else
+            {
+                return;
+            }
         }
+
+        
     }
 
     bool canThrow;

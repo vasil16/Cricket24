@@ -11,16 +11,10 @@ public class Bowl : MonoBehaviour
 
     public bool ready;
 
-    public Animator anim;
 
     private void Awake()
     {
         instance = this;
-    }
-
-    private void Start()
-    {
-        anim = GetComponent<Animator>();
     }
 
     public void Deliver()

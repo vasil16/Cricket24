@@ -50,6 +50,7 @@ public class BallHit : MonoBehaviour
                 if (fielderReached) return;
                 soundFx.PlayOneShot(wicketFx);
                 Gameplay.instance.Out();
+                Gameplay.instance.deliveryDead = true;
                 break;
 
             case "pitch":
