@@ -14,9 +14,9 @@ public class Effector : MonoBehaviour
     private void Update()
     {
         float averageWeight = (positionWeight + rotationWeight + pullWeight) / 3.0f;
-        var material = GetComponent<Renderer>().material;
-        Color color = Color.magenta;
-        material.color = SampleUtility.FadeEffectorColorByWeight(color, averageWeight);
+        //var material = GetComponent<Renderer>().material;
+        //Color color = Color.magenta;
+        //material.color = SampleUtility.FadeEffectorColorByWeight(color, averageWeight);
     }
 }
 

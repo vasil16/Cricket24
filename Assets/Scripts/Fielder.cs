@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections;
 using System.Reflection;
 using TMPro;
@@ -15,14 +16,15 @@ public class Fielder : MonoBehaviour
     public bool canReachInTime, startedRun;
     [SerializeField] FieldManager fm;
     [SerializeField] AnimationClip runClip;
-    [SerializeField] Transform rightHand, leftHand;
-    [SerializeField] TwoBoneIKConstraint leftHandIk, rightHandIk;
+    public Transform rightHand, leftHand;
     [SerializeField] MultiAimConstraint headAim, neckAim;
+    public FielderIK ikControl;
+    List<Effector> effectors;
+    [SerializeField] GameObject rayTestObject;
 
     string[] allTriggers = { "StopField", "Throw", "Pick", "DiveLeft", "DiveRight", "PickLeft", "PickRight" };
 
     public Animator animator;
-    public float weight = 1.0f;
 
     private void OnEnable()
     {
@@ -36,6 +38,14 @@ public class Fielder : MonoBehaviour
             // Get all properties of the Transform component (or other components if needed)
             //AddKeyframesFromComponent(transform, runClip);
         }
+        rayTestObject.SetActive(false);
+        ikControl = GetComponent<FielderIK>();
+        //transform.GetChild(transform.childCount - 1).GetComponent<CapsuleCollider>().center = new Vector3(-0.01712517f, 0.3118165f, 1.055462f);
+    }
+
+    private void OnDisable()
+    {
+        rayTestObject.SetActive(true);
     }
 
     #region AnimatioHelper
@@ -227,6 +237,7 @@ public class Fielder : MonoBehaviour
             if(ShouldChase(ball.position,ballRb.velocity,transform.position)&&ballComp.groundShot)
             {
                 Debug.Log("chasee");
+                //transform.GetChild(transform.childCount - 1).GetComponent<CapsuleCollider>().center = new Vector3(-0.01712517f, 0.3118165f, -1.15f);
                 StartCoroutine(CollectBall());
                 yield break;
             }           
@@ -246,7 +257,7 @@ public class Fielder : MonoBehaviour
                 {
                     if(ballComp.fielderReached)
                     {
-                        ReachedBall();
+                        StartCoroutine(ReachedBall());
                         StopAllCoroutines();
                         yield break;
                     }
@@ -259,12 +270,11 @@ public class Fielder : MonoBehaviour
             else
             {
                 if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 3f)
-                {
-                    Debug.Log(gameObject.name + " reached target go for collection");
+                {                    
                     if(ballComp.fielderReached)
                     {
-                        ReachedBall();
-                        StopAllCoroutines();
+                        Debug.Log(gameObject.name + " reached target go for collection");
+                        StartCoroutine(ReachedBall());
                         yield break;
                     }
 
@@ -284,7 +294,7 @@ public class Fielder : MonoBehaviour
         }
         Debug.Log("runningtoball");
 
-        ReachedBall();
+        StartCoroutine(ReachedBall());
     }
 
     IEnumerator WaitForBall()
@@ -314,7 +324,7 @@ public class Fielder : MonoBehaviour
             }
             yield return null;
         }
-        ReachedBall();
+        StartCoroutine(ReachedBall());
     }
 
     IEnumerator CollectBall()
@@ -326,6 +336,7 @@ public class Fielder : MonoBehaviour
                 animator.SetTrigger("StopField");
                 yield break;
             }
+            Debug.Log("chasing");
             Vector3 moveDirection = (ball.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
             lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
@@ -336,7 +347,7 @@ public class Fielder : MonoBehaviour
         }
 
         Debug.Log("reached collection");
-        ReachedBall();
+        StartCoroutine(ReachedBall());
         yield return null;
     }
 
@@ -361,7 +372,7 @@ public class Fielder : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * 0.8f * Time.deltaTime);
             yield return null;
         }
-        ReachedBall();
+        StartCoroutine(ReachedBall());
     }
 
     public void KeeperRecieve(Vector3 targetPosition, Transform ball)
@@ -405,7 +416,7 @@ public class Fielder : MonoBehaviour
 
         StartCoroutine(SetTarget());
         rightHand.position = leftHand.position = targetPosition;
-        leftHandIk.weight = rightHandIk.weight = 1;
+        ikControl.SetIKWeight(1);
         StartCoroutine(ReleaseTarget(targetPosition.z));
     }
 
@@ -420,7 +431,7 @@ public class Fielder : MonoBehaviour
             if (ball.GetComponent<BallHit>().secondTouch) yield break;
             time += Time.deltaTime;
             lerpValue = Mathf.Lerp(0, 1, time / duration);
-            leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = lerpValue;
+            ikControl.SetIKWeight(lerpValue);
             yield return null;
         }
     }
@@ -440,7 +451,7 @@ public class Fielder : MonoBehaviour
         {
             time += Time.deltaTime;
             lerpValue = Mathf.Lerp(1, 0, time / duration);
-            leftHandIk.weight = rightHandIk.weight = headAim.weight = neckAim.weight = lerpValue;
+            ikControl.SetIKWeight(lerpValue);
             yield return null;
         }
         //animator.SetFloat("Side", 0);
@@ -468,7 +479,7 @@ public class Fielder : MonoBehaviour
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        leftHandIk.weight = rightHandIk.weight = 0;
+        ikControl.SetIKWeight(0);
         foreach (string trigger in allTriggers)
         {
             animator.ResetTrigger(trigger);
@@ -477,23 +488,87 @@ public class Fielder : MonoBehaviour
         this.enabled = false;
     }
 
-    void ReachedBall()
+    IEnumerator ReachedBall()
     {
         if (ballComp.fieldedPlayer == this.gameObject)
         {
             rightHand.position = leftHand.position = ball.position;
-            leftHandIk.weight = rightHandIk.weight = 1;
-            Vector3 toBall = ball.position - transform.position;
-            float distance = toBall.magnitude;
-            Vector3 toBallNormalized = toBall.normalized;
+            float timer = 0;
+            float duration = 0.6f;
+            float lerpValue = 0;
+            while (timer <= duration)
+            {
+                timer += Time.deltaTime;
+                lerpValue = Mathf.Lerp(0, 1, timer / duration);
+                ikControl.SetIKWeight(lerpValue);
+                yield return null;
+            }
+            if(!ballComp.stopTriggered)
+            {
+                timer = 0;
+                duration = 0.3f;
+                lerpValue = 1;
+                while (timer <= duration)
+                {
+                    timer += Time.deltaTime;
+                    lerpValue = Mathf.Lerp(1, 0, timer / duration);
+                    ikControl.SetIKWeight(lerpValue);
+                    yield return null;
+                }
+                StartCoroutine(RunToBall());
+                ballComp.fielderReached = false;
+                yield break;
+            }
+            else
+            {
+                Debug.Log("commp");
+                #region dive/pick action
+                //Vector3 toBall = ball.position - transform.position;
+                //float distance = toBall.magnitude;
+                //Vector3 toBallNormalized = toBall.normalized;
 
-            float side = Vector3.Dot(transform.right, toBallNormalized);     // + right, - left
-            float forward = Vector3.Dot(transform.forward, toBallNormalized); // + in front, - behind
+                //float side = Vector3.Dot(transform.right, toBallNormalized);     // + right, - left
+                //float forward = Vector3.Dot(transform.forward, toBallNormalized); // + in front, - behind
 
-            // Set some tuning thresholds
-            float sideThresholdToDive = 0.5f;
-            float diveDistanceThreshold = 2.5f;
-            float frontThreshold = 0.6f;
+                //// Set some tuning thresholds
+                //float sideThresholdToDive = 0.5f;
+                //float diveDistanceThreshold = 2.5f;
+                //float frontThreshold = 0.6f;
+
+                //if (forward > frontThreshold)
+                //{
+                //    if (Mathf.Abs(side) > sideThresholdToDive && distance > diveDistanceThreshold)
+                //    {
+                //        // Ball is far to the side → dive
+                //        if (side > 0)
+                //            animator.SetTrigger("DiveRight");
+                //        else
+                //            animator.SetTrigger("DiveLeft");
+                //    }
+                //    else
+                //    {
+                //        // Ball is close or centered → pick from front
+                //        if (ball.position.y > 6f)
+                //        {
+                //            animator.Play("jump");
+                //        }
+                //        else
+                //        {
+                //            animator.SetTrigger("Pick");
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    // Ball is on side or behind, close enough to pick
+                //    if (side > 0)
+                //        animator.SetTrigger("Pick");
+                //    else
+                //        animator.SetTrigger("Pick");
+                //}
+                #endregion
+                StartCoroutine(FielderPickupThrow());
+            }
 
             if (!ballComp.groundShot)
             {
@@ -501,60 +576,20 @@ public class Fielder : MonoBehaviour
                 ballRb.isKinematic = true;
                 Gameplay.instance.deliveryDead = true;
                 Gameplay.instance.Out();
-                return;
-            }
-            else
-            {
-                //ballRb.isKinematic = true;
+                yield break;
             }
 
-            if (forward > frontThreshold)
-            {
-                if (Mathf.Abs(side) > sideThresholdToDive && distance > diveDistanceThreshold)
-                {
-                    // Ball is far to the side → dive
-                    if (side > 0)
-                        animator.SetTrigger("DiveRight");
-                    else
-                        animator.SetTrigger("DiveLeft");
-                }
-                else
-                {
-                    // Ball is close or centered → pick from front
-                    if (ball.position.y > 6f)
-                    {
-                        animator.Play("jump");
-                    }
-                    else
-                    {
-                        animator.SetTrigger("Pick");
-                    }
-                }
-            }
-            else
-            {
-                // Ball is on side or behind, close enough to pick
-                if (side > 0)
-                    animator.SetTrigger("Pick");
-                else
-                    animator.SetTrigger("Pick");
-            }
-
-            StartCoroutine(FielderPickupThrow());
+            
         }
 
         else
         {
-            animator.SetTrigger("StopField");
-            StopAllCoroutines();
+            animator.SetTrigger("StopField");            
             if (ballComp.fieldedPlayer == fm.keeper.gameObject)
             {
                Gameplay.instance.deliveryDead = true;
             }
-            else
-            {
-                return;
-            }
+            StopAllCoroutines();            
         }
 
         
@@ -577,6 +612,7 @@ public class Fielder : MonoBehaviour
             yield break;
         }
 
+
         float timer = 0;
 
         while (!ballComp.stopTriggered && timer < 2f)
@@ -585,11 +621,14 @@ public class Fielder : MonoBehaviour
             yield return null; // wait for next frame
         }
 
-        if(!ballComp.stopTriggered)
+
+        if (!ballComp.stopTriggered)
         {
             Gameplay.instance.deliveryDead = true;
+            StopAllCoroutines();
             yield break;
         }
+
 
         Vector3 lookDirection = (fm.stumps.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
@@ -598,41 +637,41 @@ public class Fielder : MonoBehaviour
 
         animator.SetTrigger("Throw");
 
-        yield return new WaitForSeconds(0.4f);
 
-        //ball.position = new Vector3(ball.position.x, 4f, ball.position.z);
+        float time = 0;
+        float duration = 1f;
+        float lerpValue = 1;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            lerpValue = Mathf.Lerp(1, 0, time / duration);
+            ikControl.SetIKWeight(lerpValue);
+            yield return null;
+        }
 
-        // Play the throw animation
 
-        //yield return new WaitUntil(()=>ballComp.stopTriggered);
-
-        //yield return new WaitUntil(() => canThrow);
-
-        // Calculate direction and distance
         Vector3 direction = (fm.keeper.position - ball.position).normalized;
         float distance = Vector3.Distance(ball.position, fm.stumps.position);
 
-        // Adjust speed relative to distance (tweak multiplier as needed)
-        float baseSpeed = 1f; // Adjust as per your game
-        float speed = baseSpeed + distance * 0.1f; // Example scaling
+        float baseSpeed = .5f; 
+        float speed = baseSpeed + distance * 0.1f;
 
-        // Calculate force
         Vector3 force = direction * speed;
 
-        // Apply force to the ball
+        ball.SetParent(null, true);
         ballRb.isKinematic = false;
         ballRb.AddForce(force, ForceMode.Impulse);
-
-        leftHandIk.weight = rightHandIk.weight = 0;
 
         //fm.keeper.GetComponent<Fielder>().KeeperRecieve(ball.position);
 
         // Wait until the ball reaches close to the keeper
+
         while (!ballComp.keeperReceive)
         {
-            Debug.Log("wait for ball reach");
+            Debug.Log("wait for ball reach,  throw force "  + force);
             yield return null;
         }
+
         Debug.Log("fld done");
         // Mark the delivery as complete
         yield return new WaitForSeconds(0.3f);
@@ -821,7 +860,7 @@ public class Fielder : MonoBehaviour
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        leftHandIk.weight = rightHandIk.weight = 0;
+        ikControl.SetIKWeight(0);
         animator.ResetTrigger("StopField");
         animator.ResetTrigger("Throw");
         animator.ResetTrigger("Pick");

@@ -139,7 +139,11 @@ public class FullBodyIK : MonoBehaviour
 
     private void SyncIKFromPose()
     {
-        var selectedTransform = Selection.transforms;
+#if UNITY_EDITOR
+        var selectedTransform = UnityEditor.Selection.transforms;
+#else
+    Transform[] selectedTransform = new Transform[0];
+#endif
 
         var stream = new AnimationStream();
         if (m_Animator.OpenAnimationStream(ref stream))

@@ -15,9 +15,9 @@ public class LookAtEffector : MonoBehaviour
 
     private void Update()
     {
-        float weight = (eyesWeight + headWeight + bodyWeight + clampWeight)/4.0f;
-        var material = GetComponent<Renderer>().material;
-        Color color = Color.magenta;
-        material.color = SampleUtility.FadeEffectorColorByWeight(color, weight);
+        //float weight = (eyesWeight + headWeight + bodyWeight + clampWeight)/4.0f;
+        //var material = GetComponent<Renderer>().material;
+        //Color color = Color.magenta;
+        //material.color = SampleUtility.FadeEffectorColorByWeight(color, weight);
     }
 }

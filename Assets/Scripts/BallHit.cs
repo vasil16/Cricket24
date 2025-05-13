@@ -121,13 +121,14 @@ public class BallHit : MonoBehaviour
                 if(!fielderReached)
                 {
                     //rb.isKinematic = true;
-                    fieldedPlayer = other.gameObject;
+                    fieldedPlayer = other.transform.parent.gameObject;
                     fielderReached = true;
                 }
             }
         }
         else if (other.gameObject.tag is "stop")
         {
+            if (stopTriggered) return;
             if(!secondTouch)
             {
                 Gameplay.instance.deliveryDead = true;
@@ -136,6 +137,7 @@ public class BallHit : MonoBehaviour
             transform.SetParent(other.transform, true);
             transform.position = other.transform.position;
             stopTriggered = true;
+            //rb.isKinematic = false;
         }
         else if(other.gameObject.name is "overHead")
         {
@@ -214,7 +216,9 @@ public class BallHit : MonoBehaviour
 
         RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
 
-        if (hits.Length > 0)
+        yield return new WaitUntil(() =>ballPassed(transform));
+
+        if (hits.Length > 0 && !secondTouch)
         {
             foreach (var hit in hits)
             {
@@ -230,6 +234,13 @@ public class BallHit : MonoBehaviour
             }
         }
 
+    }
+
+    bool ballPassed(Transform ballT)
+    {
+        if (ballT.position.x < -31.99f || ballT.GetComponent<BallHit>().secondTouch)
+            return true;
+        return false;
     }
 
     void CheckLegalDelivery(Vector3 enterPos)

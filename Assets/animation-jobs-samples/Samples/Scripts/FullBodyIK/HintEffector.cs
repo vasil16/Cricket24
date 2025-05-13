@@ -9,8 +9,8 @@ public class HintEffector : MonoBehaviour
 
     private void Update()
     {
-        var material = GetComponent<Renderer>().material;
-        Color color = Color.magenta;
-        material.color = SampleUtility.FadeEffectorColorByWeight(color, weight);
+        //var material = GetComponent<Renderer>().material;
+        //Color color = Color.magenta;
+        //material.color = SampleUtility.FadeEffectorColorByWeight(color, weight);
     }
 }

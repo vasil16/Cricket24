@@ -54,7 +54,7 @@ public class FieldManager : MonoBehaviour
         {
             if (hit.collider.CompareTag("rayTest"))
             {
-                Debug.Log("Added fielder  " + hit.collider.gameObject.name);
+                Debug.Log("Added fielder  " + hit.collider.transform.parent.gameObject.name);
                 Fielder fielder = hit.collider.transform.parent.GetComponent<Fielder>();
                 fielder.enabled = true;
                 fielder.targetPosition = hit.point;

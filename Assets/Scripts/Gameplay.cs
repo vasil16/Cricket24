@@ -56,6 +56,8 @@ public class Gameplay : MonoBehaviour
         ballScale = ball.transform.localScale;
     }
 
+    [SerializeField] bool randomBound;
+
     IEnumerator LaunchBallsWithDelay()
     {
         batter.batterAnim.SetTrigger("ToWait");
@@ -70,9 +72,7 @@ public class Gameplay : MonoBehaviour
 
             ball.transform.localScale = ballScale;
 
-            Vector3 ballPitchPoint = GetRandomPointWithinBounds();
-
-            //Vector3 ballPitchPoint = pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+            Vector3 ballPitchPoint = randomBound == true? GetRandomPointWithinBounds() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
 
             ball.transform.localPosition = ballOriginPoint;
 
@@ -135,7 +135,6 @@ public class Gameplay : MonoBehaviour
 
                 if (discriminant < 0f)
                 {
-                    Debug.LogWarning("No valid firing solution: speed too low or target too far.");
                     yield break; // Exit early
                 }
 
@@ -157,9 +156,6 @@ public class Gameplay : MonoBehaviour
             }
             //----------------------------------
 
-
-
-
             //rb.WakeUp();
             //rb.AddTorque(Vector3.forward * -10);
             //rb.AddForce(force, ForceMode.Impulse);
@@ -172,16 +168,16 @@ public class Gameplay : MonoBehaviour
                 cam.ball = ball;                
             }
 
-            yield return new WaitForSeconds(.7f);
-            yield return new WaitUntil(() => ballPassed(ball.transform));
+            yield return new WaitForSeconds(.7f);            
 
             broadcastCamComp.startingRunUp = false;                
 
             yield return new WaitUntil(() => deliveryDead);
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(2);
 
             bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
+
             yield return new WaitForSeconds(2f);
 
             if(!legalDelivery)
@@ -209,16 +205,16 @@ public class Gameplay : MonoBehaviour
             
             sideCam.depth = -2;
             sideCam.enabled = false;            
-            yield return new WaitForSeconds(1);
             FieldManager.ResetFielder.Invoke();
             foreach (CameraLookAt cam in activeCams)
             {
                 cam.ball = null;
                 cam.CamReset();
             }
-            yield return null;
 
             batter.batterAnim.ResetTrigger("ToStance");
+
+            yield return new WaitForSeconds(.5f);
         }
     }
 
@@ -288,12 +284,7 @@ public class Gameplay : MonoBehaviour
         return new Vector3(randomX, -4.427082f, randomZ);
     }
 
-    bool ballPassed(Transform ballT)
-    {
-        if (ballT.position.x < -31.99f || ballT.GetComponent<BallHit>().secondTouch)
-            return true;
-        return false;
-    }
+    
 
     void UpdateScoreBoard(BallHit ball)
     {
