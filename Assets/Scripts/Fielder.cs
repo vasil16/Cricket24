@@ -180,13 +180,17 @@ public class Fielder : MonoBehaviour
     IEnumerator StartField()
     {
         yield return new WaitForSeconds(0.1f);
-        if (IsBallComingAtFielder() && ballComp.groundShot)
+        if(ballRb.velocity.magnitude<10)
         {
-            Debug.Log("Coming to fielder");
-            StartCoroutine(WaitForBall());
+            targetPosition = new Vector3(ball.position.x, transform.position.y, ball.position.z);
         }
+        //if (IsBallComingAtFielder() && ballComp.groundShot)
+        //{
+        //    Debug.Log("Coming to fielder");
+        //    StartCoroutine(WaitForBall());
+        //}
 
-        else
+        //else
         {
             Debug.Log("away from fielder");
             animator.Play("running");
@@ -760,40 +764,54 @@ public class Fielder : MonoBehaviour
 
     public void Initiate(Vector3 position, Transform ball)
     {
+        targetPosition.y = transform.position.y;
         animator.enabled = true;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
         ballComp = ball.GetComponent<BallHit>();
         ballRb = ball.GetComponent<Rigidbody>();
         this.ball = ball;
-        if(!ballComp.groundShot && FielderCanReachOnTime(position))
+        //if(!ballComp.groundShot && FielderCanReachOnTime(position))
+        //{
+        //    if (!Gameplay.instance.stadiumBounds.Contains(position))
+        //    {
+        //        Vector3 direction = (position - transform.position).normalized;
+
+        //        Vector3 boundaryPoint = Gameplay.instance.stadiumBounds.ClosestPoint(position);
+
+        //        Vector3 offset = -direction * 3f;
+        //        position = boundaryPoint + offset;
+
+        //    }
+        //    targetPosition.y = transform.position.y;
+        //    Debug.Log("ball still air will reach in time");
+        //}
+        //else
+        //{
+        //    //targetPosition = UpdateTargetPosition();
+        //}
+
+        if(!ballComp.groundShot)
         {
-            if (!Gameplay.instance.stadiumBounds.Contains(position))
+            Vector3 ballPath = ball.position - position;
+            Ray pathRay = new Ray(position, ballPath);
+            RaycastHit[] hits = Physics.RaycastAll(pathRay, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
+            foreach(var hit in hits)
             {
-                Vector3 direction = (position - transform.position).normalized;
-
-                Vector3 boundaryPoint = Gameplay.instance.stadiumBounds.ClosestPoint(position);
-
-                Vector3 offset = -direction * 3f;
-                position = boundaryPoint + offset;
-
+                if(hit.collider.gameObject.CompareTag("rayTest"))
+                {
+                    targetPosition = hit.point;
+                    targetPosition.y = transform.position.y;
+                    return;
+                }
             }
-            //targetPosition = position;
-            targetPosition.y = transform.position.y;
-            //targetPosition = ballComp.shootMarker.transform.position;
-            Debug.Log("ball still air will reach in time");
+
         }
-        else
-        {
-            targetPosition = UpdateTargetPosition();
-        }        
         StartCoroutine(StartField());
     }
 
     public void Reset()
     {
-        //agent.Stop();
-        //agent.ResetPath();
         canThrow = false;
         animator.SetTrigger("StopField");
         StopCoroutine(StartField());

@@ -1854,6 +1854,7 @@ MonoBehaviour:
   score: 0
   angleDiff: 0
   timeToReachLanding: 0
+  targetPosition: {x: 0, y: 0, z: 0}
   ball: {fileID: 0}
   canReachInTime: 0
   startedRun: 0
@@ -2650,5 +2651,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 9.7, y: 0.61573577, z: 0.5499477}
-  m_Center: {x: 0, y: 0.29060555, z: 0}
+  m_Size: {x: 9.7, y: 0.50817794, z: 0.5499477}
+  m_Center: {x: 0, y: 0.23682663, z: 0}

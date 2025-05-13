@@ -71,7 +71,7 @@ public class FieldManager : MonoBehaviour
             {                
                 fielder.GetComponent<Animator>().enabled = true;
                 fielder.startedRun = true;
-                fielder.Initiate(landPos, ball);
+                fielder.Initiate(ballAt, ball);
             }
         }
         if (!bestFielders.Contains(fielders[0]))
