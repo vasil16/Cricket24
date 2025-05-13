@@ -377,11 +377,15 @@ public class Fielder : MonoBehaviour
         }
         if (targetPosition.y > 6.5f)
         {
-            animator.Play("jump");
+            //animator.Play("jump");
+            Debug.Log("jump ");
+            animator.CrossFade("jump", 1f,1);
         }
-        else if(targetPosition.z < 0.27f)
+        else if(targetPosition.y < 0.27f)
         {
-            animator.SetTrigger("CrouchForward");
+            Debug.Log("crouchforward ");
+            animator.CrossFade("crouchforward", 1f,1);
+            //animator.SetTrigger("CrouchForward");
         }
 
         //float side = 0;
@@ -405,7 +409,7 @@ public class Fielder : MonoBehaviour
     {
         Debug.Log("recive start");
         float time = 0;
-        float duration = .4f;
+        float duration = .3f;
         float lerpValue = 0;
         while (time <= duration)
         {
