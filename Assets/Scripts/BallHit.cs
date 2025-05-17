@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class BallHit : MonoBehaviour
 {
@@ -94,10 +95,20 @@ public class BallHit : MonoBehaviour
         }
     }
 
+    public bool keeperExit;
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag is "keeper")
+        {
+            keeperExit = true;
+        }
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag is "keeper")
+        if(other.gameObject.tag is "keeper" || (other.gameObject.tag is "rayTest" && other.transform.parent.tag is "keeper"))
         {
             keeperReceive = true;
             if (secondTouch)
@@ -114,6 +125,7 @@ public class BallHit : MonoBehaviour
                 //rb.isKinematic = true;
             }
         }
+
         else if(other.gameObject.tag is "fielder" or "DeepFielder")
         {
             if (secondTouch)
@@ -173,40 +185,6 @@ public class BallHit : MonoBehaviour
         return pos; // fallback
     }
 
-
-    Vector3 CalculateGroundHitPoint(Vector3 startPos, Vector3 velocity, float groundY)
-    {
-        float y0 = startPos.y;
-        float v0y = velocity.y;
-        float g = Physics.gravity.y; // Usually -9.81
-
-        // Solve: groundY = y0 + v0y * t + 0.5 * g * t^2
-        // Rearranged: 0 = (0.5 * g) * t^2 + v0y * t + (y0 - groundY)
-
-        float a = 0.5f * g;
-        float b = v0y;
-        float c = y0 - groundY;
-
-        float discriminant = b * b - 4 * a * c;
-
-        if (discriminant < 0)
-        {
-            Debug.LogWarning("No real solution; object won't reach the groundY level.");
-            return startPos;
-        }
-
-        float t1 = (-b + Mathf.Sqrt(discriminant)) / (2 * a);
-        float t2 = (-b - Mathf.Sqrt(discriminant)) / (2 * a);
-
-        // Pick the positive and greater time (object falls after peak)
-        float timeToLand = Mathf.Max(t1, t2);
-
-        float x = startPos.x + velocity.x * timeToLand;
-        float z = startPos.z + velocity.z * timeToLand;
-
-        return new Vector3(x, groundY, z);
-    }
-
     IEnumerator checkTrajectory()
     {
         Debug.Log("startcheck");
@@ -222,11 +200,11 @@ public class BallHit : MonoBehaviour
         {
             foreach (var hit in hits)
             {
-                if (hit.collider.CompareTag("keeper"))
+                if (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.gameObject.CompareTag("keeper"))
                 {
                     Debug.Log("yess");
                     //shootMarker.transform.position = new Vector3(-82.23507f, hit.point.y, hit.point.z);
-                    ballCatchPoint = new Vector3(-82.23507f, hit.point.y, hit.point.z);
+                    ballCatchPoint = new Vector3(-92.3f, hit.point.y, hit.point.z);
                     keeper.GetComponent<Fielder>().enabled = true;
                     keeper.KeeperRecieve(ballCatchPoint, this.transform);
                     break; // stop if you found keeper
@@ -267,5 +245,6 @@ public class BallHit : MonoBehaviour
         fielderReached = false;
         boundary = false;
         stopTriggered = false;
+        keeperExit = false;
     }
 }

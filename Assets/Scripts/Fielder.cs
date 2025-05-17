@@ -38,9 +38,10 @@ public class Fielder : MonoBehaviour
             // Get all properties of the Transform component (or other components if needed)
             //AddKeyframesFromComponent(transform, runClip);
         }
-        rayTestObject.SetActive(false);
+        //rayTestObject.SetActive(false);
         ikControl = GetComponent<FielderIK>();
         //transform.GetChild(transform.childCount - 1).GetComponent<CapsuleCollider>().center = new Vector3(-0.01712517f, 0.3118165f, 1.055462f);
+        transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, 0.8933917f);
     }
 
     private void OnDisable()
@@ -238,6 +239,7 @@ public class Fielder : MonoBehaviour
             {
                 Debug.Log("chasee");
                 //transform.GetChild(transform.childCount - 1).GetComponent<CapsuleCollider>().center = new Vector3(-0.01712517f, 0.3118165f, -1.15f);
+                transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, -1.78f);
                 StartCoroutine(CollectBall());
                 yield break;
             }           
@@ -439,7 +441,7 @@ public class Fielder : MonoBehaviour
     IEnumerator ReleaseTarget(float z)
     {
         float timer = 0;
-        while(!ball.GetComponent<BallHit>().stopTriggered&&timer<3f&&!Gameplay.instance.deliveryDead)
+        while(!ball.GetComponent<BallHit>().stopTriggered&&timer<3f&&!Gameplay.instance.deliveryDead && !ball.GetComponent<BallHit>().keeperExit)
         {
             timer += Time.deltaTime;
             yield return null;
@@ -658,7 +660,7 @@ public class Fielder : MonoBehaviour
 
         Vector3 force = direction * speed;
 
-        ball.SetParent(null, true);
+        //ball.SetParent(null, true);
         ballRb.isKinematic = false;
         ballRb.AddForce(force, ForceMode.Impulse);
 
@@ -835,7 +837,17 @@ public class Fielder : MonoBehaviour
             Vector3 ballPath = ball.position - position;
             Ray pathRay = new Ray(position, ballPath);
             RaycastHit[] hits = Physics.RaycastAll(pathRay, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
-            foreach(var hit in hits)
+
+
+            //Vector2 start2D = new Vector2(position.x, position.z);
+            //Vector2 ball2D = new Vector2(ball.position.x, ball.position.z);
+            //Vector2 direction2D = (ball2D - start2D).normalized;
+
+            //RaycastHit2D[] hits = Physics2D.RaycastAll(start2D, direction2D, Mathf.Infinity, ~0);
+
+            Debug.DrawRay(pathRay.origin, pathRay.direction, Color.cyan,10);
+
+            foreach (var hit in hits)
             {
                 if(hit.collider.gameObject.CompareTag("rayTest"))
                 {

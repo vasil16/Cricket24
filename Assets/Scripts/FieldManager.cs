@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class FieldManager : MonoBehaviour
 {
@@ -50,6 +51,9 @@ public class FieldManager : MonoBehaviour
         Ray ballPath = new Ray(new Vector3(ballAt.x, 0.2f, ballAt.z), flatDirection);
 
         RaycastHit[] hits = Physics.RaycastAll(ballPath, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
+
+        Debug.DrawRay(ballPath.origin, ballPath.direction, Color.green, 10);
+
         foreach (var hit in hits)
         {
             if (hit.collider.CompareTag("rayTest"))
