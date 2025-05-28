@@ -73,7 +73,6 @@ public class FieldManager : MonoBehaviour
         {
             if (!fielder.startedRun)
             {                
-                fielder.GetComponent<Animator>().enabled = true;
                 fielder.startedRun = true;
                 fielder.Initiate(ballAt, ball);
             }
@@ -91,108 +90,29 @@ public class FieldManager : MonoBehaviour
         }
     }
 
-    IEnumerator AssignFielders(Vector3 ballAt)
-    {
-        hitBallPos = ballAt;
-        hitVelocity = ball.GetComponent<Rigidbody>().velocity;
-
-        int fielderCount = 1;
-
-        if (!ball.GetComponent<BallHit>().groundShot)
-        {
-            landPos = PredictLandingPosition(ball);
-            marker.transform.position = landPos;
-            fielderCount = 2;
-            Debug.Log("Air ball detected");
-        }
-
-        yield return new WaitForSeconds(0.4f);
-
-        Debug.Log("Assigning fielders...");
-        List<Fielder> selectedFielders = new List<Fielder>();
-
-        if (ball.GetComponent<BallHit>().groundShot)
-        {
-            if (ball.GetComponent<Rigidbody>().velocity.magnitude > 88)
-            {
-                fielderCount = 3;
-            }
-            else
-            {
-                fielderCount = 2;
-            }
-        }
-
-        marker.transform.position = landPos;
-
-        List<(Fielder fielder, float score)> scoredFielders = new List<(Fielder, float)>();
-
-        foreach (var fielder in fielders)
-        {
-            float fielderScore = CalculateFielderScore(fielder);
-            scoredFielders.Add((fielder, fielderScore));
-        }
-
-        scoredFielders.Sort((a, b) => b.score.CompareTo(a.score));
-
-        foreach (var (fielder, _) in scoredFielders)
-        {
-            if (selectedFielders.Count < fielderCount)
-            {
-                if (ball.GetComponent<BallHit>().groundShot)
-                {
-                    //if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().velocity.magnitude > 88)
-                    //{
-                    //    if (!selectedFielders.Contains(fielder))
-                    //    {
-                    //        selectedFielders.Add(fielder);
-                    //        Debug.Log("Deep fielder added: " + fielder.name);
-                    //    }
-                    //}
-                }
-
-                if (!selectedFielders.Contains(fielder))
-                {
-                    selectedFielders.Add(fielder);
-                    Debug.Log("Fielder added: " + fielder.name);
-                }
-            }
-        }
-
-        foreach (var fielder in selectedFielders)
-        {
-            if (!fielder.startedRun)
-            {
-                fielder.enabled = true;
-                fielder.GetComponent<Animator>().enabled = true;
-                fielder.startedRun = true;
-                fielder.Initiate(landPos,ball);
-            }
-        }
-        bestFielders = selectedFielders;
-        if (!bestFielders.Contains(fielders[0]))
-        {
-            StartCoroutine(KeeperRunToRecieve());
-        }
-    }
-
     IEnumerator KeeperRunToRecieve()
     {
-        keeper.GetComponent<Animator>().enabled = true;
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
-        keeper.GetComponent<Animator>().Play("running");
+        keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().runningClip);
+        Vector3 moveDirection;
+        Quaternion lookRotation;
 
         while (Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z),new Vector2(stumps.position.x, stumps.position.z))>2f)
         {
-            Vector3 moveDirection = (ball.position - keeper.transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+            moveDirection = (ball.position - keeper.transform.position).normalized;
+            lookRotation = Quaternion.LookRotation(moveDirection);
             lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
-            keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 30f);
+            keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 100f);
             keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
             yield return null;
         }
-        keeper.GetComponent<Animator>().SetTrigger("StopField");
+        moveDirection = (ball.position - keeper.transform.position).normalized;
+        lookRotation = Quaternion.LookRotation(moveDirection);
+        lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+        keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().idleClip);
+        keeper.transform.rotation = lookRotation;
+
     }
 
     private float CalculateFielderScore(Fielder fielder)

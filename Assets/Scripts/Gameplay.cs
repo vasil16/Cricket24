@@ -80,7 +80,7 @@ public class Gameplay : MonoBehaviour
 
             Vector3 direction = (ballPitchPoint - ballLaunchPos).normalized;
 
-            float speed = 142;
+            float speed = 142.8f;
 
             Vector3 force = direction * speed;
 

@@ -7,7 +7,7 @@ public class BallHit : MonoBehaviour
     Rigidbody rb;
     public bool secondTouch , groundShot, keeperReceive, fielderReached, boundary, stopTriggered;
     public GameObject fieldedPlayer, shootMarker;
-    public Vector3 pitchPoint, ballCatchPoint;
+    public Vector3 pitchPoint, ballCatchPoint, shotPoint, shotForce;
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
     [SerializeField] Fielder keeper;
@@ -63,7 +63,7 @@ public class BallHit : MonoBehaviour
                 else
                 {
                     pitchPoint = collision.contacts[0].point;
-                    StartCoroutine(checkTrajectory());
+                    StartCoroutine(SimulateBallTrajectory(transform.position, rb.velocity));
                 }
                 break;
 
@@ -72,6 +72,8 @@ public class BallHit : MonoBehaviour
                 {
                     break;
                 }
+                shotPoint = transform.position;
+                shotForce = rb.velocity;
                 FieldManager.hitBallPos = transform.position;
                 FieldManager.hitVelocity = rb.velocity;
                 Debug.Log("spot " + collision.gameObject.name);
@@ -141,15 +143,16 @@ public class BallHit : MonoBehaviour
         else if (other.gameObject.tag is "stop")
         {
             if (stopTriggered) return;
-            if(!secondTouch)
-            {
-                Gameplay.instance.deliveryDead = true;
-            }
+            Debug.Log("Stoptrigger");
             rb.isKinematic = true;
             transform.SetParent(other.transform, true);
             transform.position = other.transform.position;
             stopTriggered = true;
             //rb.isKinematic = false;
+            if(!secondTouch)
+            {
+                Gameplay.instance.deliveryDead = true;
+            }
         }
         else if(other.gameObject.name is "overHead")
         {
@@ -185,34 +188,54 @@ public class BallHit : MonoBehaviour
         return pos; // fallback
     }
 
-    IEnumerator checkTrajectory()
+    [SerializeField] LayerMask keeperLayer;
+
+
+    IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
     {
-        Debug.Log("startcheck");
-        yield return new WaitForSeconds(0.5f);
-        Vector3 lodgePosition = transform.position;
-        Ray ray = new Ray(pitchPoint, lodgePosition - pitchPoint);
+        float timestep = 0.005f;
+        float maxTime = 3f;
+        float ballRadius = 0.12f;
+        int stepsPerFrame = 5;
 
-        RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
+        Vector3 currentPosition = startPosition;
+        Vector3 velocity = initialVelocity;
 
-        yield return new WaitUntil(() =>ballPassed(transform));
-
-        if (hits.Length > 0 && !secondTouch)
+        for (float t = 0f; t < maxTime; t += timestep)
         {
-            foreach (var hit in hits)
+            for (int i = 0; i < stepsPerFrame; i++)
             {
-                if (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.gameObject.CompareTag("keeper"))
-                {
-                    Debug.Log("yess");
-                    //shootMarker.transform.position = new Vector3(-82.23507f, hit.point.y, hit.point.z);
-                    ballCatchPoint = new Vector3(-92.3f, hit.point.y, hit.point.z);
-                    keeper.GetComponent<Fielder>().enabled = true;
-                    keeper.KeeperRecieve(ballCatchPoint, this.transform);
-                    break; // stop if you found keeper
-                }
-            }
-        }
+                Vector3 nextPosition = currentPosition + velocity * timestep + 0.5f * Physics.gravity * timestep * timestep;
+                Vector3 direction = nextPosition - currentPosition;
 
+                Debug.DrawRay(currentPosition, direction, Color.red, 2f);
+
+                if (Physics.SphereCast(currentPosition, ballRadius, direction.normalized, out RaycastHit hit, direction.magnitude, keeperLayer, QueryTriggerInteraction.Collide))
+                {
+                    if (hit.collider.CompareTag("keeper")||(hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
+                    {
+                        Debug.Log("Keeper will catch ball at: " + hit.point);
+                        Vector3 fixedCatchPoint = hit.point;
+                        fixedCatchPoint.x = -92f; // use logical X instead of hardcoding
+                        ballCatchPoint = fixedCatchPoint;
+                        shootMarker.transform.position = ballCatchPoint;
+
+                        keeper.GetComponent<Fielder>().enabled = true;
+                        keeper.KeeperRecieve(ballCatchPoint, this.transform);
+                        yield break;
+                    }
+                }
+
+                velocity += Physics.gravity * timestep;
+                currentPosition = nextPosition;
+            }
+
+            yield return null;
+        }
     }
+
+
+
 
     bool ballPassed(Transform ballT)
     {
