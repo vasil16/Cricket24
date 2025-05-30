@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 public class BallHit : MonoBehaviour
 {
     Rigidbody rb;
-    public bool secondTouch , groundShot, keeperReceive, fielderReached, boundary, stopTriggered;
+    public bool secondTouch, groundShot, keeperReceive, fielderReached, boundary, stopTriggered;
     public GameObject fieldedPlayer, shootMarker;
     public Vector3 pitchPoint, ballCatchPoint, shotPoint, shotForce;
     [SerializeField] AudioSource soundFx;
@@ -110,7 +110,7 @@ public class BallHit : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag is "keeper" || (other.gameObject.tag is "rayTest" && other.transform.parent.tag is "keeper"))
+        if (other.gameObject.tag is "keeper" || (other.gameObject.tag is "rayTest" && other.transform.parent.tag is "keeper"))
         {
             keeperReceive = true;
             if (secondTouch)
@@ -128,11 +128,11 @@ public class BallHit : MonoBehaviour
             }
         }
 
-        else if(other.gameObject.tag is "fielder" or "DeepFielder")
+        else if (other.gameObject.tag is "fielder" or "DeepFielder")
         {
             if (secondTouch)
             {
-                if(!fielderReached)
+                //if(!fielderReached)
                 {
                     //rb.isKinematic = true;
                     fieldedPlayer = other.transform.parent.gameObject;
@@ -143,24 +143,47 @@ public class BallHit : MonoBehaviour
         else if (other.gameObject.tag is "stop")
         {
             if (stopTriggered) return;
-            Debug.Log("Stoptrigger");
             rb.isKinematic = true;
             transform.SetParent(other.transform, true);
             transform.position = other.transform.position;
             stopTriggered = true;
             //rb.isKinematic = false;
-            if(!secondTouch)
+            if (!secondTouch)
             {
                 Gameplay.instance.deliveryDead = true;
             }
         }
-        else if(other.gameObject.name is "overHead")
+        else if (other.gameObject.name is "overHead")
         {
             Vector3 contactPoint = transform.position;
             CheckLegalDelivery(contactPoint);
             //Gameplay.instance.legalDelivery = false;
         }
     }
+
+    void OnTriggerExit(Collider other)
+    {
+        Debug.Log("exited  " + other.gameObject.name);
+        if (other.gameObject.tag is "fielder" or "DeepFielder")
+        {
+            if (secondTouch)
+            {
+                //if(!fielderReached)
+                {
+                    fielderReached = false;
+                }
+            }
+        }
+        else if (other.gameObject.tag is "keeper" || (other.gameObject.tag is "rayTest" && other.transform.parent.tag is "keeper"))
+        {
+            if (secondTouch)
+            {
+                fielderReached = false;
+                return;
+            }
+        }
+    }
+
 
     Vector3 PredictFallPosition(Vector3 startPos, Vector3 velocity, float groundY, float timeStep = 0.02f)
     {

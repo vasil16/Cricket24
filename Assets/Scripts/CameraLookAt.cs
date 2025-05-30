@@ -57,7 +57,7 @@ public class CameraLookAt : MonoBehaviour
                 //camera.fieldOfView += ball.GetComponent<Rigidbody>().velocity.magnitude * .2f * Time.deltaTime;
                 if (ball.transform.position.x < -27.03f)
                 {
-                    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6, ref dampFact, 0.6f);
+                    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6, ref dampFact, 1f);
                 }
                 else
                 {
@@ -118,8 +118,8 @@ public class CameraLookAt : MonoBehaviour
 
     void CamRunUpAnim()
     {
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 3.751515f, ref dampFact, 1.5f);
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.4f,Time.deltaTime * 0.3f), -90, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 3.651515f, ref dampFact, 1.5f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.1f,Time.deltaTime * 0.3f), -90, 0);
     }
 
     public void CamReset()
