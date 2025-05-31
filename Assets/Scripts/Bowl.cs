@@ -6,7 +6,6 @@ public class Bowl : MonoBehaviour
 {
     public void Deliver()
     {
-        //ball.SetParent(null);
         Gameplay.instance.readyToBowl = true;
     }
 

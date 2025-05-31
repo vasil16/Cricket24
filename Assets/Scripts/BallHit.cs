@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class BallHit : MonoBehaviour
 {
@@ -48,8 +47,9 @@ public class BallHit : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Wicket":
-                if (fielderReached) return;
+                if (fielderReached || Gameplay.instance.deliveryDead) return;
                 soundFx.PlayOneShot(wicketFx);
+                Debug.Log("Stump crash");
                 Gameplay.instance.Out();
                 Gameplay.instance.deliveryDead = true;
                 break;
@@ -72,7 +72,7 @@ public class BallHit : MonoBehaviour
                 {
                     break;
                 }
-                shotPoint = transform.position;
+                shotPoint = collision.contacts[0].point;
                 shotForce = rb.velocity;
                 FieldManager.hitBallPos = transform.position;
                 FieldManager.hitVelocity = rb.velocity;
@@ -82,7 +82,7 @@ public class BallHit : MonoBehaviour
                 secondTouch = true;
                 soundFx.PlayOneShot(shotFx);
                 shootMarker.transform.position = PredictFallPosition(transform.position, FieldManager.hitVelocity, -4.44f);
-                FieldManager.StartCheckField.Invoke(transform.position);
+                FieldManager.StartCheckField.Invoke(shotPoint);
                 break;
 
             case "Ground":
@@ -90,6 +90,7 @@ public class BallHit : MonoBehaviour
                 break;
 
             case "boundary":
+                Debug.Log("Stopped by " + collision.gameObject.name);
                 stopTriggered = true;
                 boundary = true;
                 Gameplay.instance.deliveryDead = true;
@@ -115,29 +116,18 @@ public class BallHit : MonoBehaviour
             keeperReceive = true;
             if (secondTouch)
             {
-                //rb.isKinematic = true;
-                fieldedPlayer = other.gameObject;
+                fieldedPlayer = other.transform.parent.gameObject;
                 fielderReached = true;
                 return;
-            }
-            else
-            {
-                //transform.position = other.transform.position;
-                //stopTriggered = true;
-                //rb.isKinematic = true;
-            }
+            }            
         }
 
         else if (other.gameObject.tag is "fielder" or "DeepFielder")
         {
             if (secondTouch)
-            {
-                //if(!fielderReached)
-                {
-                    //rb.isKinematic = true;
-                    fieldedPlayer = other.transform.parent.gameObject;
-                    fielderReached = true;
-                }
+            {                
+                fieldedPlayer = other.transform.parent.gameObject;
+                fielderReached = true;                
             }
         }
         else if (other.gameObject.tag is "stop")
@@ -147,7 +137,7 @@ public class BallHit : MonoBehaviour
             transform.SetParent(other.transform, true);
             transform.position = other.transform.position;
             stopTriggered = true;
-            //rb.isKinematic = false;
+            Debug.Log("stopped by " + other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject.name);
             if (!secondTouch)
             {
                 Gameplay.instance.deliveryDead = true;
@@ -157,33 +147,8 @@ public class BallHit : MonoBehaviour
         {
             Vector3 contactPoint = transform.position;
             CheckLegalDelivery(contactPoint);
-            //Gameplay.instance.legalDelivery = false;
         }
     }
-
-    void OnTriggerExit(Collider other)
-    {
-        Debug.Log("exited  " + other.gameObject.name);
-        if (other.gameObject.tag is "fielder" or "DeepFielder")
-        {
-            if (secondTouch)
-            {
-                //if(!fielderReached)
-                {
-                    fielderReached = false;
-                }
-            }
-        }
-        else if (other.gameObject.tag is "keeper" || (other.gameObject.tag is "rayTest" && other.transform.parent.tag is "keeper"))
-        {
-            if (secondTouch)
-            {
-                fielderReached = false;
-                return;
-            }
-        }
-    }
-
 
     Vector3 PredictFallPosition(Vector3 startPos, Vector3 velocity, float groundY, float timeStep = 0.02f)
     {
@@ -193,13 +158,11 @@ public class BallHit : MonoBehaviour
 
         while (pos.y > groundY)
         {
-            vel.y += gravity * timeStep;   // apply gravity
-            pos += vel * timeStep;         // update position
+            vel.y += gravity * timeStep;  
+            pos += vel * timeStep;        
 
-            // Early exit if we pass ground level
             if (pos.y <= groundY)
             {
-                // Interpolate to get exact ground hit point
                 float overshoot = groundY - pos.y;
                 float totalDisplacement = vel.y * timeStep;
                 float factor = overshoot / totalDisplacement;
@@ -255,16 +218,6 @@ public class BallHit : MonoBehaviour
 
             yield return null;
         }
-    }
-
-
-
-
-    bool ballPassed(Transform ballT)
-    {
-        if (ballT.position.x < -31.99f || ballT.GetComponent<BallHit>().secondTouch)
-            return true;
-        return false;
     }
 
     void CheckLegalDelivery(Vector3 enterPos)

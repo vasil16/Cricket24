@@ -68,7 +68,7 @@ public class Gameplay : MonoBehaviour
 
             deliveryDead = false;
 
-            ball.transform.SetParent(bowlerPalm,true);
+            ball.transform.SetParent(bowlerPalm);
 
             ball.transform.localScale = ballScale;
 
@@ -84,7 +84,7 @@ public class Gameplay : MonoBehaviour
 
             Vector3 force = direction * speed;
 
-
+            ball.GetComponent<BallHit>().stopTriggered = false;
             yield return new WaitForSeconds(1f);
 
             batter.batterAnim.SetTrigger("ToStance");
