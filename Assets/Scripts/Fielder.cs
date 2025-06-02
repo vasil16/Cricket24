@@ -12,11 +12,10 @@ public class Fielder : MonoBehaviour
     public Vector3 targetPosition;
     BallHit ballComp;
     Rigidbody ballRb;
-    public Transform ball;
+    public Transform ball, throwingArm, rightHand, leftHand;
     public bool canReachInTime, startedRun;
     [SerializeField] FieldManager fm;
     [SerializeField] AnimationClip runClip;
-    public Transform rightHand, leftHand;
     [SerializeField] MultiAimConstraint headAim, neckAim;
     public FielderIK ikControl;
     List<Effector> effectors;
@@ -173,11 +172,18 @@ public class Fielder : MonoBehaviour
     }
 
     IEnumerator RunToBall()
-    {        
+    {
+        bool targetBall = false;
         ikControl.PlayAnimation(runningClip);
         while (!ballComp.stopTriggered)
         {
+            if(targetBall)
+            {
+                targetPosition = new Vector3(ball.transform.position.x, transform.position.y, ball.transform.position.z);
+            }
+
             Vector3 moveDirection = (targetPosition - transform.position).normalized;
+
             if (moveDirection.sqrMagnitude > 0.01f) // prevent NaNs when target is too close
             {
                 Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
@@ -185,11 +191,10 @@ public class Fielder : MonoBehaviour
             }
 
             Debug.Log("runningtoball");
-            if (ballRb.velocity.magnitude<15 && !chaseMode)
+            if (ballRb.velocity.magnitude<25 && !chaseMode)
             {
                 Debug.Log("ball slowed");
-                targetPosition = new Vector3(ball.transform.position.x, transform.position.y, ball.transform.position.z);
-                attackMode = true;
+                targetBall = true;
             }
             if (ballComp.keeperReceive)
             {
@@ -201,10 +206,15 @@ public class Fielder : MonoBehaviour
             {
                 Debug.Log("chasee");
                 transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, -0.97f);
-                targetPosition = new Vector3(ball.transform.position.x, transform.position.y, ball.transform.position.z);
-                chaseMode = true;
-            }           
-            
+                targetBall = true;
+            }
+
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f && ballComp.fielderReached)
+            {
+                Debug.Log(gameObject.name + " reached target go for ball");
+                targetBall = true;
+            }
+
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
             //agent.SetDestination(targetPosition);
 
@@ -229,13 +239,14 @@ public class Fielder : MonoBehaviour
                         yield break;
                     }
                     Debug.Log(gameObject.name + " reached target go for");
-                    targetPosition = new Vector3(ball.transform.position.x, transform.position.y, ball.transform.position.z);
+                    targetBall = true;
                 }
             }
                 
             if(ballComp.fielderReached && ballComp.fieldedPlayer == this.gameObject)
             {
-                Debug.Log(gameObject.name + " reached target go for collection");
+                ikControl.PlayAnimation(idleClip);
+                Debug.Log(gameObject.name + " reached ball");
                 StartCoroutine(ReachedBall());
                 yield break;
             }
@@ -315,7 +326,7 @@ public class Fielder : MonoBehaviour
             float timer = 0;
             float duration = 0.3f;
             float lerpValue = 0;
-            ikControl.PlayAnimation(crouchClip);    
+            ikControl.PlayAnimation(pickUpClip);    
             while (timer <= duration)
             {
                 timer += Time.deltaTime;
@@ -347,13 +358,14 @@ public class Fielder : MonoBehaviour
 
             if (!ballComp.stopTriggered)
             {               
-                StartCoroutine(RunToBall());
                 ballComp.fielderReached = false;
+                StartCoroutine(RunToBall());
                 yield break;
             }
             else
             {
                 Debug.Log("commp");
+                ball.transform.position = throwingArm.position;
                 #region dive/pick action
                 //Vector3 toBall = ball.position - transform.position;
                 //float distance = toBall.magnitude;
@@ -405,7 +417,7 @@ public class Fielder : MonoBehaviour
     }
 
     IEnumerator FielderPickupThrow()
-    {
+    {        
         ikControl.PlayAnimation(idleClip);
         if (this.name == "keeper")
         {
@@ -439,13 +451,13 @@ public class Fielder : MonoBehaviour
         //    yield return null;
         //}
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.7f);
         Vector3 direction = (fm.keeper.position - ball.position).normalized;
         float distance = Vector3.Distance(ball.position, fm.keeper.position);
 
         Debug.DrawRay(ball.position, direction, Color.green, 10f);
 
-        float baseSpeed = .1f; 
+        float baseSpeed = .06f; 
         float speed = baseSpeed + distance * 0.1f;
 
         Vector3 force = direction * speed;
@@ -457,7 +469,7 @@ public class Fielder : MonoBehaviour
         time = 0;
         duration = 2f;
 
-        while (!ballComp.keeperReceive && time< duration)
+        while (!ballComp.keeperReceive && time < duration)
         {
             time += Time.deltaTime;
             yield return null;

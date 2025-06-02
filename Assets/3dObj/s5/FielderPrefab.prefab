@@ -189,8 +189,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.84, y: 2.4394088, z: 1.4684278}
-  m_Center: {x: -0.00000073509483, y: 0.098486185, z: 0.23421511}
+  m_Size: {x: 1.8399999, y: 2.4394088, z: 1.1627275}
+  m_Center: {x: -0.00000073600796, y: 0.098486185, z: 0.08136529}
 --- !u!1 &6101083897687772226
 GameObject:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ Transform:
   m_GameObject: {fileID: 6101083897687772226}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.028, y: 0.076, z: 0.049}
+  m_LocalPosition: {x: 0.033, y: 0.107, z: 0.069}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -718,12 +718,13 @@ MonoBehaviour:
   timeToReachLanding: 0
   targetPosition: {x: 0, y: 0, z: 0}
   ball: {fileID: 0}
+  throwingArm: {fileID: 5391229209474829915}
+  rightHand: {fileID: 0}
+  leftHand: {fileID: 0}
   canReachInTime: 0
   startedRun: 0
   fm: {fileID: 0}
   runClip: {fileID: 0}
-  rightHand: {fileID: 0}
-  leftHand: {fileID: 0}
   headAim: {fileID: 0}
   neckAim: {fileID: 0}
   ikControl: {fileID: 0}
@@ -738,7 +739,7 @@ MonoBehaviour:
   moveLeftClip: {fileID: -3020337048485731710, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   diveRightClip: {fileID: 2967806735527829977, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   diveLeftClip: {fileID: 2693572910362965475, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
-  pickUpClip: {fileID: -394925343269008741, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
+  pickUpClip: {fileID: -203655887218126122, guid: ee8232f14dd30413da920531c748ec04, type: 3}
   throwClip: {fileID: 7245587569413745938, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
 --- !u!195 &4155045105595536511
 NavMeshAgent:

@@ -78,6 +78,7 @@ public class BallHit : MonoBehaviour
                 FieldManager.hitVelocity = rb.velocity;
                 Debug.Log("spot " + collision.gameObject.name);
                 //Gameplay.instance.bb.position = collision.GetContact(0).point;
+                Gameplay.instance.broadcastCamComp.readyToDeliver = false;
                 //StartCoroutine(waitAndLook());                
                 secondTouch = true;
                 soundFx.PlayOneShot(shotFx);
@@ -202,7 +203,7 @@ public class BallHit : MonoBehaviour
                     {
                         Debug.Log("Keeper will catch ball at: " + hit.point);
                         Vector3 fixedCatchPoint = hit.point;
-                        fixedCatchPoint.x = -92f; // use logical X instead of hardcoding
+                        fixedCatchPoint.x = -93.5f;
                         ballCatchPoint = fixedCatchPoint;
                         shootMarker.transform.position = ballCatchPoint;
 

@@ -17,8 +17,9 @@ public class Gameplay : MonoBehaviour
     [SerializeField] Animator machineAnim;
     [SerializeField] List<float> launchSpeeds;
     [SerializeField] List<PitchPoints> pitchPoints;
-    [SerializeField] Bat batter;
-    [SerializeField] CameraLookAt broadcastCamComp;
+    [SerializeField] Bat batter;    
+    public CameraLookAt broadcastCamComp;
+
 
     [SerializeField] Vector3 [] ballDeliverPoint;
     [SerializeField] int ballDeliverType;
@@ -94,6 +95,7 @@ public class Gameplay : MonoBehaviour
             broadcastCamComp.startingRunUp = true;
 
             bowler.GetComponent<Animator>().enabled = true;
+
             if (ballDeliverType == 0 || ballDeliverType == 2)
             {
                 bowler.GetComponent<Animator>().Play("bowl");
@@ -108,10 +110,11 @@ public class Gameplay : MonoBehaviour
             mark.transform.position = ballPitchPoint;
             rb = ball.GetComponent<Rigidbody>();
             yield return new WaitUntil(() => readyToBowl);
+            broadcastCamComp.startingRunUp = false;
+            broadcastCamComp.readyToDeliver = true;
             ball.transform.SetParent(null,true);
             ball.transform.position = ballLaunchPos;
             rb.isKinematic = true;
-            broadcastCamComp.readyToDeliver = false;
             currentBall = ball.transform;
             rb.isKinematic = false;
             ball.SetActive(true);
@@ -168,11 +171,11 @@ public class Gameplay : MonoBehaviour
                 cam.ball = ball;                
             }
 
-            yield return new WaitForSeconds(.7f);            
-
-            broadcastCamComp.startingRunUp = false;                
+            yield return new WaitForSeconds(.7f);                       
 
             yield return new WaitUntil(() => deliveryDead);
+
+            broadcastCamComp.readyToDeliver = false;
 
             yield return new WaitForSeconds(2);
 

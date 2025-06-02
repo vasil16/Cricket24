@@ -61,8 +61,8 @@ public class FieldManager : MonoBehaviour
                 Fielder fielder = hit.collider.transform.parent.GetComponent<Fielder>();
                 Vector3 closestPoint = hit.collider.bounds.ClosestPoint(ball.position);
                 fielder.enabled = true;
-                fielder.targetPosition = closestPoint;
-                //fielder.targetPosition = hit.point;
+                //fielder.targetPosition = closestPoint;
+                fielder.targetPosition = hit.point;
                 bestFielders.Add(fielder);
                 Debug.Log("fielders added " + bestFielders.Count);
             }
