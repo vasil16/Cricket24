@@ -189,8 +189,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8399999, y: 2.4394088, z: 1.1627275}
-  m_Center: {x: -0.00000073600796, y: 0.098486185, z: 0.08136529}
+  m_Size: {x: 1.8399999, y: 2.4394088, z: 1.463073}
+  m_Center: {x: -0.00000073829773, y: 0.098486185, z: 0.19026613}
 --- !u!1 &6101083897687772226
 GameObject:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ Transform:
   m_GameObject: {fileID: 6101083897687772226}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.033, y: 0.107, z: 0.069}
+  m_LocalPosition: {x: -0.005, y: 0.107, z: 0.069}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -539,15 +539,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: ecb081007fdb64cdda1d13c5424c0cbc, type: 2}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5.2099996
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5.21
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 5.2099996
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -739,8 +739,9 @@ MonoBehaviour:
   moveLeftClip: {fileID: -3020337048485731710, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   diveRightClip: {fileID: 2967806735527829977, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   diveLeftClip: {fileID: 2693572910362965475, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
-  pickUpClip: {fileID: -203655887218126122, guid: ee8232f14dd30413da920531c748ec04, type: 3}
+  pickUpClip: {fileID: 7400000, guid: cc87a96a1025a44ad8608987f75404d3, type: 2}
   throwClip: {fileID: 7245587569413745938, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
+  kneelClip: {fileID: 7400000, guid: 53a58d67dbff54f2db82487e3bcc0eeb, type: 2}
 --- !u!195 &4155045105595536511
 NavMeshAgent:
   m_ObjectHideFlags: 0

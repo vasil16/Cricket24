@@ -134,7 +134,7 @@ public class Gameplay : MonoBehaviour
                 // Proper discriminant formula for projectile motion from height
                 float discriminant = speedSquared * speedSquared - gravity * (gravity * xz * xz + 2 * y * speedSquared);
 
-                Debug.Log($"y = {y}, xz = {xz}, speed = {speed}, discriminant = {discriminant}");
+                //Debug.Log($"y = {y}, xz = {xz}, speed = {speed}, discriminant = {discriminant}");
 
                 if (discriminant < 0f)
                 {
@@ -407,6 +407,15 @@ public class Gameplay : MonoBehaviour
     {
         Time.timeScale = 0;
         gameObject.GetComponent<AudioSource>().Pause();
+    }
+
+    public bool loftOn;
+    public UnityEngine.UI.Image loftBtn;
+
+    public void Loft()
+    {
+        loftOn = loftOn ? false : true;
+        loftBtn.color = loftOn ? Color.blue : Color.white;
     }
 
     public void ResumeFn()

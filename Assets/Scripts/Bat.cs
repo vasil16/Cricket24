@@ -77,7 +77,14 @@ public class Bat : MonoBehaviour
         else if (angle >= 180 && angle < 225)
         {
             //Debug.Log("Swipe in Slice 5 (Left)");
-            batterAnim.Play("cover");
+            if(Gameplay.instance.loftOn)
+            {
+                batterAnim.Play("loftedCover");
+            }
+            else
+            {
+                batterAnim.Play("cover");
+            }
         }
         else if (angle >= 225 && angle < 270)
         {
@@ -87,7 +94,14 @@ public class Bat : MonoBehaviour
         else if (angle >= 270 && angle < 315)
         {
             //Debug.Log("Swipe in Slice 7 (Bottom)");
-            batterAnim.Play("straightDrive");
+            if (Gameplay.instance.loftOn)
+            {
+                batterAnim.Play("slog");
+            }
+            else
+            {
+                batterAnim.Play("straightDrive");
+            }
         }
         else if (angle >= 315 && angle < 360)
         {

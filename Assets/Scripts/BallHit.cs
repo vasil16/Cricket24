@@ -87,7 +87,8 @@ public class BallHit : MonoBehaviour
                 break;
 
             case "Ground":
-                groundShot = true;
+                if(secondTouch)
+                    groundShot = true;
                 break;
 
             case "boundary":
@@ -203,7 +204,7 @@ public class BallHit : MonoBehaviour
                     {
                         Debug.Log("Keeper will catch ball at: " + hit.point);
                         Vector3 fixedCatchPoint = hit.point;
-                        fixedCatchPoint.x = -93.5f;
+                        fixedCatchPoint.x = -83.74f;
                         ballCatchPoint = fixedCatchPoint;
                         shootMarker.transform.position = ballCatchPoint;
 

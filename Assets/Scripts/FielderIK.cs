@@ -326,16 +326,6 @@ public class FielderIK : MonoBehaviour
         m_RightElbowHintEffector.GetComponent<HintEffector>().weight = 0;
     }
 
-    void EnableHandIKWeight(float value)
-    {
-        m_LeftHandEffector.GetComponent<Effector>().positionWeight = value;
-        m_LeftHandEffector.GetComponent<Effector>().rotationWeight = value;
-        m_LeftHandEffector.GetComponent<Effector>().pullWeight = value;
-        m_RightHandEffector.GetComponent<Effector>().positionWeight = value;
-        m_RightHandEffector.GetComponent<Effector>().rotationWeight = value;
-        m_RightHandEffector.GetComponent<Effector>().pullWeight = value;
-    }
-
     public void PlayAnimation(AnimationClip newClip)
     {
         if (!m_Graph.IsValid()) return;

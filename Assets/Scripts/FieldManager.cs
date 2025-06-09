@@ -55,7 +55,7 @@ public class FieldManager : MonoBehaviour
             //    break;
             //}
 
-            if (hit.collider.CompareTag("rayTest"))
+            if (hit.collider.CompareTag("rayTest")||hit.collider.CompareTag("keeper"))
             {
                 Debug.Log("Added fielder  " + hit.collider.transform.parent.gameObject.name);
                 Fielder fielder = hit.collider.transform.parent.GetComponent<Fielder>();

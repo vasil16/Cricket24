@@ -15,40 +15,43 @@ public class CameraLookAt : MonoBehaviour
 
     private void OnEnable()
     {
+        defRotation = transform.localEulerAngles;
         transform.localRotation = Quaternion.Euler(defRotation);
         if (TryGetComponent<Camera>(out cam))
         {
-            cam = GetComponent<Camera>();
+
         }
     }
 
     void Start()
     {
-        if(cam)
+        if (cam)
         {
             defFOV = cam.fieldOfView;
             activeCamSize = cam.sensorSize;
             activeScreenWidth = Screen.width;
-            adjustedSensorX = activeCamSize.x * Screen.width / refWidth;
-            cam.sensorSize = new Vector2((activeCamSize.x * Screen.width) / refWidth, activeCamSize.y);
+
+            adjustedSensorX = activeCamSize.x / (Screen.width / refWidth);
+
+            cam.sensorSize = new Vector2(adjustedSensorX, activeCamSize.y);
         }
-    }    
+    }
 
 
     void Update()
     {
         //if (Gameplay.instance && Gameplay.instance.isGameOver) this.enabled=false;              
-        if(MainGame.instance.camIndex==1)
+        if (MainGame.instance.camIndex == 1)
         {
-            if(startingRunUp)
+            if (startingRunUp)
             {
                 CamRunUpAnim();
             }
-            if(readyToDeliver)
+            if (readyToDeliver)
             {
                 CamZoomIn();
             }
-        }       
+        }
 
         if (ball)
         {
@@ -81,7 +84,7 @@ public class CameraLookAt : MonoBehaviour
     public void CamRunUpAnim()
     {        
         transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.3f, Time.deltaTime * 1f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 5f, ref dampFact, .8f);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 4.7f, ref dampFact, .8f);
     }
 
     public void CamZoomIn()
