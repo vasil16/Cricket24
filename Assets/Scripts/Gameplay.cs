@@ -92,7 +92,7 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitForSeconds(5f);
 
-            broadcastCamComp.startingRunUp = true;
+            
 
             bowler.GetComponent<Animator>().enabled = true;
 
@@ -104,10 +104,12 @@ public class Gameplay : MonoBehaviour
             {
                 bowler.GetComponent<Animator>().Play("bowlAround");
             }
-
+            
             //keeper.GetComponent<Animator>().SetTrigger("KeeperSteady");
 
             mark.transform.position = ballPitchPoint;
+            yield return new WaitForSeconds(1f);
+            broadcastCamComp.startingRunUp = true;
             rb = ball.GetComponent<Rigidbody>();
             yield return new WaitUntil(() => readyToBowl);
             broadcastCamComp.startingRunUp = false;

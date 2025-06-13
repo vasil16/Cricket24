@@ -13,7 +13,7 @@ public class CameraLookAt : MonoBehaviour
 
     Camera cam;
 
-    private void OnEnable()
+    private void OnValidate()
     {
         defRotation = transform.localEulerAngles;
         transform.localRotation = Quaternion.Euler(defRotation);
@@ -31,7 +31,7 @@ public class CameraLookAt : MonoBehaviour
             activeCamSize = cam.sensorSize;
             activeScreenWidth = Screen.width;
 
-            adjustedSensorX = activeCamSize.x / (Screen.width / refWidth);
+            adjustedSensorX = activeCamSize.x * (Screen.width / refWidth);
 
             cam.sensorSize = new Vector2(adjustedSensorX, activeCamSize.y);
         }
@@ -63,7 +63,11 @@ public class CameraLookAt : MonoBehaviour
                 {
                     if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold)
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 4.6f, ref dampFact, 0.7f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6f, ref dampFact, 0.7f);
+                    }
+                    else
+                    {
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6.5f, ref dampFact, 0.2f);
                     }
                     LookAt();
                 }
@@ -84,7 +88,7 @@ public class CameraLookAt : MonoBehaviour
     public void CamRunUpAnim()
     {        
         transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.3f, Time.deltaTime * 1f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 4.7f, ref dampFact, .8f);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 5f, ref dampFact, 1.7f);
     }
 
     public void CamZoomIn()
