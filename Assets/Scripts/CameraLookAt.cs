@@ -13,13 +13,13 @@ public class CameraLookAt : MonoBehaviour
 
     Camera cam;
 
-    private void OnValidate()
+    private void OnEnable()
     {
         defRotation = transform.localEulerAngles;
         transform.localRotation = Quaternion.Euler(defRotation);
         if (TryGetComponent<Camera>(out cam))
         {
-
+            cam = GetComponent<Camera>();
         }
     }
 
@@ -31,7 +31,7 @@ public class CameraLookAt : MonoBehaviour
             activeCamSize = cam.sensorSize;
             activeScreenWidth = Screen.width;
 
-            adjustedSensorX = activeCamSize.x * (Screen.width / refWidth);
+            adjustedSensorX = activeCamSize.x / (Screen.width / refWidth);
 
             cam.sensorSize = new Vector2(adjustedSensorX, activeCamSize.y);
         }
@@ -87,14 +87,14 @@ public class CameraLookAt : MonoBehaviour
 
     public void CamRunUpAnim()
     {        
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.3f, Time.deltaTime * 1f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 5f, ref dampFact, 1.7f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 9f, Time.deltaTime * 1f), -90, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 8f, ref dampFact, 1.7f);
     }
 
     public void CamZoomIn()
     {
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 5.68f, Time.deltaTime * 2f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 4f, ref dampFact, .3f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 7.4f, Time.deltaTime * 2f), -90, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6f, ref dampFact, .3f);
     }
 
     public void CamReset()

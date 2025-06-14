@@ -330,6 +330,11 @@ public class Fielder : MonoBehaviour
                 adjustedPosition = ball.position;
             }
 
+            if(!ballComp.groundShot)
+            {
+                adjustedPosition = new Vector3(adjustedPosition.x, transform.position.y, adjustedPosition.z);
+            }
+
             // Move hands to adjusted position
             //rightHand.position = adjustedPosition;
             //leftHand.position = adjustedPosition;
@@ -359,9 +364,7 @@ public class Fielder : MonoBehaviour
                 rightHand.position = leftHand.position = Vector3.Lerp(rightHand.position, adjustedPosition, timer/duration);
                 //ikControl.SetIKWeight(lerpValue);
                 yield return null;
-            }
-
-            
+            }            
 
             timer = 0;
             duration = 0.3f;

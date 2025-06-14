@@ -61,8 +61,6 @@ public class Gameplay : MonoBehaviour
 
     IEnumerator LaunchBallsWithDelay()
     {
-        batter.batterAnim.SetTrigger("ToWait");
-
         while (overs < 5 && !isGameOver)
         {
             yield return new WaitForSeconds(0.2f);
@@ -86,13 +84,10 @@ public class Gameplay : MonoBehaviour
             Vector3 force = direction * speed;
 
             ball.GetComponent<BallHit>().stopTriggered = false;
-            yield return new WaitForSeconds(1f);
 
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(5f);
-
-            
+            yield return new WaitForSeconds(6f);            
 
             bowler.GetComponent<Animator>().enabled = true;
 

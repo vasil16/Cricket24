@@ -204,7 +204,7 @@ public class BallHit : MonoBehaviour
                     {
                         Debug.Log("Keeper will catch ball at: " + hit.point);
                         Vector3 fixedCatchPoint = hit.point;
-                        fixedCatchPoint.x = -83.74f;
+                        fixedCatchPoint.x = -84f;
                         ballCatchPoint = fixedCatchPoint;
                         shootMarker.transform.position = ballCatchPoint;
 

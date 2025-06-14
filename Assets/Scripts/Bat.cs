@@ -13,7 +13,7 @@ public class Bat : MonoBehaviour
 
     private void Awake()
     {
-        batterAnim.Play("idle");
+        //batterAnim.Play("idle");
     }
 
     void Update()
