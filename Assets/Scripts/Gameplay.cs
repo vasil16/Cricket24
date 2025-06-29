@@ -79,7 +79,7 @@ public class Gameplay : MonoBehaviour
 
             Vector3 direction = (ballPitchPoint - ballLaunchPos).normalized;
 
-            float speed = 142.8f;
+            float speed = 146.8f;
 
             Vector3 force = direction * speed;
 
@@ -87,7 +87,7 @@ public class Gameplay : MonoBehaviour
 
             batter.batterAnim.SetTrigger("ToStance");
 
-            yield return new WaitForSeconds(6f);            
+            yield return new WaitForSeconds(7f);            
 
             bowler.GetComponent<Animator>().enabled = true;
 
@@ -128,7 +128,6 @@ public class Gameplay : MonoBehaviour
                 float gravity = Mathf.Abs(Physics.gravity.y);
                 float speedSquared = speed * speed;
 
-                // Proper discriminant formula for projectile motion from height
                 float discriminant = speedSquared * speedSquared - gravity * (gravity * xz * xz + 2 * y * speedSquared);
 
                 //Debug.Log($"y = {y}, xz = {xz}, speed = {speed}, discriminant = {discriminant}");
@@ -140,26 +139,19 @@ public class Gameplay : MonoBehaviour
 
                 float discRoot = Mathf.Sqrt(discriminant);
 
-                // Use lower angle for a flatter arc
                 float angle = Mathf.Atan2(speedSquared - discRoot, gravity * xz);
 
-                // Compose launch velocity vector
                 Vector3 velocity = toTargetXZ.normalized * Mathf.Cos(angle) * speed;
                 velocity.y = Mathf.Sin(angle) * speed;
 
-                // Reset and apply to Rigidbody
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
                 rb.WakeUp();
                 rb.AddForce(velocity, ForceMode.VelocityChange);
                 rb.AddTorque(Vector3.forward * -10f, ForceMode.Impulse);
             }
-            //----------------------------------
 
-            //rb.WakeUp();
-            //rb.AddTorque(Vector3.forward * -10);
-            //rb.AddForce(force, ForceMode.Impulse);
-
+            broadcastCamComp.ball = ball;
 
             foreach (CameraLookAt cam in activeCams)
             {
@@ -211,8 +203,6 @@ public class Gameplay : MonoBehaviour
                 cam.ball = null;
                 cam.CamReset();
             }
-
-            batter.batterAnim.ResetTrigger("ToStance");
 
             yield return new WaitForSeconds(.5f);
         }

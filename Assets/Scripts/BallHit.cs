@@ -113,7 +113,7 @@ public class BallHit : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag is "keeper" || (other.gameObject.tag is "rayTest" && other.transform.parent.tag is "keeper"))
+        if (other.gameObject.CompareTag("keeper") || (other.gameObject.CompareTag("rayTest") && other.transform.parent.CompareTag("keeper")))
         {
             keeperReceive = true;
             if (secondTouch)
@@ -124,7 +124,7 @@ public class BallHit : MonoBehaviour
             }            
         }
 
-        else if (other.gameObject.tag is "fielder" or "DeepFielder")
+        if (other.gameObject.tag is "fielder" or "DeepFielder")
         {
             if (secondTouch)
             {                
@@ -132,7 +132,7 @@ public class BallHit : MonoBehaviour
                 fielderReached = true;                
             }
         }
-        else if (other.gameObject.tag is "stop")
+        if (other.gameObject.CompareTag("stop"))
         {
             if (stopTriggered) return;
             rb.isKinematic = true;
@@ -145,12 +145,15 @@ public class BallHit : MonoBehaviour
                 Gameplay.instance.deliveryDead = true;
             }
         }
-        else if (other.gameObject.name is "overHead")
+        if (other.gameObject.name is "overHead")
         {
+            Debug.Log("os");
             Vector3 contactPoint = transform.position;
             CheckLegalDelivery(contactPoint);
+            cover = true;
         }
     }
+    public static bool cover = false;
 
     Vector3 PredictFallPosition(Vector3 startPos, Vector3 velocity, float groundY, float timeStep = 0.02f)
     {
@@ -204,7 +207,7 @@ public class BallHit : MonoBehaviour
                     {
                         Debug.Log("Keeper will catch ball at: " + hit.point);
                         Vector3 fixedCatchPoint = hit.point;
-                        fixedCatchPoint.x = -84f;
+                        fixedCatchPoint.x = -97.9f;
                         ballCatchPoint = fixedCatchPoint;
                         shootMarker.transform.position = ballCatchPoint;
 
@@ -239,6 +242,7 @@ public class BallHit : MonoBehaviour
     public void Reset()
     {
         lastHit = "";
+        cover = false;
         GetComponent<Rigidbody>().isKinematic = true;    
         secondTouch = false;
         groundShot = false;

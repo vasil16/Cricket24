@@ -8,7 +8,7 @@ public class CameraLookAt : MonoBehaviour
     public bool readyToDeliver, startingRunUp;
     public float refWidth = 2280, activeScreenWidth, refSensorSize;
     float dampFact = 0f;
-    [SerializeField] float distanceThreshold, defFOV, currentDist, adjustedSensorX;
+    [SerializeField] float distanceThreshold, defFOV, currentDist, adjustedSensorX, runUpTargetFov, deliverTargetFov;
     [SerializeField] Vector2 activeCamSize;
 
     Camera cam;
@@ -25,18 +25,24 @@ public class CameraLookAt : MonoBehaviour
 
     void Start()
     {
+        cover = false;
         if (cam)
         {
             defFOV = cam.fieldOfView;
             activeCamSize = cam.sensorSize;
-            activeScreenWidth = Screen.width;
 
-            adjustedSensorX = activeCamSize.x / (Screen.width / refWidth);
+            // Use Screen.height and camera aspect ratio instead of Screen.width
+            float screenAspect = (float)Screen.width / (float)Screen.height;
+            float virtualScreenWidth = screenAspect * Screen.height;
+
+            // Use virtualScreenWidth instead of Screen.width directly
+            adjustedSensorX = activeCamSize.x / (virtualScreenWidth / refWidth);
 
             cam.sensorSize = new Vector2(adjustedSensorX, activeCamSize.y);
         }
     }
 
+    public bool cover;
 
     void Update()
     {
@@ -47,10 +53,15 @@ public class CameraLookAt : MonoBehaviour
             {
                 CamRunUpAnim();
             }
-            if (readyToDeliver)
+            else if (readyToDeliver)
             {
                 CamZoomIn();
             }
+            //if(BallHit.cover)
+            //{
+            //    cam.transform.LookAt(ball.transform);
+            //}
+
         }
 
         if (ball)
@@ -63,11 +74,15 @@ public class CameraLookAt : MonoBehaviour
                 {
                     if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold)
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6f, ref dampFact, 0.7f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 7f, ref dampFact, 0.7f);
+                    }
+                    else if (Vector3.Distance(transform.position, ball.transform.position) < 160)
+                    {
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 16f, ref dampFact, 0.2f);
                     }
                     else
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6.5f, ref dampFact, 0.2f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 8f, ref dampFact, 0.2f);
                     }
                     LookAt();
                 }
@@ -87,14 +102,14 @@ public class CameraLookAt : MonoBehaviour
 
     public void CamRunUpAnim()
     {        
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 9f, Time.deltaTime * 1f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 8f, ref dampFact, 1.7f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 8.5f, Time.deltaTime * 1f), -90, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, runUpTargetFov, ref dampFact, 1.7f);
     }
 
     public void CamZoomIn()
     {
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 7.4f, Time.deltaTime * 2f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6f, ref dampFact, .3f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.3f, Time.deltaTime * 2f), -90, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, deliverTargetFov, ref dampFact, .3f);
     }
 
     public void CamReset()

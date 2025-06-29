@@ -139,24 +139,6 @@ public class FielderIK : MonoBehaviour
 
     public void SetIKWeight(float value)
     {
-        //m_LeftFootEffector.GetComponent<Effector>().positionWeight = value;
-        //m_LeftFootEffector.GetComponent<Effector>().rotationWeight = value;
-        //m_LeftFootEffector.GetComponent<Effector>().pullWeight = value;
-        //m_RightFootEffector.GetComponent<Effector>().positionWeight = value;
-        //m_RightFootEffector.GetComponent<Effector>().rotationWeight = value;
-        //m_RightFootEffector.GetComponent<Effector>().pullWeight = value;
-        //m_LeftHandEffector.GetComponent<Effector>().positionWeight = value;
-        //m_LeftHandEffector.GetComponent<Effector>().rotationWeight = value;
-        //m_LeftHandEffector.GetComponent<Effector>().pullWeight = value;
-        //m_RightHandEffector.GetComponent<Effector>().positionWeight = value;
-        //m_RightHandEffector.GetComponent<Effector>().rotationWeight = value;
-        //m_RightHandEffector.GetComponent<Effector>().pullWeight = value;
-
-        //m_LeftKneeHintEffector.GetComponent<HintEffector>().weight = value;
-        //m_RightKneeHintEffector.GetComponent<HintEffector>().weight = value;
-        //m_LeftElbowHintEffector.GetComponent<HintEffector>().weight = value;
-        //m_RightElbowHintEffector.GetComponent<HintEffector>().weight = value;
-
         m_LeftHandEffector.GetComponent<Effector>().positionWeight = value;
         m_LeftHandEffector.GetComponent<Effector>().rotationWeight = value;
         m_LeftHandEffector.GetComponent<Effector>().pullWeight = value;
@@ -179,17 +161,17 @@ public class FielderIK : MonoBehaviour
             AnimationHumanStream humanStream = stream.AsHuman();
 
             // don't sync if transform is currently selected
-            //if (!Array.Exists(selectedTransform, tr => tr == m_LeftFootEffector.transform))
-            //{
-            //    m_LeftFootEffector.transform.position = humanStream.GetGoalPositionFromPose(AvatarIKGoal.LeftFoot);
-            //    m_LeftFootEffector.transform.rotation = humanStream.GetGoalRotationFromPose(AvatarIKGoal.LeftFoot);
-            //}
+            if (!Array.Exists(selectedTransform, tr => tr == m_LeftFootEffector.transform))
+            {
+                m_LeftFootEffector.transform.position = humanStream.GetGoalPositionFromPose(AvatarIKGoal.LeftFoot);
+                m_LeftFootEffector.transform.rotation = humanStream.GetGoalRotationFromPose(AvatarIKGoal.LeftFoot);
+            }
 
-            //if (!Array.Exists(selectedTransform, tr => tr == m_RightFootEffector.transform))
-            //{
-            //    m_RightFootEffector.transform.position = humanStream.GetGoalPositionFromPose(AvatarIKGoal.RightFoot);
-            //    m_RightFootEffector.transform.rotation = humanStream.GetGoalRotationFromPose(AvatarIKGoal.RightFoot);
-            //}
+            if (!Array.Exists(selectedTransform, tr => tr == m_RightFootEffector.transform))
+            {
+                m_RightFootEffector.transform.position = humanStream.GetGoalPositionFromPose(AvatarIKGoal.RightFoot);
+                m_RightFootEffector.transform.rotation = humanStream.GetGoalRotationFromPose(AvatarIKGoal.RightFoot);
+            }
 
             if (!Array.Exists(selectedTransform, tr => tr == m_LeftHandEffector.transform))
             {
@@ -203,32 +185,25 @@ public class FielderIK : MonoBehaviour
                 m_RightHandEffector.transform.rotation = humanStream.GetGoalRotationFromPose(AvatarIKGoal.RightHand);
             }
 
-            //if (!Array.Exists(selectedTransform, tr => tr == m_LeftKneeHintEffector.transform))
-            //{
-            //    m_LeftKneeHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.LeftKnee);
-            //}
+            if (!Array.Exists(selectedTransform, tr => tr == m_LeftKneeHintEffector.transform))
+            {
+                m_LeftKneeHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.LeftKnee);
+            }
 
-            //if (!Array.Exists(selectedTransform, tr => tr == m_RightKneeHintEffector.transform))
-            //{
-            //    m_RightKneeHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.RightKnee);
-            //}
+            if (!Array.Exists(selectedTransform, tr => tr == m_RightKneeHintEffector.transform))
+            {
+                m_RightKneeHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.RightKnee);
+            }
 
-            //if (!Array.Exists(selectedTransform, tr => tr == m_LeftElbowHintEffector.transform))
-            //{
-            //    m_LeftElbowHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.LeftElbow);
-            //}
+            if (!Array.Exists(selectedTransform, tr => tr == m_LeftElbowHintEffector.transform))
+            {
+                m_LeftElbowHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.LeftElbow);
+            }
 
-            //if (!Array.Exists(selectedTransform, tr => tr == m_RightElbowHintEffector.transform))
-            //{
-            //    m_RightElbowHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.RightElbow);
-            //}
-
-            //if (!Array.Exists(selectedTransform, tr => tr == m_BodyRotationEffector.transform))
-            //{
-            //    m_BodyRotationEffector.transform.position = humanStream.bodyPosition;
-            //    m_BodyRotationEffector.transform.rotation = humanStream.bodyRotation;
-            //}
-
+            if (!Array.Exists(selectedTransform, tr => tr == m_RightElbowHintEffector.transform))
+            {
+                m_RightElbowHintEffector.transform.position = humanStream.GetHintPosition(AvatarIKHint.RightElbow);
+            }
             m_Animator.CloseAnimationStream(ref stream);
         }
     }
@@ -276,8 +251,6 @@ public class FielderIK : MonoBehaviour
 
         m_LookAtEffector = SetupLookAtEffector(ref job.lookAtEffector, "LookAtEffector");
 
-        //m_BodyRotationEffector = SetupBodyEffector(ref job.bodyEffector, "BodyEffector");
-
         m_LeftFootEffector.transform.SetParent(effectorParent);
         m_RightFootEffector.transform.SetParent(effectorParent);
         m_LeftHandEffector.transform.SetParent(effectorParent);
@@ -287,7 +260,8 @@ public class FielderIK : MonoBehaviour
         m_LeftElbowHintEffector.transform.SetParent(effectorParent);
         m_RightElbowHintEffector.transform.SetParent(effectorParent);
         m_LookAtEffector.transform.SetParent(effectorParent);
-        //m_BodyRotationEffector.transform.SetParent(effectorParent);
+
+        ResetIKWeight();
 
         GetComponentInParent<Fielder>().rightHand = m_RightHandEffector.transform;
         GetComponentInParent<Fielder>().leftHand = m_LeftHandEffector.transform;
