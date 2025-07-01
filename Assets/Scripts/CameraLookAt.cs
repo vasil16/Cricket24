@@ -57,10 +57,10 @@ public class CameraLookAt : MonoBehaviour
             {
                 CamZoomIn();
             }
-            //if(BallHit.cover)
-            //{
-            //    cam.transform.LookAt(ball.transform);
-            //}
+            if (BallHit.cover)
+            {
+                cam.transform.LookAt(ball.transform,Vector3.up);
+            }
 
         }
 

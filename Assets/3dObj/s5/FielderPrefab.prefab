@@ -148,6 +148,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6520798820020413462}
   - component: {fileID: 804335960252199031}
+  - component: {fileID: 7422957884232368211}
   m_Layer: 0
   m_Name: ballStopper
   m_TagString: fielder
@@ -187,10 +188,33 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1.8399999, y: 2.4394088, z: 1.463073}
   m_Center: {x: -0.00000073829773, y: 0.098486185, z: 0.19026613}
+--- !u!136 &7422957884232368211
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1729228440073990632}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 3.21
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.34, z: 0}
 --- !u!1 &6101083897687772226
 GameObject:
   m_ObjectHideFlags: 0

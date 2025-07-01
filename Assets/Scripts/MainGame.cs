@@ -52,8 +52,8 @@ public class MainGame : MonoBehaviour
         #if UNITY_IOS
                 Application.targetFrameRate = 90;
 
-        #elif UNITY_EDITOR
-            Application.targetFrameRate = 240;
+        #else
+            Application.targetFrameRate = 600;
         #endif
     }
 
