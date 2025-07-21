@@ -145,7 +145,7 @@ public class BallHit : MonoBehaviour
                 Gameplay.instance.deliveryDead = true;
             }
         }
-        if (other.gameObject.name is "overHead")
+        if (other.gameObject.CompareTag("camTrigger"))
         {
             Debug.Log("os");
             Vector3 contactPoint = transform.position;
@@ -153,7 +153,7 @@ public class BallHit : MonoBehaviour
             cover = true;
         }
     }
-    public static bool cover = false;
+    public bool cover = false;
 
     Vector3 PredictFallPosition(Vector3 startPos, Vector3 velocity, float groundY, float timeStep = 0.02f)
     {
@@ -185,7 +185,7 @@ public class BallHit : MonoBehaviour
     IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
     {
         float timestep = 0.005f;
-        float maxTime = 3f;
+        float maxTime = 2f;
         float ballRadius = 0.12f;
         int stepsPerFrame = 5;
 
@@ -207,7 +207,7 @@ public class BallHit : MonoBehaviour
                     {
                         Debug.Log("Keeper will catch ball at: " + hit.point);
                         Vector3 fixedCatchPoint = hit.point;
-                        fixedCatchPoint.x = -97.9f;
+                        fixedCatchPoint.x = -98.75f;
                         ballCatchPoint = fixedCatchPoint;
                         shootMarker.transform.position = ballCatchPoint;
 

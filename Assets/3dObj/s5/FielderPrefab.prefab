@@ -188,10 +188,10 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8399999, y: 2.4394088, z: 1.463073}
-  m_Center: {x: -0.00000073829773, y: 0.098486185, z: 0.19026613}
+  m_Size: {x: 1.84, y: 2.439409, z: 2.3180554}
+  m_Center: {x: -0.00000076261, y: 0.09848614, z: 0.61775726}
 --- !u!136 &7422957884232368211
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -209,7 +209,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.3
   m_Height: 3.21
@@ -717,7 +717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncGoal: 1
   stiffness: 1
-  maxPullIteration: 5
+  maxPullIteration: 2
   defaultEffectorPositionWeight: 1
   defaultEffectorRotationWeight: 1
   defaultEffectorPullWeight: 1
@@ -745,6 +745,8 @@ MonoBehaviour:
   throwingArm: {fileID: 5391229209474829915}
   rightHand: {fileID: 0}
   leftHand: {fileID: 0}
+  rightFoot: {fileID: 0}
+  leftFoot: {fileID: 0}
   canReachInTime: 0
   startedRun: 0
   fm: {fileID: 0}

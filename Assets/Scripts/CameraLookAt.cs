@@ -57,9 +57,15 @@ public class CameraLookAt : MonoBehaviour
             {
                 CamZoomIn();
             }
-            if (BallHit.cover)
+            if (ball && ball.GetComponent<BallHit>().cover && !ball.GetComponent<BallHit>().secondTouch)
             {
-                cam.transform.LookAt(ball.transform,Vector3.up);
+                Debug.Log("cover");
+                cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 1f, ref dampFact, .5f);
+                Vector3 direction = (ball.transform.position - transform.position).normalized;
+                Vector3 currentEuler = transform.eulerAngles;
+                float targetPitch = Quaternion.LookRotation(direction, Vector3.up).eulerAngles.x;
+                float smoothPitch = Mathf.LerpAngle(currentEuler.x, targetPitch, Time.deltaTime * 3);
+                transform.eulerAngles = new Vector3(smoothPitch, currentEuler.y, currentEuler.z);
             }
 
         }

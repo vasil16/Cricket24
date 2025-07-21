@@ -164,6 +164,8 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitUntil(() => deliveryDead);
 
+            ball.GetComponent<BallHit>().cover = false;
+
             broadcastCamComp.readyToDeliver = false;
 
             yield return new WaitForSeconds(2);

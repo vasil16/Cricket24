@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEditor;
+using Unity.VisualScripting;
 
 #if UNITY_2019_3_OR_NEWER
 using UnityEngine.Animations;
@@ -14,10 +15,10 @@ public class FielderIK : MonoBehaviour
     public bool syncGoal = true;
 
     [Range(0.0f, 1.5f)]
-    public float stiffness = 1.0f;
+    public float stiffness = 0.3f;
 
     [Range(1, 50)]
-    public int maxPullIteration = 5;
+    public int maxPullIteration = 1;
 
     [Range(0, 1)]
     public float defaultEffectorPositionWeight = 1.0f;
@@ -139,6 +140,8 @@ public class FielderIK : MonoBehaviour
 
     public void SetIKWeight(float value)
     {
+        m_LeftFootEffector.GetComponent<Effector>().positionWeight = value;
+        m_RightFootEffector.GetComponent<Effector>().positionWeight = value;
         m_LeftHandEffector.GetComponent<Effector>().positionWeight = value;
         m_LeftHandEffector.GetComponent<Effector>().rotationWeight = value;
         m_LeftHandEffector.GetComponent<Effector>().pullWeight = value;
@@ -265,6 +268,8 @@ public class FielderIK : MonoBehaviour
 
         GetComponentInParent<Fielder>().rightHand = m_RightHandEffector.transform;
         GetComponentInParent<Fielder>().leftHand = m_LeftHandEffector.transform;
+        GetComponentInParent<Fielder>().leftFoot = m_LeftFootEffector.transform;
+        GetComponentInParent<Fielder>().rightFoot = m_RightFootEffector.transform;
 
         m_IKPlayable = AnimationScriptPlayable.Create(m_Graph, job, 1);
         m_IKPlayable.ConnectInput(0, clipPlayable, 0, 1.0f);
@@ -343,8 +348,7 @@ public class FielderIK : MonoBehaviour
     }
 
     void LateUpdate()
-    {
-        // Synchronize on LateUpdate to sync goal on current frame
+    {        
         if (syncGoal)
         {
             SyncIKFromPose();

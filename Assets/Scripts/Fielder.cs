@@ -4,6 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.AI;
+using Unity.VisualScripting;
 
 public class Fielder : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class Fielder : MonoBehaviour
     public Vector3 targetPosition;
     BallHit ballComp;
     Rigidbody ballRb;
-    public Transform ball, throwingArm, rightHand, leftHand;
+    public Transform ball, throwingArm, rightHand, leftHand, rightFoot, leftFoot;
     public bool canReachInTime, startedRun;
     [SerializeField] FieldManager fm;
     [SerializeField] AnimationClip runClip;
@@ -23,7 +24,7 @@ public class Fielder : MonoBehaviour
     [SerializeField] NavMeshAgent agent;
     Vector3 initialTarget;
     bool chaseMode, attackMode;
-
+    float groundY = -3.4859f;
     public Animator animator;
 
     private void OnEnable()
@@ -59,7 +60,7 @@ public class Fielder : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(.15f);
+            //yield return new WaitForSeconds(.f);
         }
 
         if (targetPosition.z > -2.13f)
@@ -78,11 +79,14 @@ public class Fielder : MonoBehaviour
         {
             //ikControl.PlayAnimation(crouchClip);
         }
-
+        
         if (!ballComp.secondTouch)
         {
+            leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z);
+            rightFoot.position = new Vector3(transform.position.x, groundY, leftFoot.position.z-2.8f);
             rightHand.position = leftHand.position = targetPosition;
         }
+
         //Debug.Log("recive start");
         float time = 0;
         float duration = .3f;
@@ -336,6 +340,8 @@ public class Fielder : MonoBehaviour
             //}
             rightHand.position = adjustedPosition;
             leftHand.position = adjustedPosition;
+            leftFoot.position = new Vector3(leftFoot.position.x, groundY, leftFoot.position.z);
+            rightFoot.position = new Vector3(rightFoot.position.x, groundY, rightFoot.position.z);
 
             if (ballRb.velocity.magnitude < 20f && !chaseMode)
             {
@@ -354,17 +360,17 @@ public class Fielder : MonoBehaviour
             }
 
             float timer = 0;
-            float duration = 0.3f;
+            float duration = 0.2f;
             float lerpValue = 0;
-            ikControl.SetIKWeight(1);
-            //while (timer <= duration)
-            //{
-            //    timer += Time.deltaTime;
-            //    lerpValue = Mathf.Lerp(0, 1, timer / duration);
-            //    //rightHand.position = leftHand.position = Vector3.Lerp(rightHand.position, adjustedPosition, timer / duration);
-            //    ikControl.SetIKWeight(lerpValue);
-            //    yield return null;
-            //}
+            //ikControl.SetIKWeight(1);
+            while (timer <= duration)
+            {
+                timer += Time.deltaTime;
+                lerpValue = Mathf.Lerp(0, 1, timer / duration);
+                //rightHand.position = leftHand.position = Vector3.Lerp(rightHand.position, adjustedPosition, timer / duration);
+                ikControl.SetIKWeight(lerpValue);
+                yield return null;
+            }
 
             timer = 0;
             duration = 0.3f;
@@ -475,22 +481,23 @@ public class Fielder : MonoBehaviour
             Gameplay.instance.deliveryDead = true;
             yield break;
         }
-        ikControl.PlayAnimation(throwClip);
-
         Vector3 lookDirection = (fm.keeper.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
         lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
-        transform.rotation = lookRotation;            
+        transform.rotation = lookRotation;
+        yield return new WaitForSeconds(2f);                 
+
+        ikControl.PlayAnimation(throwClip);
 
         yield return new WaitUntil(() => throwable);
         ball.SetParent(null, true);
         Vector3 direction = (fm.keeper.position - ball.position).normalized;
-        //direction.y = 1.65f;
+        direction.y = .7f;
         float distance = Vector3.Distance(ball.position, fm.keeper.position);
 
         Debug.DrawRay(ball.position, direction, Color.green, 10f);
 
-        float baseSpeed = 2.4f; 
+        float baseSpeed = 1.6f; 
         float speed = baseSpeed + distance * 0.1f;
 
         Vector3 force = direction * speed;
@@ -503,9 +510,22 @@ public class Fielder : MonoBehaviour
         float time = 0;
         float duration = 2f;
 
+        Vector3 keeperRight = fm.keeper.right;
+
         while (!ballComp.keeperReceive)
         {
-            time += Time.deltaTime;
+            // Calculate lateral direction (project ball offset onto local X axis)
+            Vector3 toBall = ball.position - fm.keeper.position;
+            float lateralOffset = Vector3.Dot(toBall, keeperRight);
+
+            // Move keeper only sideways
+            Vector3 sidewaysMove = keeperRight * lateralOffset;
+
+            // Clamp or smooth movement if needed
+            Vector3 newPos = Vector3.MoveTowards(fm.keeper.position, fm.keeper.position + sidewaysMove, Time.deltaTime * 10);
+            newPos.z = fm.keeper.position.z; // optional: lock Z axis if needed
+            fm.keeper.position = newPos;
+
             yield return null;
         }
 
