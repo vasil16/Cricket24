@@ -94,8 +94,10 @@ public class FieldManager : MonoBehaviour
 
     IEnumerator KeeperRunToRecieve()
     {
+        keeper.GetComponent<Fielder>().StopAllCoroutines();
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
+        keeper.GetComponent<FielderIK>().SetIKWeight(0);
         keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().runningClip);
         Vector3 moveDirection;
         Quaternion lookRotation;

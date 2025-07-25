@@ -276,7 +276,24 @@ public class Gameplay : MonoBehaviour
         return new Vector3(randomX, -4.427082f, randomZ);
     }
 
-    
+    Vector3 GetRandomCricketDeliveryPoint()
+    {
+        float groundY = -4.43f;
+
+        // X: Length from batter (~ -6 = yorker, ~ -30 = short ball)
+        float minX = -30f;
+        float maxX = -6f;
+
+        // Z: Line (off to leg side)
+        float minZ = -1.8f; // wide outside off
+        float maxZ = 1.0f;  // deep leg side (rare but happens)
+
+        // Random point within realistic cricket pitch zone
+        float x = Random.Range(minX, maxX);
+        float z = Random.Range(minZ, maxZ);
+
+        return new Vector3(x, groundY, z);
+    }
 
     void UpdateScoreBoard(BallHit ball)
     {

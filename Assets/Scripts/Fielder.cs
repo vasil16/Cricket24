@@ -24,7 +24,7 @@ public class Fielder : MonoBehaviour
     [SerializeField] NavMeshAgent agent;
     Vector3 initialTarget;
     bool chaseMode, attackMode;
-    float groundY = -3.4859f;
+    float groundY = -4f;
     public Animator animator;
 
     private void OnEnable()
@@ -57,33 +57,57 @@ public class Fielder : MonoBehaviour
         if (targetPosition == Vector3.zero)
         {
             targetPosition = ball.position;
+            rightHand.position = leftHand.position = targetPosition;
         }
         else
         {
             //yield return new WaitForSeconds(.f);
+            leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z+.6f);
+            rightFoot.position = new Vector3(transform.position.x, groundY, leftFoot.position.z - 2f);
+
+
+            if (targetPosition.z > -2.13f)
+            {
+                Debug.Log("move left");
+                ikControl.PlayAnimation(moveLeftClip);
+            }
+            else if (targetPosition.z < -6.44f)
+            {
+                Debug.Log("move right");
+                ikControl.PlayAnimation(moveRightClip);
+            }
+            else
+            {
+                if (targetPosition.z > transform.position.z + 1.4f)
+                {
+                    Debug.Log("towards left");
+                    leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z + 1f);
+                    rightFoot.position = new Vector3(transform.position.x, groundY, leftFoot.position.z - 2f);
+                }
+                else if (targetPosition.z < transform.position.z - 1.3f)
+                {
+                    Debug.Log("towards right");
+                    rightFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z - 1f);
+                    leftFoot.position = new Vector3(transform.position.x, groundY, rightFoot.position.z - 2f);
+                }
+            }
+
+            if (targetPosition.y > 6.5f)
+            {
+                ikControl.PlayAnimation(jumpClip);
+                leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z);
+                rightFoot.position = new Vector3(transform.position.x, groundY, leftFoot.position.z + .4f);
+            }
+            else if (targetPosition.y < 0.27f)
+            {
+                //ikControl.PlayAnimation(crouchClip);
+            }
         }
 
-        if (targetPosition.z > -2.13f)
-        {
-            ikControl.PlayAnimation(moveLeftClip);
-        }
-        if (targetPosition.z < -6.44f)
-        {
-            ikControl.PlayAnimation(moveRightClip);
-        }
-        if (targetPosition.y > 6.5f)
-        {
-            ikControl.PlayAnimation(jumpClip);
-        }
-        else if (targetPosition.y < 0.27f)
-        {
-            //ikControl.PlayAnimation(crouchClip);
-        }
-        
         if (!ballComp.secondTouch)
         {
-            leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z);
-            rightFoot.position = new Vector3(transform.position.x, groundY, leftFoot.position.z-2.8f);
+            //leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z);
+            //rightFoot.position = new Vector3(transform.position.x, groundY, leftFoot.position.z+.4f);
             rightHand.position = leftHand.position = targetPosition;
         }
 
@@ -93,7 +117,7 @@ public class Fielder : MonoBehaviour
         float lerpValue = 0;
         while (time <= duration)
         {
-            if (ballComp.secondTouch) yield break;
+            //if (ballComp.secondTouch) yield break;
             time += Time.deltaTime;
             lerpValue = Mathf.Lerp(0, 1, time / duration);
             ikControl.SetIKWeight(lerpValue);
@@ -194,7 +218,7 @@ public class Fielder : MonoBehaviour
                 {
                     Vector3 directionVector = new Vector3(ball.transform.position.x - transform.position.x,0, ball.transform.position.z - transform.position.z);
                     Vector3 normalVector = directionVector.normalized;
-                    targetPosition = new Vector3(ball.transform.position.x + normalVector.x*8f, transform.position.y, ball.transform.position.z + normalVector.z *8f);
+                    targetPosition = new Vector3((ball.transform.position.x + normalVector.x*8f)+2, transform.position.y, ball.transform.position.z + normalVector.z *8f);
                 }
                 else
                 {
@@ -343,11 +367,19 @@ public class Fielder : MonoBehaviour
             leftFoot.position = new Vector3(leftFoot.position.x, groundY, leftFoot.position.z);
             rightFoot.position = new Vector3(rightFoot.position.x, groundY, rightFoot.position.z);
 
+            float duration = 0.2f;
             if (ballRb.velocity.magnitude < 20f && !chaseMode)
             {
-                //ikControl.PlayAnimation(kneelClip);
-                Debug.Log("kneel");
+                leftFoot.position = new Vector3(ball.position.x - .2f, transform.position.y, ball.position.z);
+                rightFoot.position = new Vector3(leftFoot.position.x-.3f, transform.position.y, leftFoot.position.z-.3f);
+                Debug.Log("slow front");
+                duration = .4f;
             }
+            //else if (ballRb.velocity.magnitude < 20f && !chaseMode)
+            //{
+            //    //ikControl.PlayAnimation(kneelClip);
+            //    Debug.Log("kneel");
+            //}
             else if (chaseMode)
             {
                 //ikControl.PlayAnimation(chasePickupClip);
@@ -360,7 +392,7 @@ public class Fielder : MonoBehaviour
             }
 
             float timer = 0;
-            float duration = 0.2f;
+            
             float lerpValue = 0;
             //ikControl.SetIKWeight(1);
             while (timer <= duration)
@@ -373,20 +405,20 @@ public class Fielder : MonoBehaviour
             }
 
             timer = 0;
-            duration = 0.3f;
+            duration = 0.4f;
             lerpValue = 1;
-            //while (timer <= duration)
-            //{
-            //    timer += Time.deltaTime;
-            //    lerpValue = Mathf.Lerp(1, 0, timer / duration);
-            //    ikControl.SetIKWeight(lerpValue);
-            //    yield return null;
-            //}
-
-            while (!ballComp.stopTriggered)
-            {                
+            while (timer <= duration)
+            {
+                timer += Time.deltaTime;
+                lerpValue = Mathf.Lerp(1, 0, timer / duration);
+                ikControl.SetIKWeight(lerpValue);
                 yield return null;
             }
+
+            //while (!ballComp.stopTriggered)
+            //{                
+            //    yield return null;
+            //}
 
             if (!ballComp.stopTriggered)
             {
@@ -397,65 +429,68 @@ public class Fielder : MonoBehaviour
             }
             else
             {
-                ikControl.SetIKWeight(0);
-                if (!ballComp.groundShot)
+                if(ballComp.stopper==this.gameObject)
                 {
-                    ikControl.PlayAnimation(idleClip);
-                    ballRb.isKinematic = true;
-                    Gameplay.instance.deliveryDead = true;
-                    Debug.Log("caught");
-                    Gameplay.instance.Out();
-                    yield break;
+                    ikControl.SetIKWeight(0);
+                    if (!ballComp.groundShot)
+                    {
+                        ikControl.PlayAnimation(idleClip);
+                        ballRb.isKinematic = true;
+                        Gameplay.instance.deliveryDead = true;
+                        Debug.Log("caught");
+                        Gameplay.instance.Out();
+                        yield break;
+                    }
+                    Debug.Log("commp");
+                    ball.transform.position = throwingArm.position;
+                    ball.transform.SetParent(throwingArm);
+                    #region dive/pick action
+                    //Vector3 toBall = ball.position - transform.position;
+                    //float distance = toBall.magnitude;
+                    //Vector3 toBallNormalized = toBall.normalized;
+
+                    //float side = Vector3.Dot(transform.right, toBallNormalized);     // + right, - left
+                    //float forward = Vector3.Dot(transform.forward, toBallNormalized); // + in front, - behind
+
+                    //// Set some tuning thresholds
+                    //float sideThresholdToDive = 0.5f;
+                    //float diveDistanceThreshold = 2.5f;
+                    //float frontThreshold = 0.6f;
+
+                    //if (forward > frontThreshold)
+                    //{
+                    //    if (Mathf.Abs(side) > sideThresholdToDive && distance > diveDistanceThreshold)
+                    //    {
+                    //        // Ball is far to the side → dive
+                    //        if (side > 0)
+                    //            animator.SetTrigger("DiveRight");
+                    //        else
+                    //            animator.SetTrigger("DiveLeft");
+                    //    }
+                    //    else
+                    //    {
+                    //        // Ball is close or centered → pick from front
+                    //        if (ball.position.y > 6f)
+                    //        {
+                    //            animator.Play("jump");
+                    //        }
+                    //        else
+                    //        {
+                    //            animator.SetTrigger("Pick");
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    // Ball is on side or behind, close enough to pick
+                    //    if (side > 0)
+                    //        animator.SetTrigger("Pick");
+                    //    else
+                    //        animator.SetTrigger("Pick");
+                    //}
+                    #endregion                
+                    StartCoroutine(FielderPickupThrow());
                 }
-                Debug.Log("commp");
-                ball.transform.position = throwingArm.position;
-                ball.transform.SetParent(throwingArm);
-                #region dive/pick action
-                //Vector3 toBall = ball.position - transform.position;
-                //float distance = toBall.magnitude;
-                //Vector3 toBallNormalized = toBall.normalized;
-
-                //float side = Vector3.Dot(transform.right, toBallNormalized);     // + right, - left
-                //float forward = Vector3.Dot(transform.forward, toBallNormalized); // + in front, - behind
-
-                //// Set some tuning thresholds
-                //float sideThresholdToDive = 0.5f;
-                //float diveDistanceThreshold = 2.5f;
-                //float frontThreshold = 0.6f;
-
-                //if (forward > frontThreshold)
-                //{
-                //    if (Mathf.Abs(side) > sideThresholdToDive && distance > diveDistanceThreshold)
-                //    {
-                //        // Ball is far to the side → dive
-                //        if (side > 0)
-                //            animator.SetTrigger("DiveRight");
-                //        else
-                //            animator.SetTrigger("DiveLeft");
-                //    }
-                //    else
-                //    {
-                //        // Ball is close or centered → pick from front
-                //        if (ball.position.y > 6f)
-                //        {
-                //            animator.Play("jump");
-                //        }
-                //        else
-                //        {
-                //            animator.SetTrigger("Pick");
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    // Ball is on side or behind, close enough to pick
-                //    if (side > 0)
-                //        animator.SetTrigger("Pick");
-                //    else
-                //        animator.SetTrigger("Pick");
-                //}
-                #endregion
-                StartCoroutine(FielderPickupThrow());
             }            
         }
         else
@@ -465,8 +500,14 @@ public class Fielder : MonoBehaviour
     }
 
     IEnumerator FielderPickupThrow()
-    {        
+    {
         //ikControl.PlayAnimation(idleClip);
+        if (!ballComp.stopper == this.gameObject)
+        {
+            Debug.Log("fld smbdy");
+            StopAllCoroutines();
+            yield break;
+        }
         if (this.name == "keeper")
         {
             Debug.Log("fld done");
@@ -485,25 +526,24 @@ public class Fielder : MonoBehaviour
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
         lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
         transform.rotation = lookRotation;
-        yield return new WaitForSeconds(2f);                 
+        yield return new WaitForSeconds(1.2f);                 
 
         ikControl.PlayAnimation(throwClip);
-
         yield return new WaitUntil(() => throwable);
         ball.SetParent(null, true);
+        ballRb.WakeUp();
         Vector3 direction = (fm.keeper.position - ball.position).normalized;
         direction.y = .7f;
         float distance = Vector3.Distance(ball.position, fm.keeper.position);
 
         Debug.DrawRay(ball.position, direction, Color.green, 10f);
 
-        float baseSpeed = 1.6f; 
-        float speed = baseSpeed + distance * 0.1f;
+        float baseSpeed = .32f; 
+        float speed = baseSpeed * distance;
 
         Vector3 force = direction * speed;
         ikControl.SetIKWeight(0);
         ballRb.isKinematic = false;
-        ballRb.WakeUp();
 
         ballRb.AddForce(force, ForceMode.VelocityChange);
 
@@ -517,7 +557,14 @@ public class Fielder : MonoBehaviour
             // Calculate lateral direction (project ball offset onto local X axis)
             Vector3 toBall = ball.position - fm.keeper.position;
             float lateralOffset = Vector3.Dot(toBall, keeperRight);
-
+            if (lateralOffset > 0.2f)
+            {
+                fm.keeper.GetComponent<FielderIK>().PlayAnimation(moveRightClip);
+            }
+            else if(lateralOffset < -0.2f)
+            {
+                fm.keeper.GetComponent<FielderIK>().PlayAnimation(moveLeftClip);
+            }
             // Move keeper only sideways
             Vector3 sidewaysMove = keeperRight * lateralOffset;
 

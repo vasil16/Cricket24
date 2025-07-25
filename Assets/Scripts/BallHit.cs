@@ -9,7 +9,7 @@ public class BallHit : MonoBehaviour
     public Vector3 pitchPoint, ballCatchPoint, shotPoint, shotForce;
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
-    [SerializeField] Fielder keeper;
+    [SerializeField] public Fielder keeper;
 
     public string lastHit;
 
@@ -100,6 +100,8 @@ public class BallHit : MonoBehaviour
         }
     }
 
+    public GameObject stopper;
+
     public bool keeperExit;
 
     void OnCollisionExit(Collision collision)
@@ -139,6 +141,7 @@ public class BallHit : MonoBehaviour
             transform.SetParent(other.transform, true);
             transform.position = other.transform.position;
             stopTriggered = true;
+            stopper = other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject;
             Debug.Log("stopped by " + other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject.name);
             if (!secondTouch)
             {
