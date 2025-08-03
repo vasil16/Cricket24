@@ -479,7 +479,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8132335361112814541
 Transform:
   m_ObjectHideFlags: 0
@@ -683,9 +683,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3858217411917904294}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4155045105595536511}
   m_SourcePrefab: {fileID: 100100000, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
 --- !u!4 &2386480516857431065 stripped
 Transform:
@@ -759,7 +756,7 @@ MonoBehaviour:
   neckAim: {fileID: 0}
   ikControl: {fileID: 0}
   rayTestObject: {fileID: 705017877900192434}
-  agent: {fileID: 4155045105595536511}
+  agent: {fileID: 0}
   animator: {fileID: 0}
   idleClip: {fileID: -5252816984213320552, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   runningClip: {fileID: -3925427449959772061, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
@@ -774,28 +771,6 @@ MonoBehaviour:
   throwClip: {fileID: 7400000, guid: 74afef52c0b0e4b9492686caa6f990ac, type: 2}
   kneelClip: {fileID: 7400000, guid: 5bb182317a49f4a8b880557fcaad124c, type: 2}
   throwable: 0
---- !u!195 &4155045105595536511
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8379446109579997316}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 30
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 1
-  m_ObstacleAvoidanceType: 4
 --- !u!4 &9151901013794040382 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}

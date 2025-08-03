@@ -113,8 +113,8 @@ public class Fielder : MonoBehaviour
 
         //Debug.Log("recive start");
         float time = 0;
-        float duration = .3f;
-        float lerpValue = 0;
+        float duration = .46f;
+        float lerpValue;
         while (time <= duration)
         {
             //if (ballComp.secondTouch) yield break;
@@ -136,7 +136,7 @@ public class Fielder : MonoBehaviour
         }        
         float time = 0;
         float duration = 0.5f;
-        float lerpValue = 1;
+        float lerpValue;
         while (time <= duration)
         {
             time += Time.deltaTime;
@@ -243,7 +243,7 @@ public class Fielder : MonoBehaviour
             {
                 if(!targetBall)
                 {
-                    transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, -1.2f);
+                    transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, -1.47F);
                     Debug.Log("chasee");
                     chaseMode = true;
                     targetBall = true;
@@ -252,8 +252,13 @@ public class Fielder : MonoBehaviour
 
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f && !ballComp.fielderReached && !targetBall)
             {
+                //if(ballRb.velocity.magnitude>10)
+                //{
+                //}
                 Debug.Log(gameObject.name + " reached target go for ball");
+                StartCoroutine(WaitForBall());
                 targetBall = true;
+                yield break;
             }
 
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
@@ -325,11 +330,11 @@ public class Fielder : MonoBehaviour
             {
                 yield break;
             }
-            if (ballRb.velocity.magnitude < 5)
+            if (ballRb.velocity.magnitude < 9)
             {
                 Debug.Log("slowed beyound thrshold");
-                //transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
-                agent.SetDestination(new Vector3(ball.position.x, transform.position.y, ball.position.z));                
+                transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
+                //agent.SetDestination(new Vector3(ball.position.x, transform.position.y, ball.position.z));                
             }
             yield return null;
         }
@@ -501,7 +506,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator FielderPickupThrow()
     {
-        //ikControl.PlayAnimation(idleClip);
+        ikControl.PlayAnimation(idleClip);
         if (!ballComp.stopper == this.gameObject)
         {
             Debug.Log("fld smbdy");
@@ -533,7 +538,7 @@ public class Fielder : MonoBehaviour
         ball.SetParent(null, true);
         ballRb.WakeUp();
         Vector3 direction = (fm.keeper.position - ball.position).normalized;
-        direction.y = .7f;
+        direction.y += .2f;
         float distance = Vector3.Distance(ball.position, fm.keeper.position);
 
         Debug.DrawRay(ball.position, direction, Color.green, 10f);
@@ -552,8 +557,9 @@ public class Fielder : MonoBehaviour
 
         Vector3 keeperRight = fm.keeper.right;
 
-        while (!ballComp.keeperReceive)
-        {
+        //while (!ballComp.keeperReceive)
+        while(Vector2.Distance(new Vector2(ball.position.x,ball.position.z), new Vector2(fm.keeper.position.x, fm.keeper.position.z)) > 4f)
+        {            
             // Calculate lateral direction (project ball offset onto local X axis)
             Vector3 toBall = ball.position - fm.keeper.position;
             float lateralOffset = Vector3.Dot(toBall, keeperRight);
@@ -573,9 +579,13 @@ public class Fielder : MonoBehaviour
             newPos.z = fm.keeper.position.z; // optional: lock Z axis if needed
             fm.keeper.position = newPos;
 
+            if(Vector3.Distance(ball.position, fm.keeper.position)<2)
+            {
+                fm.keeper.GetComponent<Fielder>().KeeperRecieve(Vector3.zero, ball);
+            }
             yield return null;
         }
-
+        Debug.Log("keeper catchig");
         fm.keeper.GetComponent<Fielder>().KeeperRecieve(Vector3.zero, ball);
         Debug.Log("fld done");
 
