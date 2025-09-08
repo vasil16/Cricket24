@@ -640,6 +640,7 @@ GameObject:
   m_Component:
   - component: {fileID: 18233188}
   - component: {fileID: 18233189}
+  - component: {fileID: 18233190}
   m_Layer: 0
   m_Name: batter
   m_TagString: Untagged
@@ -769,6 +770,29 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.14131433, y: 0.032805912, z: 0.000031113625}
     m_Extent: {x: 0.9569048, y: 0.20535874, z: 0.88837874}
   m_DirtyAABB: 0
+--- !u!136 &18233190
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18233187}
+  m_Material: {fileID: 13400000, guid: 9f5fc659c0e9947f89f0643d6291e215, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.17
+  m_Height: 1.9138103
+  m_Direction: 1
+  m_Center: {x: -0.13526496, y: 0.81997025, z: -0.3716758}
 --- !u!1 &19354051
 GameObject:
   m_ObjectHideFlags: 0
