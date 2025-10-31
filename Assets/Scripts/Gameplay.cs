@@ -168,9 +168,9 @@ public class Gameplay : MonoBehaviour
 
             broadcastCamComp.readyToDeliver = false;
 
-            yield return new WaitForSeconds(2);
-
             bowler.GetComponent<Animator>().SetBool("DeliveryComplete", true);
+
+            yield return new WaitForSeconds(2);
 
             yield return new WaitForSeconds(2f);
 
