@@ -49,12 +49,12 @@ public class Gameplay : MonoBehaviour
     {
         ballerTrueScale = bowler.transform.localScale;
         ShiftEnd();
-        StartCoroutine(LaunchBallsWithDelay());
         //activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;
         ballOriginPoint = ball.transform.localPosition;
         ballScale = ball.transform.localScale;
+        StartCoroutine(LaunchBallsWithDelay());
     }
 
     [SerializeField] bool randomBound;

@@ -9,6 +9,8 @@ public class FieldManager : MonoBehaviour
     public Transform ball;
     public float fieldingRange = 1.5f;
 
+    public bool tryingPickup;
+
     public List<Fielder> bestFielders = new List<Fielder>();
     public static Action<Vector3> StartCheckField;
     public static Action ResetFielder;

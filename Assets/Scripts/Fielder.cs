@@ -112,7 +112,7 @@ public class Fielder : MonoBehaviour
 
         //Debug.Log("recive start");
         float time = 0;
-        float duration = .46f;
+        float duration = .26f;
         float lerpValue;
         while (time <= duration)
         {
@@ -183,7 +183,7 @@ public class Fielder : MonoBehaviour
         {
             targetPosition = new Vector3(ball.position.x, transform.position.y, ball.position.z);
         }
-        if (IsBallComingAtFielder() && ballComp.groundShot && ballRb.velocity.magnitude > 500)
+        if (IsBallComingAtFielder() && ballComp.groundShot && ballRb.velocity.magnitude > 1000)
         {
             Debug.Log("Coming to fielder");
             StartCoroutine(WaitForBall());
@@ -205,7 +205,7 @@ public class Fielder : MonoBehaviour
         {
             Vector3 moveDirection = (targetPosition - transform.position).normalized;
 
-            if (moveDirection.sqrMagnitude > 0.01f) // prevent NaNs when target is too close
+            if (moveDirection.sqrMagnitude > 0.01f)
             {
                 Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 3f);
@@ -232,12 +232,6 @@ public class Fielder : MonoBehaviour
                 transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, -.37f);
                 targetBall = true;
             }
-            //if (ballComp.keeperReceive)
-            //{
-            //    StopAll();
-            //    Gameplay.instance.deliveryDead = true;
-            //    break;
-            //}
             if(ShouldChase(ball.position,ballRb.velocity,transform.position)&&ballComp.groundShot)
             {
                 if(!targetBall)
@@ -251,17 +245,13 @@ public class Fielder : MonoBehaviour
 
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f && !ballComp.fielderReached && !targetBall)
             {
-                //if(ballRb.velocity.magnitude>10)
-                //{
-                //}
-                Debug.Log(gameObject.name + " reached target go for ball");
+                Debug.Log(gameObject.name + " reached target called wait for ball");
                 StartCoroutine(WaitForBall());
                 targetBall = true;
                 yield break;
             }
 
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
-            //agent.SetDestination(targetPosition);
 
             if (Gameplay.instance.deliveryDead)
             {
@@ -359,17 +349,7 @@ public class Fielder : MonoBehaviour
             float maxReachSide = 0.3f;
             localBallOffset.x = Mathf.Clamp(localBallOffset.x, -maxReachSide, maxReachSide);
 
-            //Vector3 adjustedPosition = transform.TransformPoint(localBallOffset);
             Vector3 adjustedPosition = ball.position;
-            //if (ballRb.velocity.magnitude<0.2f)
-            //{
-            //    adjustedPosition = ball.position;
-            //}
-
-            //if(!ballComp.groundShot)
-            //{
-            //    adjustedPosition = new Vector3(adjustedPosition.x, transform.position.y, adjustedPosition.z);
-            //}
             rightHand.position = adjustedPosition;
             leftHand.position = adjustedPosition;
             leftFoot.position = new Vector3(leftFoot.position.x, groundY, leftFoot.position.z);
@@ -385,24 +365,20 @@ public class Fielder : MonoBehaviour
             }
             else if (chaseMode)
             {
-                //ikControl.PlayAnimation(chasePickupClip);
                 Debug.Log("pkup chase");
             }
             else
             {
-                //ikControl.PlayAnimation(pickUpClip);
                 Debug.Log("pkup");
             }
 
             float timer = 0;
             
             float lerpValue = 0;
-            //ikControl.SetIKWeight(1);
             while (timer <= duration)
             {
                 timer += Time.deltaTime;
                 lerpValue = Mathf.Lerp(0, 1, timer / duration);
-                //rightHand.position = leftHand.position = Vector3.Lerp(rightHand.position, adjustedPosition, timer / duration);
                 ikControl.SetIKWeight(lerpValue);
                 yield return null;
             }
@@ -422,10 +398,19 @@ public class Fielder : MonoBehaviour
             if (!ballComp.stopTriggered)
             {
                 Debug.Log("nostop");
+                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < .5f)
+                {
+                    StartCoroutine(ReachedBall());
+                }
+                else
+                {
+                    StartCoroutine(RunToBall());
+                }
                 ballComp.fielderReached = false;
-                StartCoroutine(RunToBall());
+                //StartCoroutine(RunToBall());
                 yield break;
             }
+
             else
             {
                 if(ballComp.stopper==this.gameObject)
@@ -498,6 +483,15 @@ public class Fielder : MonoBehaviour
         }
     }
 
+    bool ballWithinReach()
+    {
+        if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f)
+        {
+            return true;
+        }
+        return false;
+    }
+
     IEnumerator GrabBall()
     {
         yield return new WaitForEndOfFrame();
@@ -521,12 +515,12 @@ public class Fielder : MonoBehaviour
             yield break;
         }
 
-        if (Vector3.Distance(transform.position, fm.keeper.position)<=80)
-        {
-            Debug.Log("fld done");
-            Gameplay.instance.deliveryDead = true;
-            yield break;
-        }
+        //if (Vector3.Distance(transform.position, fm.keeper.position)<=80)
+        //{
+        //    Debug.Log("fld done");
+        //    Gameplay.instance.deliveryDead = true;
+        //    yield break;
+        //}
         Vector3 lookDirection = (fm.keeper.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
         lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
@@ -543,10 +537,17 @@ public class Fielder : MonoBehaviour
 
         Debug.DrawRay(ball.position, direction, Color.green, 10f);
 
-        float baseSpeed = .32f; 
+        float baseSpeed = .4f; 
         float speed = baseSpeed * distance;
 
-        Vector3 force = direction * speed;
+
+        // x distance   a speed
+        // y distance   ? speed
+        speed = 70f;
+        
+
+        Debug.Log("throw spee " + speed+ " distance "+distance);
+        Vector3 force = direction * Mathf.Max(10,speed);
         ikControl.SetIKWeight(0);
         ballRb.isKinematic = false;
 
