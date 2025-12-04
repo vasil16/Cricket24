@@ -121,6 +121,9 @@ public class CameraLookAt : MonoBehaviour
 
     public void CamReset()
     {
+        startingRunUp = false;
+        readyToDeliver = false;
+        ball = null;
         transform.localRotation = Quaternion.Euler(defRotation);
         if (!cam) return;
         cam.fieldOfView = defFOV;

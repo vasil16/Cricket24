@@ -283619,6 +283619,7 @@ MonoBehaviour:
   - {fileID: 1356569742}
   ball: {fileID: 0}
   fieldingRange: 1.5
+  tryingPickup: 0
   bestFielders: []
   score: 0
   marker: {fileID: 1936551969}
@@ -316151,7 +316152,7 @@ MonoBehaviour:
   legalDelivery: 1
   readyToBowl: 0
   scc: 1
-  randomBound: 0
+  randomBound: 1
   loftOn: 0
   loftBtn: {fileID: 1889719095}
 --- !u!82 &8347944086181394553

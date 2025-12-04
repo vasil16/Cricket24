@@ -183,7 +183,7 @@ public class Fielder : MonoBehaviour
         {
             targetPosition = new Vector3(ball.position.x, transform.position.y, ball.position.z);
         }
-        if (IsBallComingAtFielder() && ballComp.groundShot && ballRb.velocity.magnitude > 1000)
+        if (IsBallComingAtFielder() && ballComp.groundShot && ballRb.velocity.magnitude > 3000)
         {
             Debug.Log("Coming to fielder");
             StartCoroutine(WaitForBall());
@@ -339,23 +339,13 @@ public class Fielder : MonoBehaviour
         if (ballComp.fieldedPlayer == this.gameObject)
         {
             Debug.Log("222");
-            Vector3 targetPosition = ball.position;
-
-            Vector3 localBallOffset = transform.InverseTransformPoint(targetPosition);
-
-            float maxReachForward = 0.5f; // Adjust as needed
-            localBallOffset.z = Mathf.Clamp(localBallOffset.z, -maxReachForward, maxReachForward);
-
-            float maxReachSide = 0.3f;
-            localBallOffset.x = Mathf.Clamp(localBallOffset.x, -maxReachSide, maxReachSide);
 
             Vector3 adjustedPosition = ball.position;
             rightHand.position = adjustedPosition;
             leftHand.position = adjustedPosition;
-            leftFoot.position = new Vector3(leftFoot.position.x, groundY, leftFoot.position.z);
-            rightFoot.position = new Vector3(rightFoot.position.x, groundY, rightFoot.position.z);
 
             float duration = 0.2f;
+
             if (ballRb.velocity.magnitude < 20f && !chaseMode)
             {
                 leftFoot.position = new Vector3(ball.position.x - .2f, transform.position.y, ball.position.z);
@@ -363,10 +353,12 @@ public class Fielder : MonoBehaviour
                 Debug.Log("slow front");
                 duration = .4f;
             }
+
             else if (chaseMode)
             {
                 Debug.Log("pkup chase");
             }
+
             else
             {
                 Debug.Log("pkup");
@@ -394,11 +386,10 @@ public class Fielder : MonoBehaviour
                 yield return null;
             }
 
-
             if (!ballComp.stopTriggered)
             {
                 Debug.Log("nostop");
-                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < .5f)
+                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < .5f)
                 {
                     StartCoroutine(ReachedBall());
                 }
@@ -407,7 +398,6 @@ public class Fielder : MonoBehaviour
                     StartCoroutine(RunToBall());
                 }
                 ballComp.fielderReached = false;
-                //StartCoroutine(RunToBall());
                 yield break;
             }
 
