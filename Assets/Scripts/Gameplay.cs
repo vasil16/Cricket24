@@ -43,6 +43,74 @@ public class Gameplay : MonoBehaviour
         //bat.GetComponent<Rigidbody>().centerOfMass = batCenter.localPosition;
     }
 
+    //public List<Vector3> deliveryPoints = new List<Vector3>()
+    //{
+    //    // --- YORKERS (Targeting the Base of Stumps) ---
+    //    new Vector3(-30.5f, -4.42f, -0.36f), // Perfect Middle Yorker
+    //    new Vector3(-30.3f, -4.42f, 0.40f),  // Off-Stump Yorker
+    //    new Vector3(-30.6f, -4.42f, -1.10f), // Leg-Stump Yorker
+    //    new Vector3(-30.0f, -4.42f, 3.50f),  // Wide Yorker (Inside Wide Line)
+    //    new Vector3(-29.8f, -4.42f, 5.50f),  // Extreme Wide Yorker
+    //    new Vector3(-30.8f, -4.42f, -0.70f), // Cramp Yorker (Aimed at toes)
+
+    //    // --- SLOT BALLS (High Boundary Risk - Half Volleys) ---
+    //    new Vector3(-28.5f, -4.42f, -0.36f), // Classic Middle Slot
+    //    new Vector3(-27.5f, -4.42f, 1.00f),  // Off-Drive Half-Volley
+    //    new Vector3(-28.0f, -4.42f, -1.50f), // Leg-Side Clip
+    //    new Vector3(-27.0f, -4.42f, 2.80f),  // Wide Drive Bait
+    //    new Vector3(-27.8f, -4.42f, 0.60f),  // Overpitched Off-Stump
+    //    new Vector3(-29.0f, -4.42f, -0.10f), // The "Floaty" Half-Volley
+
+    //    // --- GOOD LENGTH (The "Corridor of Uncertainty") ---
+    //    new Vector3(-26.0f, -4.42f, -0.10f), // Top of Off
+    //    new Vector3(-25.5f, -4.42f, 0.80f),  // 4th Stump Channel
+    //    new Vector3(-25.2f, -4.42f, 1.60f),  // 5th Stump (Test match line)
+    //    new Vector3(-25.8f, -4.42f, -0.36f), // Straight Good Length
+    //    new Vector3(-26.5f, -4.42f, -0.90f), // Tight into the Pads
+    //    new Vector3(-24.8f, -4.42f, 2.50f),  // Wide Slanting Angle
+    //    new Vector3(-24.5f, -4.42f, 0.40f),  // Deep Good Length (Dry spell line)
+
+    //    // --- BACK OF LENGTH (Defensive / Heavy Ball) ---
+    //    new Vector3(-23.0f, -4.42f, -0.50f), // Heavy Ball (Rib-cage height)
+    //    new Vector3(-22.5f, -4.42f, 1.20f),  // Back of Length Outside Off
+    //    new Vector3(-23.5f, -4.42f, -1.00f), // Short of Length Body Cramp
+    //    new Vector3(-22.0f, -4.42f, 0.00f),  // Defensive Middle
+
+    //    // --- FULL TOSSES (Targets in the air at the Crease) ---
+    //    new Vector3(-31.08f, -4.10f, -0.36f), // Low Full Toss Middle
+    //    new Vector3(-31.08f, -3.50f, 1.20f),  // Waist High Off-Side (Risky)
+    //    new Vector3(-31.08f, -3.80f, 4.80f),  // Wide Full Toss (T20 Death ball)
+    //    new Vector3(-31.08f, -4.00f, -1.80f), // Leg Side Full Toss
+
+    //    // --- SHORT PITCH (Occasional Bouncers) ---
+    //    new Vector3(-20.0f, -4.42f, -0.36f), // Standard Short Ball
+    //    new Vector3(-19.5f, -4.42f, 2.50f),  // Wide Bouncer
+    //    new Vector3(-18.5f, -4.42f, 0.20f),  // Chest Height Bouncer
+    //    new Vector3(-17.5f, -4.42f, -0.20f)  // Throat Ball
+    //};
+
+    public List<Vector3> deliveryPoints = new List<Vector3>()
+    {
+        // --- YORKERS (Base of Stumps) ---
+        new Vector3(-30.2f, -4.42f, -0.36f), // Middle Stump Yorker
+        new Vector3(-30.0f, -4.42f, 0.60f),  // Off-Stump Yorker
+        new Vector3(-29.8f, -4.42f, 3.50f),  // Wide Yorker (T20 Style)
+
+        // --- SLOT BALLS (In the "Arc") ---
+        new Vector3(-28.5f, -4.42f, -0.36f), // Middle Slot
+        new Vector3(-28.0f, -4.42f, 1.00f),  // Off Slot
+        new Vector3(-28.2f, -4.42f, -1.20f), // Leg-ish Slot
+
+        // --- GOOD LENGTH (Standard) ---
+        new Vector3(-25.5f, -4.42f, 0.00f),  // Top of Off
+        new Vector3(-25.0f, -4.42f, 0.80f),  // 4th Stump
+        new Vector3(-26.0f, -4.42f, -0.80f), // At the Body
+
+        // --- FULL TOSS / BEAMER TARGETS (Y is higher here) ---
+        new Vector3(-31.08f, -3.80f, 0.00f), // Low Full Toss
+        new Vector3(-31.08f, -3.20f, 1.50f)  // Wide Full Toss
+    };
+
     public float scc;
 
     void Start()
@@ -71,7 +139,10 @@ public class Gameplay : MonoBehaviour
 
             ball.transform.localScale = ballScale;
 
-            Vector3 ballPitchPoint = randomBound == true? GetRandomPointWithinBounds() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+            //Vector3 ballPitchPoint = randomBound == true? GetRandomPointWithinBounds() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+
+            Vector3 ballPitchPoint = randomBound == true ? shareRand() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+            
 
             ball.transform.localPosition = ballOriginPoint;
 
@@ -102,7 +173,10 @@ public class Gameplay : MonoBehaviour
             
             //keeper.GetComponent<Animator>().SetTrigger("KeeperSteady");
 
-            mark.transform.position = ballPitchPoint;
+            //mark.transform.position = ballPitchPoint;
+
+            mark.transform.position = BowlingEngine.instance.DecidePoint(false);
+
             yield return new WaitForSeconds(1f);
             broadcastCamComp.startingRunUp = true;
             rb = ball.GetComponent<Rigidbody>();
@@ -121,34 +195,36 @@ public class Gameplay : MonoBehaviour
 
             //----------------------------------
             {
-                Vector3 toTarget = ballPitchPoint - ballLaunchPos;
-                Vector3 toTargetXZ = new Vector3(toTarget.x, 0, toTarget.z);
-                float y = toTarget.y; // This should be negative if the target is below
-                float xz = toTargetXZ.magnitude;
-                float gravity = Mathf.Abs(Physics.gravity.y);
-                float speedSquared = speed * speed;
+                //Vector3 toTarget = ballPitchPoint - ballLaunchPos;
+                //Vector3 toTargetXZ = new Vector3(toTarget.x, 0, toTarget.z);
+                //float y = toTarget.y; // This should be negative if the target is below
+                //float xz = toTargetXZ.magnitude;
+                //float gravity = Mathf.Abs(Physics.gravity.y);
+                //float speedSquared = speed * speed;
 
-                float discriminant = speedSquared * speedSquared - gravity * (gravity * xz * xz + 2 * y * speedSquared);
+                //float discriminant = speedSquared * speedSquared - gravity * (gravity * xz * xz + 2 * y * speedSquared);
 
-                //Debug.Log($"y = {y}, xz = {xz}, speed = {speed}, discriminant = {discriminant}");
+                ////Debug.Log($"y = {y}, xz = {xz}, speed = {speed}, discriminant = {discriminant}");
 
-                if (discriminant < 0f)
-                {
-                    yield break; // Exit early
-                }
+                //if (discriminant < 0f)
+                //{
+                //    yield break; // Exit early
+                //}
 
-                float discRoot = Mathf.Sqrt(discriminant);
+                //float discRoot = Mathf.Sqrt(discriminant);
 
-                float angle = Mathf.Atan2(speedSquared - discRoot, gravity * xz);
+                //float angle = Mathf.Atan2(speedSquared - discRoot, gravity * xz);
 
-                Vector3 velocity = toTargetXZ.normalized * Mathf.Cos(angle) * speed;
-                velocity.y = Mathf.Sin(angle) * speed;
+                //Vector3 velocity = toTargetXZ.normalized * Mathf.Cos(angle) * speed;
+                //velocity.y = Mathf.Sin(angle) * speed;
 
-                rb.velocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-                rb.WakeUp();
-                rb.AddForce(velocity, ForceMode.VelocityChange);
-                rb.AddTorque(Vector3.forward * -10f, ForceMode.Impulse);
+                //rb.velocity = Vector3.zero;
+                //rb.angularVelocity = Vector3.zero;
+                //rb.WakeUp();
+                //rb.AddForce(velocity, ForceMode.VelocityChange);
+                //rb.AddTorque(Vector3.forward * -10f, ForceMode.Impulse);
+                //BowlingEngine.instance.ReleaseBall(false);
+                BowlingEngine.instance.Release();
             }
 
             broadcastCamComp.ball = ball;
@@ -257,6 +333,12 @@ public class Gameplay : MonoBehaviour
         float randomX = Random.Range(-45.8f, 22.4f);
         float randomZ = Random.Range(-4f, .8f);
         return new Vector3(randomX, -4.427082f, randomZ);
+    }
+
+    Vector3 shareRand()
+    {
+        int kd = Random.Range(0, deliveryPoints.Count);
+        return deliveryPoints[kd];
     }
 
     Vector3 GetRandomPointWithinBounds()

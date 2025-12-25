@@ -56,6 +56,18 @@ public class FieldManager : MonoBehaviour
             //{
             //    break;
             //}
+            if (hit.transform.parent.gameObject.CompareTag("DeepFielder"))
+            {
+                Debug.Log(hit.transform.parent.name + "  a deep filder");
+                
+            }
+
+            else
+            {
+                Debug.Log(hit.transform.parent.name + "  nnot a deep filder");
+                //continue;
+            }
+
 
             if (hit.collider.CompareTag("rayTest")||hit.collider.CompareTag("keeper"))
             {
@@ -64,7 +76,14 @@ public class FieldManager : MonoBehaviour
                 Vector3 closestPoint = hit.collider.bounds.ClosestPoint(ball.position);
                 fielder.enabled = true;
                 //fielder.targetPosition = closestPoint;
-                fielder.targetPosition = hit.point;
+                if(!Gameplay.instance.stadiumBounds.Contains(hit.point))
+                {
+                    fielder.actualFetchPosition = Gameplay.instance.stadiumBounds.ClosestPoint(hit.point);
+                }
+                else
+                {
+                    fielder.actualFetchPosition =  hit.point;
+                }
                 bestFielders.Add(fielder);
                 Debug.Log("fielders added " + bestFielders.Count);
             }
@@ -78,7 +97,7 @@ public class FieldManager : MonoBehaviour
             if (!fielder.startedRun)
             {                
                 fielder.startedRun = true;
-                fielder.Initiate(ballAt, ball);
+                fielder.Initiate(ball);
             }
         }
         if (!bestFielders.Contains(fielders[0]))

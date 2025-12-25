@@ -148,7 +148,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6520798820020413462}
   - component: {fileID: 804335960252199031}
-  - component: {fileID: 7422957884232368211}
   m_Layer: 0
   m_Name: ballStopper
   m_TagString: fielder
@@ -190,31 +189,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.84, y: 2.439409, z: 2.3180554}
-  m_Center: {x: -0.00000076261, y: 0.09848614, z: 0.61775726}
---- !u!136 &7422957884232368211
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1729228440073990632}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 3.21
-  m_Direction: 1
-  m_Center: {x: 0, y: -0.34, z: 0}
+  m_Size: {x: 1.84, y: 2.439409, z: 1.1315626}
+  m_Center: {x: -0.00000085771, y: 0.09848614, z: 0.024509905}
 --- !u!1 &6101083897687772226
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,8 +242,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.07
-  m_Height: 0.07
+  m_Radius: 0.1
+  m_Height: 0.1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6294500092598876500
@@ -459,8 +435,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.07
-  m_Height: 0.07
+  m_Radius: 0.1
+  m_Height: 0.1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9069543324301034001
@@ -717,11 +693,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncGoal: 1
-  stiffness: 1
-  maxPullIteration: 2
+  stiffness: 1.1311105
+  maxPullIteration: 6
   defaultEffectorPositionWeight: 1
   defaultEffectorRotationWeight: 1
-  defaultEffectorPullWeight: 1
+  defaultEffectorPullWeight: 0.663
   defaultHintWeight: 1
   idleClip: {fileID: -5252816984213320552, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   effectorParent: {fileID: 4583524442194653570}
@@ -737,7 +713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02da525d320ca4893b06a0452efcf995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 25
+  runSpeed: 35
   score: 0
   angleDiff: 0
   timeToReachLanding: 0
@@ -757,8 +733,8 @@ MonoBehaviour:
   rayTestObject: {fileID: 705017877900192434}
   agent: {fileID: 0}
   chaseMode: 0
-  attackMode: 0
   animator: {fileID: 0}
+  actualFetchPosition: {x: 0, y: 0, z: 0}
   idleClip: {fileID: -5252816984213320552, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   runningClip: {fileID: -3925427449959772061, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   jumpClip: {fileID: -2993534804863918692, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
@@ -771,6 +747,9 @@ MonoBehaviour:
   pickUpClip: {fileID: 7400000, guid: cc87a96a1025a44ad8608987f75404d3, type: 2}
   throwClip: {fileID: 7400000, guid: 74afef52c0b0e4b9492686caa6f990ac, type: 2}
   kneelClip: {fileID: 7400000, guid: 5bb182317a49f4a8b880557fcaad124c, type: 2}
+  distanceToTarget: 0
+  refDistance: 186.2869
+  refSpeed: 15
   throwable: 0
 --- !u!4 &9151901013794040382 stripped
 Transform:

@@ -185,46 +185,106 @@ public class BallHit : MonoBehaviour
     [SerializeField] LayerMask keeperLayer;
 
 
+    //IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
+    //{
+    //    float timestep = 0.005f;
+    //    float maxTime = 2f;
+    //    float ballRadius = 0.12f;
+    //    int stepsPerFrame = 5;
+
+    //    Vector3 currentPosition = startPosition;
+    //    Vector3 velocity = initialVelocity;
+
+    //    for (float t = 0f; t < maxTime; t += timestep)
+    //    {
+    //        for (int i = 0; i < stepsPerFrame; i++)
+    //        {
+    //            Vector3 nextPosition = currentPosition + velocity * timestep + 0.5f * Physics.gravity * timestep * timestep;
+    //            Vector3 direction = nextPosition - currentPosition;
+
+    //            Debug.DrawRay(currentPosition, direction, Color.red, 2f);
+
+    //            if (Physics.SphereCast(currentPosition, ballRadius, direction.normalized, out RaycastHit hit, direction.magnitude, keeperLayer, QueryTriggerInteraction.Collide))
+    //            {
+    //                if (hit.collider.CompareTag("keeper") || (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
+    //                {
+    //                    Debug.Log("Keeper will catch ball at: " + hit.point);
+    //                    Vector3 fixedCatchPoint = hit.point;
+    //                    fixedCatchPoint.x = -91.12f;
+    //                    ballCatchPoint = fixedCatchPoint;
+    //                    shootMarker.transform.position = ballCatchPoint;
+    //                    yield return new WaitUntil(() => cover);
+    //                    keeper.GetComponent<Fielder>().enabled = true;
+    //                    keeper.KeeperRecieve(ballCatchPoint, this.transform);
+    //                    yield break;
+    //                }
+    //            }
+
+    //            velocity += Physics.gravity * timestep;
+    //            currentPosition = nextPosition;
+    //        }
+
+    //        yield return null;
+    //    }
+    //}
+
     IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
     {
-        float timestep = 0.005f;
+        // 1. Match the project's exact physics step for 100% accuracy
+        float timestep = Time.fixedDeltaTime;
         float maxTime = 2f;
         float ballRadius = 0.12f;
-        int stepsPerFrame = 5;
+
+        // Get the drag from the actual Rigidbody component
+        float drag = rb.drag;
 
         Vector3 currentPosition = startPosition;
         Vector3 velocity = initialVelocity;
 
-        for (float t = 0f; t < maxTime; t += timestep)
+        int totalSteps = Mathf.CeilToInt(maxTime / timestep);
+
+        for (int s = 0; s < totalSteps; s++)
         {
-            for (int i = 0; i < stepsPerFrame; i++)
+            // 2. Physics Step Calculation (Unity Style)
+            // First, apply gravity
+            velocity += Physics.gravity * timestep;
+
+            // Second, apply Drag (This is what usually causes the "higher" error)
+            // Unity uses: velocity *= 1.0 / (1.0 + drag * timestep)
+            velocity /= (1f + drag * timestep);
+
+            // Third, calculate the movement
+            Vector3 moveDelta = velocity * timestep;
+            Vector3 nextPosition = currentPosition + moveDelta;
+
+            // Visualization
+            Debug.DrawLine(currentPosition, nextPosition, Color.red, 2f);
+
+            // 3. Collision Detection
+            if (Physics.SphereCast(currentPosition, ballRadius, moveDelta.normalized, out RaycastHit hit, moveDelta.magnitude, keeperLayer, QueryTriggerInteraction.Collide))
             {
-                Vector3 nextPosition = currentPosition + velocity * timestep + 0.5f * Physics.gravity * timestep * timestep;
-                Vector3 direction = nextPosition - currentPosition;
-
-                Debug.DrawRay(currentPosition, direction, Color.red, 2f);
-
-                if (Physics.SphereCast(currentPosition, ballRadius, direction.normalized, out RaycastHit hit, direction.magnitude, keeperLayer, QueryTriggerInteraction.Collide))
+                if (hit.collider.CompareTag("keeper") || (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
                 {
-                    if (hit.collider.CompareTag("keeper")||(hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
-                    {
-                        Debug.Log("Keeper will catch ball at: " + hit.point);
-                        Vector3 fixedCatchPoint = hit.point;
-                        fixedCatchPoint.x = -91.63f;
-                        ballCatchPoint = fixedCatchPoint;
-                        shootMarker.transform.position = ballCatchPoint;
+                    Vector3 fixedCatchPoint = hit.point;
+                    fixedCatchPoint.x = -91.22f;
+                    ballCatchPoint = fixedCatchPoint;
 
-                        keeper.GetComponent<Fielder>().enabled = true;
-                        keeper.KeeperRecieve(ballCatchPoint, this.transform);
-                        yield break;
-                    }
+                    shootMarker.transform.position = ballCatchPoint;
+
+                    yield return new WaitUntil(() => Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z), new Vector2(transform.position.x, transform.position.z)) <21);
+                    Debug.Log("check done for distance");
+                    keeper.GetComponent<Fielder>().enabled = true;
+                    keeper.KeeperRecieve(ballCatchPoint, this.transform);
+                    yield break;
                 }
-
-                velocity += Physics.gravity * timestep;
-                currentPosition = nextPosition;
             }
 
-            yield return null;
+            currentPosition = nextPosition;
+
+            // This ensures we don't calculate everything in one frame (unless you want to)
+            // For a path preview, you might want to run this in a single frame's loop.
+            // For a real-time sync, we yield every few steps.
+            if (s % 5 == 0) yield return null;
         }
     }
 
