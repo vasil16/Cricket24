@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum DeliveryLength { Yorker, Slot, GoodLength, BackOfLength, Short, FullToss }
+public enum DeliveryLength { Yorker, Full, GoodLength, BackOfLength, Short, FullToss }
 
 [System.Serializable]
 public struct BowlingPoint
@@ -35,7 +35,7 @@ public class BowlingEngine : MonoBehaviour
         {
             InitializePoints();
         }
-    }
+    }   
 
     public Vector3 DecidePoint(bool isDeathOvers)
     {
@@ -56,6 +56,8 @@ public class BowlingEngine : MonoBehaviour
 
         // Convert km/h to m/s for Unity Physics
         float speedMs = deliverySpeedKmh / 3.6f;
+
+        chosenPoint = Gameplay.instance.pitchPoint;
 
         Vector3 launchVelocity = CalculateVelocityForSpeed(chosenPoint, speedMs);
 
@@ -98,7 +100,7 @@ public class BowlingEngine : MonoBehaviour
         {
             if (r < 0.65f) chosenLength = DeliveryLength.Yorker;
             else if (r < 0.85f) chosenLength = DeliveryLength.FullToss;
-            else chosenLength = DeliveryLength.Slot;
+            else chosenLength = DeliveryLength.Full;
         }
         else
         {
@@ -117,33 +119,57 @@ public class BowlingEngine : MonoBehaviour
     public void InitializePoints()
     {
         deliveryPoints.Clear();
-        float groundY = -4.42f;
-        float centerZ = -0.36f;
+        float groundY = 0.001f;
 
-        // --- CALIBRATED FOR 90-UNIT PITCH ---
-        AddPoint("Top of Off", new Vector3(2.0f, groundY, -0.8f), DeliveryLength.GoodLength);
-        AddPoint("Corridor Off", new Vector3(5.0f, groundY, -1.8f), DeliveryLength.GoodLength);
-        AddPoint("Good Length Middle", new Vector3(0.0f, groundY, centerZ), DeliveryLength.GoodLength);
-        AddPoint("Tight into Pads", new Vector3(-2.5f, groundY, 0.45f), DeliveryLength.GoodLength);
+        // ==================================================
+        // YORKERS (Z: 50 to 51)
+        // ==================================================
+        AddPoint("Toe-Crusher Straight", new Vector3(0.0f, groundY, 50.8f), DeliveryLength.Yorker);
+        AddPoint("Off-Stump Blockhole", new Vector3(-0.52f, groundY, 50.8f), DeliveryLength.Yorker);
+        AddPoint("Wide Yorker (Legal)", new Vector3(-4.1f, groundY, 50.5f), DeliveryLength.Yorker);
 
-        AddPoint("Yorker Middle", new Vector3(-30.5f, groundY, centerZ), DeliveryLength.Yorker);
-        AddPoint("Yorker Off", new Vector3(-30.2f, groundY, -0.8f), DeliveryLength.Yorker);
-        AddPoint("Yorker Wide", new Vector3(-29.5f, groundY, -4.0f), DeliveryLength.Yorker);
+        // ==================================================
+        // FULL / SLOT (Z: 32 to 36)
+        // ==================================================
+        AddPoint("Full at Stumps", new Vector3(0.0f, groundY, 35.0f), DeliveryLength.Full);
+        AddPoint("Full Outside Off", new Vector3(-1.04f, groundY, 33.0f), DeliveryLength.Full);
+        AddPoint("Driving Full Length", new Vector3(-2.5f, groundY, 32.0f), DeliveryLength.Full);
 
-        AddPoint("Heavy Ball Ribs", new Vector3(18.0f, groundY, 0.1f), DeliveryLength.BackOfLength);
-        AddPoint("Defensive Back", new Vector3(25.0f, groundY, -2.0f), DeliveryLength.BackOfLength);
+        // ==================================================
+        // STOCK GOOD LENGTH (Z: 16 to 22)
+        // ==================================================
+        AddPoint("Top of Off", new Vector3(-0.52f, groundY, 20.0f), DeliveryLength.GoodLength);
+        AddPoint("Fourth Stump Probe", new Vector3(-1.04f, groundY, 18.0f), DeliveryLength.GoodLength);
+        AddPoint("Corridor Control", new Vector3(-2.2f, groundY, 16.5f), DeliveryLength.GoodLength);
+        AddPoint("Into Pads Length", new Vector3(0.52f, groundY, 21.0f), DeliveryLength.GoodLength);
 
-        // Bouncers (Pitched closer to bowler for higher trajectory)
-        AddPoint("Standard Bouncer", new Vector3(38.0f, groundY, centerZ), DeliveryLength.Short);
-        AddPoint("Wide Bouncer", new Vector3(35.0f, groundY, -3.5f), DeliveryLength.Short);
+        // ==================================================
+        // BACK OF A LENGTH (Z: 0 to 8)
+        // ==================================================
+        AddPoint("Heavy Back Length", new Vector3(-0.52f, groundY, 5.0f), DeliveryLength.BackOfLength);
+        AddPoint("Rising Corridor Length", new Vector3(-1.8f, groundY, 2.0f), DeliveryLength.BackOfLength);
+        AddPoint("Cramping Length", new Vector3(0.4f, groundY, 4.0f), DeliveryLength.BackOfLength);
 
-        AddPoint("Full Toss", new Vector3(-31.08f, -3.8f, centerZ), DeliveryLength.FullToss);
+        // ==================================================
+        // SHORT / BOUNCERS (Z: -25 to -10)
+        // ==================================================
+        // On a 102-unit pitch, these MUST be in negative Z to be visually "short"
+        AddPoint("Head-High Bouncer", new Vector3(0.0f, groundY, -15.0f), DeliveryLength.Short);
+        AddPoint("Rib-Cage Bouncer", new Vector3(0.6f, groundY, -10.0f), DeliveryLength.Short);
+        AddPoint("Wide Surprise Bouncer", new Vector3(-3.5f, groundY, -22.0f), DeliveryLength.Short);
+        AddPoint("Nasty Throat Ball", new Vector3(-0.2f, groundY, -12.0f), DeliveryLength.Short);
     }
 
     private void AddPoint(string n, Vector3 pos, DeliveryLength l)
     {
-        deliveryPoints.Add(new BowlingPoint { name = n, point = pos, length = l });
+        deliveryPoints.Add(new BowlingPoint
+        {
+            name = n,
+            point = pos,
+            length = l
+        });
     }
+
 
     public void UpdatePoint(int index, Vector3 newPos)
     {

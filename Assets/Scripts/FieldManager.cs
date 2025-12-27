@@ -56,17 +56,17 @@ public class FieldManager : MonoBehaviour
             //{
             //    break;
             //}
-            if (hit.transform.parent.gameObject.CompareTag("DeepFielder"))
-            {
-                Debug.Log(hit.transform.parent.name + "  a deep filder");
-                
-            }
+            //Debug.Log(hit.transform.name+" hhh");
+            //if (hit.transform.parent.gameObject.CompareTag("DeepFielder"))
+            //{
+            //    Debug.Log(hit.transform.parent.name + "  a deep filder");                
+            //}
 
-            else
-            {
-                Debug.Log(hit.transform.parent.name + "  nnot a deep filder");
-                //continue;
-            }
+            //else
+            //{
+            //    Debug.Log(hit.transform.parent.name + "  nnot a deep filder");
+            //    //continue;
+            //}
 
 
             if (hit.collider.CompareTag("rayTest")||hit.collider.CompareTag("keeper"))
@@ -97,7 +97,11 @@ public class FieldManager : MonoBehaviour
             if (!fielder.startedRun)
             {                
                 fielder.startedRun = true;
-                fielder.Initiate(ball);
+                if (fielder.CompareTag("keeper")) fielder.KeeperRecieve(Vector3.zero, ball, true);
+                else
+                {
+                    fielder.Initiate(ball);
+                }
             }
         }
         if (!bestFielders.Contains(fielders[0]))

@@ -15,8 +15,7 @@ public class CameraLookAt : MonoBehaviour
 
     private void OnEnable()
     {
-        defRotation = transform.localEulerAngles;
-        transform.localRotation = Quaternion.Euler(defRotation);
+        defRotation = transform.eulerAngles;
         if (TryGetComponent<Camera>(out cam))
         {
             cam = GetComponent<Camera>();
@@ -25,6 +24,7 @@ public class CameraLookAt : MonoBehaviour
 
     void Start()
     {
+        transform.rotation = Quaternion.Euler(defRotation);
         cover = false;
         if (cam)
         {
@@ -57,17 +57,29 @@ public class CameraLookAt : MonoBehaviour
             {
                 CamZoomIn();
             }
+            //if (ball && ball.GetComponent<BallHit>().cover && !ball.GetComponent<BallHit>().secondTouch)
+            //{
+            //    Debug.Log("cover");
+            //    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, .7f, ref dampFact, .5f);
+            //    Vector3 dir = ball.transform.position - transform.position;
+
+            //    // vertical angle only
+            //    float targetPitch = Mathf.Atan2(dir.y, new Vector2(dir.x, dir.z).magnitude) * Mathf.Rad2Deg;
+
+            //    float smoothPitch = Mathf.LerpAngle( transform.eulerAngles.x, targetPitch, Time.deltaTime * 3f );
+
+            //    transform.eulerAngles = new Vector3( smoothPitch, transform.eulerAngles.y, transform.eulerAngles.z );
+            //}
+
             if (ball && ball.GetComponent<BallHit>().cover && !ball.GetComponent<BallHit>().secondTouch)
             {
-                Debug.Log("cover");
-                cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, .7f, ref dampFact, .5f);
+                Debug.Log("cover"); cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, .7f, ref dampFact, .5f);
                 Vector3 direction = (ball.transform.position - transform.position).normalized;
-                Vector3 currentEuler = transform.eulerAngles;
-                //currentEuler.x -= 1f;
-                float targetPitch = Quaternion.LookRotation(direction, Vector3.up).eulerAngles.x;
+                Vector3 currentEuler = transform.eulerAngles; float targetPitch = Quaternion.LookRotation(direction, Vector3.right).eulerAngles.x;
                 float smoothPitch = Mathf.LerpAngle(currentEuler.x, targetPitch, Time.deltaTime * 3);
                 transform.eulerAngles = new Vector3(smoothPitch, currentEuler.y, currentEuler.z);
             }
+
 
         }
 
@@ -107,16 +119,20 @@ public class CameraLookAt : MonoBehaviour
         }
     }
 
+    public float runUpTargetRotation, deliverTargetRotaion;
+
     public void CamRunUpAnim()
-    {        
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 8.5f, Time.deltaTime * 1f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, runUpTargetFov, ref dampFact, 1.7f);
+    {
+        transform.localRotation = Quaternion.Euler(Mathf.Lerp(transform.eulerAngles.x, runUpTargetRotation, Time.deltaTime * .61f), 0, 0);
+        //transform.eulerAngles = new Vector3(Mathf.Lerp(transform.eulerAngles.x, runUpTargetRotation, Time.deltaTime * .61f), 0, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, runUpTargetFov, ref dampFact, 3f);
     }
 
     public void CamZoomIn()
     {
-        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.rotation.eulerAngles.x, 6.3f, Time.deltaTime * 2f), -90, 0);
-        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, deliverTargetFov, ref dampFact, .3f);
+        transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.eulerAngles.x, deliverTargetRotaion, Time.deltaTime * 1.8f), 0, 0);
+        //transform.eulerAngles = new Vector3(Mathf.Lerp(transform.eulerAngles.x, deliverTargetRotaion, Time.deltaTime * 1.8f), 0, 0);
+        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, deliverTargetFov, ref dampFact, .25f);
     }
 
     public void CamReset()
@@ -124,7 +140,7 @@ public class CameraLookAt : MonoBehaviour
         startingRunUp = false;
         readyToDeliver = false;
         ball = null;
-        transform.localRotation = Quaternion.Euler(defRotation);
+        transform.eulerAngles = defRotation;
         if (!cam) return;
         cam.fieldOfView = defFOV;
     }

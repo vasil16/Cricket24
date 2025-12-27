@@ -266,7 +266,7 @@ public class BallHit : MonoBehaviour
                 if (hit.collider.CompareTag("keeper") || (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
                 {
                     Vector3 fixedCatchPoint = hit.point;
-                    fixedCatchPoint.x = -91.22f;
+                    fixedCatchPoint.z = 155f;
                     ballCatchPoint = fixedCatchPoint;
 
                     shootMarker.transform.position = ballCatchPoint;
@@ -293,12 +293,12 @@ public class BallHit : MonoBehaviour
         if(enterPos.z is <= -4.71f or >=1.8f || enterPos.y > 2.96f)
         {
             Debug.Log("wideball");
-            Gameplay.instance.legalDelivery = false;
+            //Gameplay.instance.legalDelivery = false;
         }
         else
         {
             Debug.Log("goodball");
-            Gameplay.instance.legalDelivery = true;
+            //Gameplay.instance.legalDelivery = true;
         }
     }
 

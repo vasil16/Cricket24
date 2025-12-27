@@ -43,87 +43,68 @@ public class Gameplay : MonoBehaviour
         //bat.GetComponent<Rigidbody>().centerOfMass = batCenter.localPosition;
     }
 
-    //public List<Vector3> deliveryPoints = new List<Vector3>()
-    //{
-    //    // --- YORKERS (Targeting the Base of Stumps) ---
-    //    new Vector3(-30.5f, -4.42f, -0.36f), // Perfect Middle Yorker
-    //    new Vector3(-30.3f, -4.42f, 0.40f),  // Off-Stump Yorker
-    //    new Vector3(-30.6f, -4.42f, -1.10f), // Leg-Stump Yorker
-    //    new Vector3(-30.0f, -4.42f, 3.50f),  // Wide Yorker (Inside Wide Line)
-    //    new Vector3(-29.8f, -4.42f, 5.50f),  // Extreme Wide Yorker
-    //    new Vector3(-30.8f, -4.42f, -0.70f), // Cramp Yorker (Aimed at toes)
+    public List<Vector3> deliveryPoints;
 
-    //    // --- SLOT BALLS (High Boundary Risk - Half Volleys) ---
-    //    new Vector3(-28.5f, -4.42f, -0.36f), // Classic Middle Slot
-    //    new Vector3(-27.5f, -4.42f, 1.00f),  // Off-Drive Half-Volley
-    //    new Vector3(-28.0f, -4.42f, -1.50f), // Leg-Side Clip
-    //    new Vector3(-27.0f, -4.42f, 2.80f),  // Wide Drive Bait
-    //    new Vector3(-27.8f, -4.42f, 0.60f),  // Overpitched Off-Stump
-    //    new Vector3(-29.0f, -4.42f, -0.10f), // The "Floaty" Half-Volley
-
-    //    // --- GOOD LENGTH (The "Corridor of Uncertainty") ---
-    //    new Vector3(-26.0f, -4.42f, -0.10f), // Top of Off
-    //    new Vector3(-25.5f, -4.42f, 0.80f),  // 4th Stump Channel
-    //    new Vector3(-25.2f, -4.42f, 1.60f),  // 5th Stump (Test match line)
-    //    new Vector3(-25.8f, -4.42f, -0.36f), // Straight Good Length
-    //    new Vector3(-26.5f, -4.42f, -0.90f), // Tight into the Pads
-    //    new Vector3(-24.8f, -4.42f, 2.50f),  // Wide Slanting Angle
-    //    new Vector3(-24.5f, -4.42f, 0.40f),  // Deep Good Length (Dry spell line)
-
-    //    // --- BACK OF LENGTH (Defensive / Heavy Ball) ---
-    //    new Vector3(-23.0f, -4.42f, -0.50f), // Heavy Ball (Rib-cage height)
-    //    new Vector3(-22.5f, -4.42f, 1.20f),  // Back of Length Outside Off
-    //    new Vector3(-23.5f, -4.42f, -1.00f), // Short of Length Body Cramp
-    //    new Vector3(-22.0f, -4.42f, 0.00f),  // Defensive Middle
-
-    //    // --- FULL TOSSES (Targets in the air at the Crease) ---
-    //    new Vector3(-31.08f, -4.10f, -0.36f), // Low Full Toss Middle
-    //    new Vector3(-31.08f, -3.50f, 1.20f),  // Waist High Off-Side (Risky)
-    //    new Vector3(-31.08f, -3.80f, 4.80f),  // Wide Full Toss (T20 Death ball)
-    //    new Vector3(-31.08f, -4.00f, -1.80f), // Leg Side Full Toss
-
-    //    // --- SHORT PITCH (Occasional Bouncers) ---
-    //    new Vector3(-20.0f, -4.42f, -0.36f), // Standard Short Ball
-    //    new Vector3(-19.5f, -4.42f, 2.50f),  // Wide Bouncer
-    //    new Vector3(-18.5f, -4.42f, 0.20f),  // Chest Height Bouncer
-    //    new Vector3(-17.5f, -4.42f, -0.20f)  // Throat Ball
-    //};
-
-    public List<Vector3> deliveryPoints = new List<Vector3>()
-    {
-        // --- YORKERS (Base of Stumps) ---
-        new Vector3(-30.2f, -4.42f, -0.36f), // Middle Stump Yorker
-        new Vector3(-30.0f, -4.42f, 0.60f),  // Off-Stump Yorker
-        new Vector3(-29.8f, -4.42f, 3.50f),  // Wide Yorker (T20 Style)
-
-        // --- SLOT BALLS (In the "Arc") ---
-        new Vector3(-28.5f, -4.42f, -0.36f), // Middle Slot
-        new Vector3(-28.0f, -4.42f, 1.00f),  // Off Slot
-        new Vector3(-28.2f, -4.42f, -1.20f), // Leg-ish Slot
-
-        // --- GOOD LENGTH (Standard) ---
-        new Vector3(-25.5f, -4.42f, 0.00f),  // Top of Off
-        new Vector3(-25.0f, -4.42f, 0.80f),  // 4th Stump
-        new Vector3(-26.0f, -4.42f, -0.80f), // At the Body
-
-        // --- FULL TOSS / BEAMER TARGETS (Y is higher here) ---
-        new Vector3(-31.08f, -3.80f, 0.00f), // Low Full Toss
-        new Vector3(-31.08f, -3.20f, 1.50f)  // Wide Full Toss
-    };
 
     public float scc;
 
     void Start()
     {
         ballerTrueScale = bowler.transform.localScale;
-        ShiftEnd();
+        //ShiftEnd();
         //activeCams = FindObjectsOfType<CameraLookAt>();
         stadiumBounds = groundBounds.GetComponent<Renderer>().bounds;
         bowlerPalm = ball.transform.parent;
         ballOriginPoint = ball.transform.localPosition;
         ballScale = ball.transform.localScale;
+        deliveryPoints = new List<Vector3>()
+        {
+            // =====================
+            // YORKERS (Blockhole)
+            // =====================
+            new Vector3(-3.8f, 0.01f, 48.5f),
+            new Vector3(-4.2f, 0.01f, 47.5f),
+            new Vector3(-3.5f, 0.01f, 46.0f),
+
+            // =====================
+            // FULL / SLOT
+            // =====================
+            new Vector3(-3.2f, 0.01f, 40.0f),
+            new Vector3(-3.6f, 0.01f, 38.5f),
+            new Vector3(-4.0f, 0.01f, 36.5f),
+
+            // =====================
+            // GOOD LENGTH
+            // =====================
+            new Vector3(-2.8f, 0.01f, 22.0f),
+            new Vector3(-3.2f, 0.01f, 20.0f),
+            new Vector3(-3.6f, 0.01f, 18.0f),
+
+            // =====================
+            // BACK OF A LENGTH
+            // =====================
+            new Vector3(-3.0f, 0.01f, 8.0f),
+            new Vector3(-3.5f, 0.01f, 5.0f),
+            new Vector3(-4.0f, 0.01f, 2.0f),
+
+            // =====================
+            // SHORT / BOUNCERS
+            // =====================
+            new Vector3(-3.4f, 0.01f, -5.0f),
+            new Vector3(-3.8f, 0.01f, -10.0f),
+            new Vector3(-4.2f, 0.01f, -15.0f),
+            new Vector3(-4.6f, 0.01f, -20.0f),
+
+            // =====================
+            // TOO SHORT (Punish)
+            // =====================
+            new Vector3(-4.0f, 0.01f, -25.0f),
+            new Vector3(-4.5f, 0.01f, -30.0f),
+        };
         StartCoroutine(LaunchBallsWithDelay());
     }
+
+    public Vector3 pitchPoint;
 
     [SerializeField] bool randomBound;
 
@@ -139,16 +120,22 @@ public class Gameplay : MonoBehaviour
 
             ball.transform.localScale = ballScale;
 
-            //Vector3 ballPitchPoint = randomBound == true? GetRandomPointWithinBounds() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+            //pitchPoint = randomBound == true ? GetRandomPointWithinBounds() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
 
-            Vector3 ballPitchPoint = randomBound == true ? shareRand() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
-            
+            //pitchPoint = randomBound == true ? shareRand() : pitchPoints[ballDeliverType].points[Random.Range(0, 10)];
+
+            pitchPoint = BowlingEngine.instance.DecidePoint(false);
+
+            Debug.Log("bound poss " + pitchPoint);
+
+            mark.transform.position = pitchPoint;
+
 
             ball.transform.localPosition = ballOriginPoint;
 
             ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
 
-            Vector3 direction = (ballPitchPoint - ballLaunchPos).normalized;
+            Vector3 direction = (pitchPoint - ballLaunchPos).normalized;
 
             float speed = 146.8f;
 
@@ -173,9 +160,9 @@ public class Gameplay : MonoBehaviour
             
             //keeper.GetComponent<Animator>().SetTrigger("KeeperSteady");
 
-            //mark.transform.position = ballPitchPoint;
+            //mark.transform.position = pitchPoint;
 
-            mark.transform.position = BowlingEngine.instance.DecidePoint(false);
+            //mark.transform.position = BowlingEngine.instance.DecidePoint(false);
 
             yield return new WaitForSeconds(1f);
             broadcastCamComp.startingRunUp = true;
@@ -195,7 +182,7 @@ public class Gameplay : MonoBehaviour
 
             //----------------------------------
             {
-                //Vector3 toTarget = ballPitchPoint - ballLaunchPos;
+                //Vector3 toTarget = pitchPoint - ballLaunchPos;
                 //Vector3 toTargetXZ = new Vector3(toTarget.x, 0, toTarget.z);
                 //float y = toTarget.y; // This should be negative if the target is below
                 //float xz = toTargetXZ.magnitude;
@@ -268,7 +255,7 @@ public class Gameplay : MonoBehaviour
             {
                 overs++;
                 ballsLaunched = 0;
-                ShiftEnd();
+                //ShiftEnd();
             }
 
             UpdateScoreBoard(ball.GetComponent<BallHit>());            
@@ -328,54 +315,30 @@ public class Gameplay : MonoBehaviour
         //bowler.GetComponent<Animator>().enabled = true;
     }
 
-    Vector3 GenerateRandomPointOnPlane()
-    {
-        float randomX = Random.Range(-45.8f, 22.4f);
-        float randomZ = Random.Range(-4f, .8f);
-        return new Vector3(randomX, -4.427082f, randomZ);
-    }
-
     Vector3 shareRand()
     {
-        int kd = Random.Range(0, deliveryPoints.Count);
+        int kd = Random.RandomRange(0, deliveryPoints.Count);
+        Debug.Log("index " +kd);
         return deliveryPoints[kd];
     }
 
+
+
     Vector3 GetRandomPointWithinBounds()
     {
-        float minX = Mathf.Min(bound1.x, bound2.x, bound3.x, bound4.x);
-        float maxX = Mathf.Max(bound1.x, bound2.x, bound3.x, bound4.x);
 
-        float minZ = Mathf.Min(bound1.z, bound2.z, bound3.z, bound4.z);
-        float maxZ = Mathf.Max(bound1.z, bound2.z, bound3.z, bound4.z);
+        Vector3 max =  pMap.bounds.max;
+        Vector3 min = pMap.bounds.min;
 
-        float randomX = Random.Range(minX, maxX);
-        float randomZ = Random.Range(minZ, maxZ);
+        float x = Random.Range(min.x,max.x);
+        float z = Random.Range(min.z, max.z);
 
-        randomX = Mathf.Clamp(randomX, minX, maxX);
-        randomZ = Mathf.Clamp(randomZ, minZ, maxZ);
-
-        return new Vector3(randomX, -4.427082f, randomZ);
+        return (new Vector3(x, 0.01f, z));
     }
 
-    Vector3 GetRandomCricketDeliveryPoint()
-    {
-        float groundY = -4.43f;
 
-        // X: Length from batter (~ -6 = yorker, ~ -30 = short ball)
-        float minX = -30f;
-        float maxX = -6f;
+    public MeshRenderer pMap;
 
-        // Z: Line (off to leg side)
-        float minZ = -1.8f; // wide outside off
-        float maxZ = 1.0f;  // deep leg side (rare but happens)
-
-        // Random point within realistic cricket pitch zone
-        float x = Random.Range(minX, maxX);
-        float z = Random.Range(minZ, maxZ);
-
-        return new Vector3(x, groundY, z);
-    }
 
     void UpdateScoreBoard(BallHit ball)
     {

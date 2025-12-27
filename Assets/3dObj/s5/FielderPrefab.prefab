@@ -539,15 +539,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: ecb081007fdb64cdda1d13c5424c0cbc, type: 2}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 5.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5
+      value: 5.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 5
+      value: 5.2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -739,8 +739,8 @@ MonoBehaviour:
   runningClip: {fileID: -3925427449959772061, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   jumpClip: {fileID: -2993534804863918692, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   crouchClip: {fileID: 7400000, guid: 5bb182317a49f4a8b880557fcaad124c, type: 2}
-  moveRightClip: {fileID: -2192205170705996770, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
-  moveLeftClip: {fileID: -3020337048485731710, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
+  moveRightClip: {fileID: -203655887218126122, guid: 9fc74295b28fc402bb45e15cdce7c056, type: 3}
+  moveLeftClip: {fileID: -203655887218126122, guid: 7831de7ddf757433c83e87b6f9463be2, type: 3}
   diveRightClip: {fileID: 2967806735527829977, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   diveLeftClip: {fileID: 2693572910362965475, guid: 894badc39f3184108a7b1f6535d27d3a, type: 3}
   chasePickupClip: {fileID: 7400000, guid: 02f7050fbd98145d68ec1b6eb913d5e3, type: 2}
