@@ -271,7 +271,7 @@ public class BallHit : MonoBehaviour
 
                     shootMarker.transform.position = ballCatchPoint;
 
-                    yield return new WaitUntil(() => Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z), new Vector2(transform.position.x, transform.position.z)) <21);
+                    //yield return new WaitUntil(() => Vector2.Distance(new Vector2(keeper.transform.position.x, keeper.transform.position.z), new Vector2(transform.position.x, transform.position.z)) <21);
                     Debug.Log("check done for distance");
                     keeper.GetComponent<Fielder>().enabled = true;
                     keeper.KeeperRecieve(ballCatchPoint, this.transform);
