@@ -47,10 +47,79 @@ public class Fielder : MonoBehaviour
         StartCoroutine(SetTarget(targetPosition, ball, isEdge));
     }
 
-    IEnumerator SetTarget(Vector3 targetPosition, Transform ball, bool isEdge=false)
+    //IEnumerator SetTarget(Vector3 targetPosition, Transform ball, bool isEdge=false)
+    //{
+    //    ballComp = ball.GetComponent<BallHit>();
+    //    this.ball = ball;
+    //    if (targetPosition == Vector3.zero)
+    //    {
+    //        while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 7)
+    //        {
+    //            yield return null;
+    //        }
+    //        targetPosition = ball.position;
+    //        targetPosition.y += 1f;
+    //        rightHand.position = leftHand.position = targetPosition;
+    //    }
+    //    else
+    //    {
+    //        if (targetPosition.x > transform.position.x + 1.4f)
+    //        {
+    //            Debug.Log("towards left");
+    //            ikControl.PlayAnimation(moveLeftClip);
+    //        }
+    //        else if (targetPosition.x < transform.position.x - 1.3f)
+    //        {
+    //            Debug.Log("towards right");
+    //            ikControl.PlayAnimation(moveRightClip);
+    //        }
+
+
+    //        if (targetPosition.y > 12.93f)
+    //        {
+    //            Debug.Log("jump..");
+    //            ikControl.PlayAnimation(jumpClip);
+    //        }
+    //    }
+
+    //    if (!ballComp.secondTouch)
+    //    {
+    //        //targetPosition.y += .4f;
+    //        float addConstant = targetPosition.x > transform.position.x ? -1 : 1;
+    //        fm.marker.position = targetPosition;
+    //        //rightHand.position = leftHand.position = targetPosition;
+    //    }
+    //    yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 55);
+
+    //    Debug.Log("recive start");
+    //    float time = 0;
+    //    float duration = .4f;
+    //    float lerpValue;
+    //    pickScript.pickupObject = fm.marker.GetComponent<InteractionObject>();
+    //    float ballArrivalTime = GetBallArrivalTime(fm.marker.position, ball.GetComponent<Rigidbody>());
+    //    float delay = ballArrivalTime - handReachDuration - earlyBias;
+
+    //    delay = Mathf.Clamp(delay, 0f, 1.2f);
+
+    //    if (delay > 0f)
+    //        yield return new WaitForSeconds(delay);
+
+    //    pickScript.StartPickup();
+    //    while (time <= duration)
+    //    {
+    //        //if (ballComp.secondTouch) yield break;
+    //        time += Time.deltaTime;
+    //        lerpValue = Mathf.Lerp(0, 1, time / duration);
+    //        //ikControl.SetIKWeight(lerpValue);
+    //        yield return null;
+    //    }
+    //}
+
+    IEnumerator SetTarget(Vector3 targetPosition, Transform ball, bool isEdge = false)
     {
         ballComp = ball.GetComponent<BallHit>();
         this.ball = ball;
+
         if (targetPosition == Vector3.zero)
         {
             while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 7)
@@ -61,72 +130,100 @@ public class Fielder : MonoBehaviour
             targetPosition.y += 1f;
             rightHand.position = leftHand.position = targetPosition;
         }
+
         else
         {
-            if (targetPosition.x > transform.position.x + 1.4f)
+            while (Mathf.Abs(targetPosition.x - transform.position.x) > 0.5f)
             {
-                Debug.Log("towards left");
-                ikControl.PlayAnimation(moveLeftClip);
-                //leftFoot.position = new Vector3(transform.position.x + 1f, groundY, leftFoot.position.z);
-                //rightFoot.position = new Vector3(transform.position.x - 2f, groundY, rightFoot.position.z);
-            }
-            else if (targetPosition.x < transform.position.x - 1.3f)
-            {
-                Debug.Log("towards right");
-                ikControl.PlayAnimation(moveRightClip);
-                //rightFoot.position = new Vector3(transform.position.x - 1f, groundY, rightFoot.position.z);
-                //leftFoot.position = new Vector3(transform.position.x - 2f, groundY, leftFoot.position.z);
-            }
-            
+                // Safety break if ball is too close
+                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 60f)
+                    break;
 
+                AnimationClip clipToPlay = null;
+                float directionMultiplier = 0; // 1 for right, -1 for left
+
+                if (targetPosition.x > transform.position.x)
+                {
+                    Debug.Log("Stepping Left...");
+                    clipToPlay = moveLeftClip;
+                    directionMultiplier = 1f; // Adjust based on your world axis (Usually +X is Right, -X is Left)
+                                              // Note: If 'Left' means increasing X for you, keep 1f. If Decreasing X, use -1f.
+                }
+                else
+                {
+                    Debug.Log("Stepping Right...");
+                    clipToPlay = moveRightClip;
+                    directionMultiplier = -1f;
+                }
+
+                if (clipToPlay != null)
+                {
+                    // 1. Play Anim
+                    ikControl.PlayAnimation(clipToPlay);
+
+                    // 2. Wait for it to finish
+                    yield return new WaitForSeconds(clipToPlay.length);
+
+                    // 3. THE FIX: Manually move the GameObject to the new spot
+                    // We move the transform instantly to where the animation visually ended up
+                    Vector3 newPos = transform.position;
+                    newPos.x += (2.7f * directionMultiplier);
+                    transform.position = newPos;
+                }
+                else
+                {
+                    yield return null;
+                }
+            }
             if (targetPosition.y > 12.93f)
             {
                 Debug.Log("jump..");
-                //ikControl.PlayAnimation(jumpClip);
-                //leftFoot.position = new Vector3(transform.position.x, groundY, targetPosition.z);
-                //rightFoot.position = new Vector3(transform.position.x + .4f, groundY, leftFoot.position.z );
+                ikControl.PlayAnimation(jumpClip);
             }
             else if (targetPosition.y < 3f)
             {
-                //ikControl.PlayAnimation(crouchClip);
+                // ikControl.PlayAnimation(crouchClip);
             }
         }
 
         if (!ballComp.secondTouch)
         {
-            //targetPosition.y += .4f;
             float addConstant = targetPosition.x > transform.position.x ? -1 : 1;
-            //leftFoot.position = new Vector3(targetPosition.x, groundY, leftFoot.position.z);
-            //rightFoot.position = new Vector3(leftFoot.position.x +2f * addConstant, groundY, rightFoot.position.z);
             fm.marker.position = targetPosition;
-            //rightHand.position = leftHand.position = targetPosition;
+            rightHand.position = leftHand.position = targetPosition;
         }
+
         yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 55);
 
         Debug.Log("recive start");
-        float time = 0;
-        float duration = .4f;
-        float lerpValue;
+
         pickScript.pickupObject = fm.marker.GetComponent<InteractionObject>();
         float ballArrivalTime = GetBallArrivalTime(fm.marker.position, ball.GetComponent<Rigidbody>());
         float delay = ballArrivalTime - handReachDuration - earlyBias;
 
-        // Clamp so we never wait negative or absurd times
         delay = Mathf.Clamp(delay, 0f, 1.2f);
 
         if (delay > 0f)
             yield return new WaitForSeconds(delay);
 
         pickScript.StartPickup();
+
+        float time = 0;
+        float duration = .4f;
+        float lerpValue;
+
         while (time <= duration)
         {
-            //if (ballComp.secondTouch) yield break;
             time += Time.deltaTime;
             lerpValue = Mathf.Lerp(0, 1, time / duration);
-            //ikControl.SetIKWeight(lerpValue);
             yield return null;
         }
-        StartCoroutine(ReleaseTarget(targetPosition.z));
+    }
+
+    public void DropBall(bool keeper)
+    {
+        //Debug.Log("drop call , keeper? " + keeper);
+        StartCoroutine(ReleaseTarget(keeper));
     }
 
     float GetBallArrivalTime(Vector3 catchPoint, Rigidbody ballRb)
@@ -146,28 +243,22 @@ public class Fielder : MonoBehaviour
     [SerializeField] float earlyBias = 0.03f; // micro-anticipation (human-like)
 
 
-    IEnumerator ReleaseTarget(float z)
+    IEnumerator ReleaseTarget(bool keeper)
     {
-        //float timer = 0;
-        //while (!ballComp.stopTriggered && timer < 3f && !Gameplay.instance.deliveryDead && !ballComp.keeperExit)
-        //{
-        //    timer += Time.deltaTime;
-        //    yield return null;
-        //}
         //rightHand.position = idleRightHand;
         //leftHand.position = idleLeftHand;
-        if (ballComp.stopTriggered) pickScript.StartDrop();
-        float time = 0;
-        float duration = 0.5f;
-        float lerpValue;
-        while (time <= duration)
+        //Debug.Log("release call , keeper? " + keeper);
+        pickScript.StartDrop();
+
+        if(keeper)
         {
-            time += Time.deltaTime;
-            lerpValue = Mathf.Lerp(1, 0, time / duration);
-            //ikControl.SetIKWeight(lerpValue);
-            yield return null;
+            Gameplay.instance.deliveryDead = true;
         }
-        Gameplay.instance.deliveryDead = true;
+        else
+        {
+            StartCoroutine(FielderPickupThrow());
+        }
+        yield return null;
         //Debug.Log("recive done");
     }
     #endregion
@@ -277,7 +368,6 @@ public class Fielder : MonoBehaviour
         return interceptPoint;
     }
 
-
     bool targetBall = false;
 
     public Transform fielderTargetMark;
@@ -307,29 +397,6 @@ public class Fielder : MonoBehaviour
                 targetPosition = new Vector3(ball.transform.position.x, transform.position.y, ball.transform.position.z);
             }
         }
-        //else if (chaseMode)
-        //{
-        //    Vector3 ballVelocity = ballRb.velocity;
-        //    Vector3 ballDir = new Vector3(ballVelocity.x, 0f, ballVelocity.z).normalized;
-        //    float ballSpeed = ballVelocity.magnitude;
-
-        //    float interceptDistance = (ballSpeed * 5f) / 20f;
-
-        //    //float interceptDistance = 4.3f;
-
-        //    float sideBuffer = Mathf.Max(1.4f, ballSpeed * 0.04f);
-
-        //    Vector3 sideVector = Vector3.Cross(ballDir, Vector3.up).normalized;
-
-        //    Vector3 toFielder = (transform.position - ball.position).normalized;
-        //    float sideSign = Vector3.Dot(toFielder, sideVector);
-
-        //    if (sideSign < 0) sideVector = -sideVector;
-
-        //    targetPosition = ball.position + (ballDir * interceptDistance) + (sideVector * sideBuffer);
-
-        //    targetPosition.y = transform.position.y;
-        //}
 
         else if (chaseMode)
         {
@@ -339,7 +406,7 @@ public class Fielder : MonoBehaviour
             float interceptDistance = (ballSpeed * 5f) / 20f;
             float sideBuffer = 2f;
             Vector3 localRight = Vector3.Cross(Vector3.up, transform.forward).normalized;
-            Vector3 throwingHandSide = isRightHanded ? localRight : -localRight;
+            Vector3 throwingHandSide = isRightHanded ? -localRight : localRight;
             targetPosition = ball.position + (ballDir * interceptDistance) + (throwingHandSide * sideBuffer);
             targetPosition.y = transform.position.y;
         }
@@ -635,7 +702,7 @@ public class Fielder : MonoBehaviour
             //ikControl.SetIKWeight(lerpValue);
             yield return null;
         }
-        pickScript.StartDrop();
+
         if (!ballComp.stopTriggered)
         {
             Debug.Log("no stop");
@@ -715,7 +782,7 @@ public class Fielder : MonoBehaviour
                 //        animator.SetTrigger("Pick");
                 //}
                 #endregion                
-                StartCoroutine(FielderPickupThrow());
+                //StartCoroutine(FielderPickupThrow());
             }
         }            
                 
@@ -740,6 +807,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator FielderPickupThrow()
     {
+        //Debug.Log("throw call");
         ikControl.PlayAnimation(idleClip);
         if (!ballComp.stopper == this.gameObject)
         {

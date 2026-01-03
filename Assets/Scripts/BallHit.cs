@@ -22,12 +22,12 @@ public class BallHit : MonoBehaviour
     {
         if (!Gameplay.instance) return;
 
+
+        if (!secondTouch) return;
         if (!Gameplay.instance.stadiumBounds.Contains(transform.position))
         {
             Gameplay.instance.deliveryDead = true;
         }
-
-        if (!secondTouch) return;
         if (transform.position.x > 80 && transform.position.z < 24)
         {
             Gameplay.instance.sideCam.depth = 0;
@@ -134,6 +134,7 @@ public class BallHit : MonoBehaviour
                 fielderReached = true;                
             }
         }
+
         if (other.gameObject.CompareTag("stop"))
         {
             if (stopTriggered) return;
@@ -142,12 +143,10 @@ public class BallHit : MonoBehaviour
             transform.position = other.transform.position;
             stopTriggered = true;
             stopper = other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject;
-            Debug.Log("stopped by " + other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject.name);
-            if (!secondTouch)
-            {
-                Gameplay.instance.deliveryDead = true;
-            }
+            stopper.GetComponent<Fielder>().DropBall(stopper.CompareTag("keeper")?true:false);
+            //Debug.Log("stopped by " + stopper.name);
         }
+
         if (other.gameObject.CompareTag("camTrigger"))
         {
             Debug.Log("os");
