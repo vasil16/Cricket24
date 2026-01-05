@@ -18,7 +18,7 @@ public class Gameplay : MonoBehaviour
     [SerializeField] List<float> launchSpeeds;
     [SerializeField] List<PitchPoints> pitchPoints;
     [SerializeField] Bat batter;    
-    public CameraLookAt broadcastCamComp;
+    public CameraLookAt broadcastCamComp, drawCam;
 
 
     [SerializeField] Vector3 [] ballDeliverPoint;
@@ -166,9 +166,14 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitForSeconds(1f);
             broadcastCamComp.startingRunUp = true;
+            drawCam.startingRunUp = true;
             rb = ball.GetComponent<Rigidbody>();
+            yield return new WaitForSeconds(.9f);
+            drawCam.startingRunUp = false;
+            drawCam.gameObject.SetActive(false);
             yield return new WaitUntil(() => readyToBowl);
             broadcastCamComp.startingRunUp = false;
+            
             broadcastCamComp.readyToDeliver = true;
             ball.transform.SetParent(null,true);
             ball.transform.position = ballLaunchPos;
@@ -268,7 +273,7 @@ public class Gameplay : MonoBehaviour
                 cam.ball = null;
                 cam.CamReset();
             }
-
+            drawCam.gameObject.SetActive(true);
             yield return new WaitForSeconds(.5f);
         }
     }

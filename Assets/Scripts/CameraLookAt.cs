@@ -46,6 +46,15 @@ public class CameraLookAt : MonoBehaviour
 
     void Update()
     {
+        if(this.gameObject.name=="draw1")
+        {            
+            if (startingRunUp)
+            {
+                Debug.Log("drawr");
+                cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 3.8f, ref dampFact, 1f);
+            }
+            return;
+        }
         //if (Gameplay.instance && Gameplay.instance.isGameOver) this.enabled=false;              
         if (MainGame.instance.camIndex == 1)
         {

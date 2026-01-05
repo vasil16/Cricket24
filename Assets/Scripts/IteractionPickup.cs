@@ -40,32 +40,32 @@ public class SmoothInteractionPickup : MonoBehaviour
         Debug.Log("Smooth Pickup Ready. Press E to Interact.");
     }
 
-    void Update()
+    //void Update()
+    //{
+    //    // --- 1. Handle Looking smoothly in Update (The Conductor of the Symphony) ---
+    //    if (fbbik != null)
+    //    {
+    //        // Smoothly blend the weight
+    //        //fbbik.solver.lookAt.weight = Mathf.Lerp(fbbik.solver.lookAt.weight, currentLookWeight, Time.deltaTime * lookAtSmoothSpeed);
+
+    //        // Update target if we have one
+    //        if (currentLookTarget != null)
+    //        {
+    //            //fbbik.solver.lookAt.target = currentLookTarget;
+    //        }
+    //    }
+
+    //    // --- 2. Input ---
+    //    if (Input.GetKeyDown(KeyCode.E) && !isTransitioning)
+    //    {
+    //        //if (!isHolding) StartCoroutine(PickupSequence());
+    //        //else StartCoroutine(DropSequence());
+    //    }
+    //}
+
+    public void StartPickup(bool singleHand)
     {
-        // --- 1. Handle Looking smoothly in Update (The Conductor of the Symphony) ---
-        if (fbbik != null)
-        {
-            // Smoothly blend the weight
-            //fbbik.solver.lookAt.weight = Mathf.Lerp(fbbik.solver.lookAt.weight, currentLookWeight, Time.deltaTime * lookAtSmoothSpeed);
-
-            // Update target if we have one
-            if (currentLookTarget != null)
-            {
-                //fbbik.solver.lookAt.target = currentLookTarget;
-            }
-        }
-
-        // --- 2. Input ---
-        if (Input.GetKeyDown(KeyCode.E) && !isTransitioning)
-        {
-            //if (!isHolding) StartCoroutine(PickupSequence());
-            //else StartCoroutine(DropSequence());
-        }
-    }
-
-    public void StartPickup()
-    {
-        StartCoroutine(PickupSequence());
+        StartCoroutine(PickupSequence(singleHand));
     }
 
     public void StartDrop()
@@ -73,7 +73,7 @@ public class SmoothInteractionPickup : MonoBehaviour
         StartCoroutine(DropSequence());
     }
 
-    IEnumerator PickupSequence()
+    IEnumerator PickupSequence(bool singleHand)
     {
         isTransitioning = true;
 
@@ -87,7 +87,10 @@ public class SmoothInteractionPickup : MonoBehaviour
 
         // Step 2: Reach with Body
         // We start the interaction. The "Curves" in the Inspector will handle the arm timing.
-        interactionSystem.StartInteraction(leftHandEffector, pickupObject, false);
+        if(!singleHand)
+        {
+            interactionSystem.StartInteraction(leftHandEffector, pickupObject, false);
+        }
         interactionSystem.StartInteraction(rightHandEffector, pickupObject, false);
 
         // Step 3: Wait for Grab
@@ -108,6 +111,7 @@ public class SmoothInteractionPickup : MonoBehaviour
             // Only drop if we are still holding it (user might have dropped manually)
             //if (isHolding) StartCoroutine(DropSequence());
         }
+        if (isHolding) StartCoroutine(DropSequence());
     }
 
     IEnumerator DropSequence()
