@@ -176793,7 +176793,7 @@ MonoBehaviour:
   ballRigidbody: {fileID: 2054515088}
   handReleasePoint: {fileID: 2007373751}
   marker: {fileID: 1409644517}
-  deliverySpeedKmh: 670
+  deliverySpeedKmh: 750
   deliveryPoints:
   - name: Toe-Crusher Straight
     point: {x: 0, y: 0.001, z: 41.5}
@@ -197219,7 +197219,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
       propertyPath: m_TagString

@@ -181,9 +181,9 @@ public class Fielder : MonoBehaviour
         //rightHand.position = idleRightHand;
         //leftHand.position = idleLeftHand;
         //Debug.Log("release call , keeper? " + keeper);
-        //pickScript.StartDrop();
+        pickScript.StartDrop();
 
-        if(keeper)
+        if (keeper)
         {
             Gameplay.instance.deliveryDead = true;
         }
@@ -738,7 +738,7 @@ public class Fielder : MonoBehaviour
     IEnumerator FielderPickupThrow()
     {
         //ball.GetComponent<InteractionObject>().enabled = false;
-        Debug.Log("throw call");
+        
         //ikControl.PlayAnimation(idleClip);
         //if (!ballComp.stopper == this.gameObject)
         //{
@@ -765,10 +765,11 @@ public class Fielder : MonoBehaviour
         yield return new WaitUntil(() => throwable);
         ball.SetParent(null, true);
         ballRb.WakeUp();
+        ballRb.useGravity = false;
         ballRb.isKinematic = false;
 
         // --- NEW LOGIC
-
+        Debug.Log("throw call");
         Vector3 ballPosFlat = new Vector3(ball.position.x, 0, ball.position.z);
         Vector3 keeperPosFlat = new Vector3(fm.keeper.position.x, 0, fm.keeper.position.z);
         float distToKeeper = Vector3.Distance(ballPosFlat, keeperPosFlat);
@@ -784,7 +785,7 @@ public class Fielder : MonoBehaviour
 
         Debug.DrawLine(ball.position, pitchPoint, Color.red, 5f);
 
-        float maxArcHeight = 14f; 
+        float maxArcHeight = 14f;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
         float verticalVelocity = Mathf.Sqrt(2 * gravity * maxArcHeight);
@@ -798,6 +799,8 @@ public class Fielder : MonoBehaviour
         velocity.y = verticalVelocity;
 
         ballRb.velocity = velocity;
+
+        //ThrowToTarget(ballRb, ball.position, fm.keeper.position, 5f);
 
         Vector3 keeperRight = fm.keeper.right;
 
@@ -834,6 +837,24 @@ public class Fielder : MonoBehaviour
         Gameplay.instance.deliveryDead = true;
 
         StopAllCoroutines();
+    }
+
+    public static void ThrowToTarget(Rigidbody rb, Vector3 start, Vector3 target, float flightTime)
+    {
+        Vector3 displacement = target - start;
+
+        Vector3 displacementXZ = new Vector3(displacement.x, 0f, displacement.z);
+        Vector3 displacementY = Vector3.up * displacement.y;
+
+        float gravity = Mathf.Abs(Physics.gravity.y);
+
+        Vector3 velocityY =
+            displacementY / flightTime +
+            Vector3.up * (gravity * flightTime * 0.5f);
+
+        Vector3 velocityXZ = displacementXZ / flightTime;
+
+        rb.velocity = velocityXZ + velocityY;
     }
 
 

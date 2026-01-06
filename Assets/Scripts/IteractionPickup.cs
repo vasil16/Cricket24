@@ -130,8 +130,8 @@ public class SmoothInteractionPickup : MonoBehaviour
         // Step 3: Wait for Blend Out
         // The interaction system takes time to blend weights back to 0. 
         // We wait here to ensure the coroutine doesn't finish while the character is still moving.
-        yield return new WaitForSeconds(1.0f);
-
+        //yield return new WaitForSeconds(1.0f);
+        yield return null;
         isHolding = false;
         isTransitioning = false;
         currentLookTarget = null; // Clear target to prevent "ghost" looking
