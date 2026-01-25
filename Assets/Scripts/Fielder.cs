@@ -763,11 +763,9 @@ public class Fielder : MonoBehaviour
 
         ikControl.PlayAnimation(throwClip);
         yield return new WaitUntil(() => throwable);
-        ball.SetParent(null, true);
-        ballRb.WakeUp();
-        ballRb.useGravity = false;
         ballRb.isKinematic = false;
-
+        //ballRb.WakeUp();
+        //ball.SetParent(null, true);
         // --- NEW LOGIC
         Debug.Log("throw call");
         Vector3 ballPosFlat = new Vector3(ball.position.x, 0, ball.position.z);
@@ -779,18 +777,18 @@ public class Fielder : MonoBehaviour
         Vector3 dirToKeeper = (fm.keeper.position - ball.position).normalized;
         Vector3 pitchPoint = ballPosFlat + (dirToKeeper * (distToKeeper * pitchRatio));
 
-        if (distToKeeper <= 25f) pitchPoint -= dirToKeeper * 3.0f;
+        //if (distToKeeper <= 25f) pitchPoint -= dirToKeeper * 3.0f;
 
         pitchPoint.y = 0;
 
         Debug.DrawLine(ball.position, pitchPoint, Color.red, 5f);
 
-        float maxArcHeight = 14f;
+        float maxArcHeight = 14000f;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
         float verticalVelocity = Mathf.Sqrt(2 * gravity * maxArcHeight);
 
-        float flightTime = 2 * (verticalVelocity / gravity);
+        float flightTime = 200 * (verticalVelocity / gravity);
 
         float distanceToPitch = Vector3.Distance(ballPosFlat, pitchPoint);
         float horizontalSpeed = distanceToPitch / flightTime;
@@ -798,7 +796,8 @@ public class Fielder : MonoBehaviour
         Vector3 velocity = dirToKeeper * horizontalSpeed;
         velocity.y = verticalVelocity;
 
-        ballRb.velocity = velocity;
+        //ballRb.velocity = velocity;
+        //ballRb.AddForce(velocity);
 
         //ThrowToTarget(ballRb, ball.position, fm.keeper.position, 5f);
 
@@ -837,6 +836,26 @@ public class Fielder : MonoBehaviour
         Gameplay.instance.deliveryDead = true;
 
         StopAllCoroutines();
+    }
+
+    private Vector3 CalculateVelocityForSpeed(Vector3 target, float speed)
+    {
+        Vector3 origin = ball.position;
+        Vector3 toTarget = target - origin;
+
+        // Calculate time based on 3D distance and speed
+        float distance = toTarget.magnitude;
+        float time = distance / speed;
+
+        // X and Z components (Constant velocity)
+        float vx = toTarget.x / time;
+        float vz = toTarget.z / time;
+
+        // Y component (Accounting for gravity)
+        // Formula: y = v0y*t + 0.5*g*t^2  => v0y = (y - 0.5*g*t^2) / t
+        float vy = (toTarget.y - (0.5f * Physics.gravity.y * time * time)) / time;
+
+        return new Vector3(vx, vy, vz);
     }
 
     public static void ThrowToTarget(Rigidbody rb, Vector3 start, Vector3 target, float flightTime)
@@ -885,39 +904,6 @@ public class Fielder : MonoBehaviour
         float fielderDistanceToPredictedPos = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(positionAtReqTime.x, positionAtReqTime.z));
         return fielderDistanceToPredictedPos / runSpeed <= timeReq;
     }
-
-    //Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float ballDrag)
-    //{
-    //    float timestep = Time.fixedDeltaTime; // Match physics precision
-    //    Vector3 currentPosition = initialPosition;
-    //    Vector3 currentVelocity = velocity;
-    //    float groundY = transform.position.y; // The height of the fielder/ground
-
-    //    // Safety limit to prevent infinite loops if the ball never hits the ground
-    //    int maxSteps = 1000;
-
-    //    for (int i = 0; i < maxSteps; i++)
-    //    {
-    //        // 1. Apply Gravity
-    //        currentVelocity += Physics.gravity * timestep;
-
-    //        // 2. Apply Drag (The "Secret Sauce" for accuracy)
-    //        // Unity's internal formula: v = v * (1 / (1 + drag * dt))
-    //        currentVelocity /= (1f + ballDrag * timestep);
-
-    //        // 3. Move
-    //        currentPosition += currentVelocity * timestep;
-
-    //        // 4. Check if we've hit or passed the ground height
-    //        if (currentPosition.y <= groundY)
-    //        {
-    //            // Optional: Interpolate between the last two points for pixel-perfect accuracy
-    //            return currentPosition;
-    //        }
-    //    }
-
-    //    return currentPosition; // Fallback
-    //}
 
     Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float ballDrag)
     {
@@ -969,6 +955,16 @@ public class Fielder : MonoBehaviour
     }
 
     #endregion
+
+    public void StopField()
+    {
+        ikControl.PlayAnimation(idleClip);
+        if (isKeeper) KeeperReset();
+        else
+            Reset();
+    }
+
+    public bool isKeeper;
 
     public void KeeperReset()
     {

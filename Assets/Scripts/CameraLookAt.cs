@@ -44,7 +44,7 @@ public class CameraLookAt : MonoBehaviour
 
     public bool cover;
 
-    void Update()
+    void LateUpdate()
     {
         if(this.gameObject.name=="draw1")
         {            

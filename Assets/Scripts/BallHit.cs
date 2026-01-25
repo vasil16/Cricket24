@@ -96,6 +96,7 @@ public class BallHit : MonoBehaviour
                 stopTriggered = true;
                 boundary = true;
                 Gameplay.instance.deliveryDead = true;
+                //FieldManager.StopField?.Invoke();
                 break;
         }
     }

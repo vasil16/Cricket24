@@ -13,7 +13,7 @@ public class FieldManager : MonoBehaviour
 
     public List<Fielder> bestFielders = new List<Fielder>();
     public static Action<Vector3> StartCheckField;
-    public static Action ResetFielder;
+    public static Action ResetFielder, StopField;
 
     public static Vector3 hitBallPos, hitVelocity;
 
@@ -26,6 +26,7 @@ public class FieldManager : MonoBehaviour
     {
         StartCheckField = AssignBestFielders;
         ResetFielder = ResetFielders;
+        StopField = StopFielders;
     }
 
     public void AssignBestFielders(Vector3 ballAt)
@@ -34,7 +35,15 @@ public class FieldManager : MonoBehaviour
         ball = Gameplay.instance.currentBall;
         Debug.Log("fielder");
         StartCoroutine(DelayAndCheck(ballAt));
-    }   
+    }
+
+    public void StopFielders()
+    {
+        foreach(Fielder fielder in bestFielders)
+        {
+            fielder.StopField();
+        }
+    }
 
     IEnumerator DelayAndCheck(Vector3 ballAt)
     {
