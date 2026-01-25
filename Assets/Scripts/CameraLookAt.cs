@@ -2,16 +2,27 @@ using UnityEngine;
 
 public class CameraLookAt : MonoBehaviour
 {
-
     public GameObject ball;
     public Vector3 defRotation;
     public bool readyToDeliver, startingRunUp;
     public float refWidth = 2280, activeScreenWidth, refSensorSize;
-    float dampFact = 0f;
+
+    // -- SMOOTHING VARIABLES --
+    [Header("Broadcast Settings")]
+    [SerializeField] float lookDamping = 5f;        // Lower = smoother/slower tracking
+    [SerializeField] float bounceDamping = 0.3f;      // Higher = ignores bouncing more
+    private float currentYVelocity;                   // Internal ref for Y smoothing
+    private float stabilizedY;                        // The smoothed Y position
+    private bool isTrackingInitialized = false;       // To snap to position on first frame
+
+    float dampFact = 0f; // Used for FOV smoothing
     [SerializeField] float distanceThreshold, defFOV, currentDist, adjustedSensorX, runUpTargetFov, deliverTargetFov;
     [SerializeField] Vector2 activeCamSize;
 
     Camera cam;
+
+    public bool cover;
+    public float runUpTargetRotation, deliverTargetRotaion;
 
     private void OnEnable()
     {
@@ -31,23 +42,18 @@ public class CameraLookAt : MonoBehaviour
             defFOV = cam.fieldOfView;
             activeCamSize = cam.sensorSize;
 
-            // Use Screen.height and camera aspect ratio instead of Screen.width
             float screenAspect = (float)Screen.width / (float)Screen.height;
             float virtualScreenWidth = screenAspect * Screen.height;
-
-            // Use virtualScreenWidth instead of Screen.width directly
             adjustedSensorX = activeCamSize.x / (virtualScreenWidth / refWidth);
-
             cam.sensorSize = new Vector2(adjustedSensorX, activeCamSize.y);
         }
     }
 
-    public bool cover;
-
     void LateUpdate()
     {
-        if(this.gameObject.name=="draw1")
-        {            
+        // 1. Draw Camera Logic (Unchanged)
+        if (this.gameObject.name == "draw1")
+        {
             if (startingRunUp)
             {
                 Debug.Log("drawr");
@@ -55,92 +61,124 @@ public class CameraLookAt : MonoBehaviour
             }
             return;
         }
-        //if (Gameplay.instance && Gameplay.instance.isGameOver) this.enabled=false;              
+
+        // 2. Main Game Camera Logic
         if (MainGame.instance.camIndex == 1)
         {
             if (startingRunUp)
             {
                 CamRunUpAnim();
+                return; // Exit to prevent fighting with ball tracking
             }
             else if (readyToDeliver)
             {
                 CamZoomIn();
-            }
-            //if (ball && ball.GetComponent<BallHit>().cover && !ball.GetComponent<BallHit>().secondTouch)
-            //{
-            //    Debug.Log("cover");
-            //    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, .7f, ref dampFact, .5f);
-            //    Vector3 dir = ball.transform.position - transform.position;
-
-            //    // vertical angle only
-            //    float targetPitch = Mathf.Atan2(dir.y, new Vector2(dir.x, dir.z).magnitude) * Mathf.Rad2Deg;
-
-            //    float smoothPitch = Mathf.LerpAngle( transform.eulerAngles.x, targetPitch, Time.deltaTime * 3f );
-
-            //    transform.eulerAngles = new Vector3( smoothPitch, transform.eulerAngles.y, transform.eulerAngles.z );
-            //}
-
-            if (ball && ball.GetComponent<BallHit>().cover && !ball.GetComponent<BallHit>().secondTouch)
-            {
-                Debug.Log("cover"); cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, .7f, ref dampFact, .5f);
-                Vector3 direction = (ball.transform.position - transform.position).normalized;
-                Vector3 currentEuler = transform.eulerAngles; float targetPitch = Quaternion.LookRotation(direction, Vector3.right).eulerAngles.x;
-                float smoothPitch = Mathf.LerpAngle(currentEuler.x, targetPitch, Time.deltaTime * 3);
-                transform.eulerAngles = new Vector3(smoothPitch, currentEuler.y, currentEuler.z);
+                return; // Exit to prevent fighting with ball tracking
             }
 
-
-        }
-
-        if (ball)
-        {
-            currentDist = Vector3.Distance(transform.position, ball.transform.position);
-
-            if (MainGame.instance.camIndex == 1)
+            // -- BROADCAST TRACKING LOGIC --
+            if (ball)
             {
-                if (ball.GetComponent<BallHit>().secondTouch)
+                Debug.Log("yes cover");
+                var ballHit = ball.GetComponent<BallHit>();
+                currentDist = Vector3.Distance(transform.position, ball.transform.position);
+
+                // A. Second Touch (Standard Play)
+                if (ballHit.secondTouch)
                 {
-                    if (Vector3.Distance(transform.position, ball.transform.position) > distanceThreshold)
+                    float targetFovVal = 8f;
+                    float fovSmoothTime = 0.2f;
+
+                    if (currentDist > distanceThreshold)
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 7f, ref dampFact, 0.7f);
+                        targetFovVal = 7f; fovSmoothTime = 0.7f;
                     }
-                    else if (Vector3.Distance(transform.position, ball.transform.position) < 160)
+                    else if (currentDist < 160)
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 16f, ref dampFact, 0.2f);
+                        targetFovVal = 16f; fovSmoothTime = 0.2f;
                     }
-                    else
-                    {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 8f, ref dampFact, 0.2f);
-                    }
-                    LookAt();
+
+                    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, targetFovVal, ref dampFact, fovSmoothTime);
+
+                    // USE THE NEW SMOOTH LOOK
+                    BroadcastLookAt(ball.transform.position);
+                }
+                // B. Cover Drive (Special Action)
+                else if (ballHit.cover)
+                {
+                    Debug.Log("cover (Play & Miss / Leave)");
+
+                    // FOV Logic
+                    cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, .7f, ref dampFact, .5f);
+
+                    // --- FAST TRACKING FIX ---
+                    // Speed: 20f (Very fast, almost instant but still smooth)
+                    // Damp: 0.05f (Very sensitive to Y movement, so we see the ball dip to the keeper)
+                    BroadcastLookAt(ball.transform.position, 20f, 0.05f);
+                }
+                else
+                {
+                    Debug.Log("cs");
+                    // Fallback if neither condition is met but ball exists
+                    BroadcastLookAt(ball.transform.position);
                 }
             }
-
-            else if (MainGame.instance.camIndex == 3)
-            {
-                transform.LookAt(ball.transform);
-
-            }
-            else
-            {
-                LookAt();
-            }
+        }
+        // 3. Other Camera Indices
+        else if (MainGame.instance.camIndex == 3 && ball)
+        {
+            // Keep instant tracking for Cam 3 if desired, or switch to BroadcastLookAt
+            transform.LookAt(ball.transform);
+        }
+        else if (ball)
+        {
+            // Default fallback
+            transform.LookAt(ball.transform);
         }
     }
 
-    public float runUpTargetRotation, deliverTargetRotaion;
+    // --- THE MAGIC SAUCE: SMOOTH BROADCAST LOOK ---
+    // Updated function with optional override parameters
+    // defaultSpeed = -1 means "use the global variable"
+    void BroadcastLookAt(Vector3 targetPos, float overrideSpeed = -1f, float overrideBounceDamp = -1f)
+    {
+        // 1. Determine which settings to use (Default vs Override)
+        float currentLookSpeed = (overrideSpeed > 0) ? overrideSpeed : lookDamping;
+        float currentBounceDamp = (overrideBounceDamp >= 0) ? overrideBounceDamp : bounceDamping;
+
+        // Initialize tracking if needed
+        if (!isTrackingInitialized)
+        {
+            stabilizedY = targetPos.y;
+            isTrackingInitialized = true;
+        }
+
+        // 2. Stabilize Y (Use lower damping for keeper action to track height accurately)
+        stabilizedY = Mathf.SmoothDamp(stabilizedY, targetPos.y, ref currentYVelocity, currentBounceDamp);
+
+        Vector3 stabilizedTarget = new Vector3(targetPos.x, stabilizedY, targetPos.z);
+        Vector3 direction = stabilizedTarget - transform.position;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(direction);
+
+            // 3. Apply Rotation with the chosen speed
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * currentLookSpeed);
+        }
+    }
 
     public void CamRunUpAnim()
     {
+        isTrackingInitialized = false; // Reset tracking so it snaps correctly next time
         transform.localRotation = Quaternion.Euler(Mathf.Lerp(transform.eulerAngles.x, runUpTargetRotation, Time.deltaTime * .61f), 0, 0);
-        //transform.eulerAngles = new Vector3(Mathf.Lerp(transform.eulerAngles.x, runUpTargetRotation, Time.deltaTime * .61f), 0, 0);
         cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, runUpTargetFov, ref dampFact, 3f);
     }
 
     public void CamZoomIn()
     {
+        isTrackingInitialized = false;
         transform.rotation = Quaternion.Euler(Mathf.Lerp(transform.eulerAngles.x, deliverTargetRotaion, Time.deltaTime * 1.8f), 0, 0);
-        //transform.eulerAngles = new Vector3(Mathf.Lerp(transform.eulerAngles.x, deliverTargetRotaion, Time.deltaTime * 1.8f), 0, 0);
         cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, deliverTargetFov, ref dampFact, .25f);
     }
 
@@ -149,13 +187,15 @@ public class CameraLookAt : MonoBehaviour
         startingRunUp = false;
         readyToDeliver = false;
         ball = null;
+        isTrackingInitialized = false; // Important: Reset smoothing
         transform.eulerAngles = defRotation;
         if (!cam) return;
         cam.fieldOfView = defFOV;
     }
 
+    // Legacy function kept just in case, but unused in CamIndex 1 now
     public void LookAt()
-    {        
-        cam.transform.LookAt(ball.transform);        
+    {
+        if (ball) cam.transform.LookAt(ball.transform);
     }
 }

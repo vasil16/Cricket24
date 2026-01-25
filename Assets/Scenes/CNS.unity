@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 385
   m_LinearFogEnd: 3254
-  m_AmbientSkyColor: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
+  m_AmbientSkyColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 1}
   m_AmbientEquatorColor: {r: 0.933033, g: 1.3062462, b: 1.4928528, a: 1}
   m_AmbientGroundColor: {r: 0.9883372, g: 0.87852204, b: 0.6588915, a: 1}
   m_AmbientIntensity: 1
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 91bbc795c1d3e41af901fb53e45c962c, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: ddedbea82c68f44998cb94de7a44eabb, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -2115,7 +2115,7 @@ Transform:
   m_GameObject: {fileID: 66139079}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.10639391, z: -0, w: 0.9943241}
-  m_LocalPosition: {x: -109, y: 250.4863, z: -124}
+  m_LocalPosition: {x: -109, y: 245, z: -124}
   m_LocalScale: {x: 563.8977, y: 291.248, z: 588.6998}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -5566,7 +5566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &168065115
 Light:
   m_ObjectHideFlags: 0
@@ -5718,6 +5718,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 0
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 0
   defFOV: 0
   currentDist: 0
@@ -22025,6 +22027,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 3360
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 300
   defFOV: 7
   currentDist: 0
@@ -23812,6 +23816,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 3360
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 300
   defFOV: 7
   currentDist: 0
@@ -163108,6 +163114,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 3360
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 300
   defFOV: 7
   currentDist: 0
@@ -176907,6 +176915,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 0
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 0
   defFOV: 0
   currentDist: 0
@@ -182202,7 +182212,7 @@ Transform:
   m_GameObject: {fileID: 754615060}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.10639391, z: -0, w: 0.9943241}
-  m_LocalPosition: {x: -109, y: 250.4863, z: -124}
+  m_LocalPosition: {x: -109, y: 245, z: -124}
   m_LocalScale: {x: 563.8977, y: 291.248, z: 588.6998}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -182876,6 +182886,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 3360
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 0
   defFOV: 51.227978
   currentDist: 0
@@ -198509,6 +198521,8 @@ PrefabInstance:
     - {fileID: 6651808683397124087, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
     - {fileID: 8396082972750352692, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
     - {fileID: -5997409032958745805, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
+    - {fileID: -3644696872652911159, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
+    - {fileID: -2520457756238057985, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
       insertIndex: 1
@@ -198517,7 +198531,7 @@ PrefabInstance:
       insertIndex: 2
       addedObject: {fileID: 589873528}
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
-      insertIndex: 11
+      insertIndex: 9
       addedObject: {fileID: 2005093882}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -8929531831423899767, guid: 7e18ba1012a32442cb7abd28aa3f71d3, type: 3}
@@ -200035,7 +200049,6 @@ GameObject:
   - component: {fileID: 922130311}
   - component: {fileID: 922130310}
   - component: {fileID: 922130313}
-  - component: {fileID: 922130312}
   m_Layer: 0
   m_Name: newBatter
   m_TagString: Untagged
@@ -200085,103 +200098,6 @@ Transform:
   - {fileID: 441779709}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!82 &922130312
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 922130309}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 0
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 155
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &922130313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200196,7 +200112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   batterAnim: {fileID: 922130310}
   dragObject: {fileID: 0}
-  audioSource: {fileID: 922130312}
+  audioSource: {fileID: 0}
   batHittingGround: {fileID: 8300000, guid: 71f80e543d50a43c9a7484bfe281e43c, type: 3}
   diss: 0
 --- !u!1 &926911312
@@ -201044,6 +200960,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 3360
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 0
   defFOV: 47
   currentDist: 0
@@ -203944,6 +203862,8 @@ MonoBehaviour:
   refWidth: 1920
   activeScreenWidth: 3360
   refSensorSize: 41.2
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 370
   defFOV: 10
   currentDist: 0
@@ -206209,7 +206129,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1150615976
 Transform:
   m_ObjectHideFlags: 0
@@ -208130,6 +208050,8 @@ MonoBehaviour:
   refWidth: 1920
   activeScreenWidth: 3360
   refSensorSize: 41.2
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 370
   defFOV: 10
   currentDist: 0
@@ -209131,7 +209053,7 @@ Transform:
   m_GameObject: {fileID: 1236640893}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.10639391, z: -0, w: 0.9943241}
-  m_LocalPosition: {x: -109, y: 250.4863, z: -124}
+  m_LocalPosition: {x: -109, y: 245, z: -124}
   m_LocalScale: {x: 563.8977, y: 291.248, z: 588.6998}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -233874,6 +233796,8 @@ MonoBehaviour:
   refWidth: 2280
   activeScreenWidth: 3360
   refSensorSize: 0
+  lookDamping: 5
+  bounceDamping: 0.3
   distanceThreshold: 300
   defFOV: 7
   currentDist: 0
@@ -238311,7 +238235,7 @@ Transform:
   m_GameObject: {fileID: 1975317672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.3, y: 6.85, z: 44.8}
+  m_LocalPosition: {x: 3.3, y: 6.85, z: 42.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -253797,7 +253721,7 @@ Transform:
   m_GameObject: {fileID: 2069385672}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.10639391, z: -0, w: 0.9943241}
-  m_LocalPosition: {x: -109, y: 250.4863, z: -124}
+  m_LocalPosition: {x: -109, y: 245, z: -124}
   m_LocalScale: {x: 563.8977, y: 291.248, z: 588.6998}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -256409,7 +256333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9151901013794040382, guid: 06345095d920f426582d5cc2c004aaff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 9151901013794040382, guid: 06345095d920f426582d5cc2c004aaff, type: 3}
       propertyPath: m_LocalPosition.z

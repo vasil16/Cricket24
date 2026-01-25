@@ -166,11 +166,11 @@ public class Gameplay : MonoBehaviour
 
             yield return new WaitForSeconds(1f);
             broadcastCamComp.startingRunUp = true;
-            drawCam.startingRunUp = true;
+            //drawCam.startingRunUp = true;
             rb = ball.GetComponent<Rigidbody>();
             yield return new WaitForSeconds(.9f);
-            drawCam.startingRunUp = false;
-            drawCam.gameObject.SetActive(false);
+            //drawCam.startingRunUp = false;
+            //drawCam.gameObject.SetActive(false);
             yield return new WaitUntil(() => readyToBowl);
             broadcastCamComp.startingRunUp = false;
             
@@ -273,7 +273,7 @@ public class Gameplay : MonoBehaviour
                 cam.ball = null;
                 cam.CamReset();
             }
-            drawCam.gameObject.SetActive(true);
+            //drawCam.gameObject.SetActive(true);
             yield return new WaitForSeconds(.5f);
         }
     }

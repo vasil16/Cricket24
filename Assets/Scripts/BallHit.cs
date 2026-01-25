@@ -13,32 +13,36 @@ public class BallHit : MonoBehaviour
 
     public string lastHit;
 
+    public GameObject stopper;
+
+    public bool keeperExit;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    private void Update()
-    {
-        if (!Gameplay.instance) return;
+    //private void Update()
+    //{
+    //    if (!Gameplay.instance) return;
 
 
-        if (!secondTouch) return;
-        if (!Gameplay.instance.stadiumBounds.Contains(transform.position))
-        {
-            Gameplay.instance.deliveryDead = true;
-        }
-        if (transform.position.x > 80 && transform.position.z < 24)
-        {
-            Gameplay.instance.sideCam.depth = 0;
-            Gameplay.instance.sideCam.enabled = true;
-        }
-        else
-        {
-            Gameplay.instance.sideCam.depth = -2;
-            Gameplay.instance.sideCam.enabled = false;
-        }
-    }
+    //    if (!secondTouch) return;
+    //    if (!Gameplay.instance.stadiumBounds.Contains(transform.position))
+    //    {
+    //        Gameplay.instance.deliveryDead = true;
+    //    }
+    //    if (transform.position.x > 80 && transform.position.z < 24)
+    //    {
+    //        Gameplay.instance.sideCam.depth = 0;
+    //        Gameplay.instance.sideCam.enabled = true;
+    //    }
+    //    else
+    //    {
+    //        Gameplay.instance.sideCam.depth = -2;
+    //        Gameplay.instance.sideCam.enabled = false;
+    //    }
+    //}
 
     void OnCollisionEnter(Collision collision)
     {
@@ -101,9 +105,7 @@ public class BallHit : MonoBehaviour
         }
     }
 
-    public GameObject stopper;
-
-    public bool keeperExit;
+    
 
     void OnCollisionExit(Collision collision)
     {
@@ -139,10 +141,10 @@ public class BallHit : MonoBehaviour
         if (other.gameObject.CompareTag("stop"))
         {
             if (stopTriggered) return;
+            stopTriggered = true;
             rb.isKinematic = true;
             transform.SetParent(other.transform, true);
-            transform.position = other.transform.position;
-            stopTriggered = true;
+            //transform.position = other.transform.position;
             stopper = other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject;
             stopper.GetComponent<Fielder>().DropBall(stopper.CompareTag("keeper")?true:false);
             //Debug.Log("stopped by " + stopper.name);

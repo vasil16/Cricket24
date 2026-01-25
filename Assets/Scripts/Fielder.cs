@@ -178,10 +178,7 @@ public class Fielder : MonoBehaviour
 
     IEnumerator ReleaseTarget(bool keeper)
     {
-        //rightHand.position = idleRightHand;
-        //leftHand.position = idleLeftHand;
-        //Debug.Log("release call , keeper? " + keeper);
-        pickScript.StartDrop();
+        //pickScript.StartDrop();
 
         if (keeper)
         {
@@ -200,9 +197,6 @@ public class Fielder : MonoBehaviour
     {
         StartCoroutine(StartField(ball));
     }
-
-
-    //best stop point, 
 
     IEnumerator StartField(Transform ball)
     {
@@ -737,15 +731,6 @@ public class Fielder : MonoBehaviour
 
     IEnumerator FielderPickupThrow()
     {
-        //ball.GetComponent<InteractionObject>().enabled = false;
-        
-        //ikControl.PlayAnimation(idleClip);
-        //if (!ballComp.stopper == this.gameObject)
-        //{
-        //    Debug.Log("fld smbdy");
-        //    StopAllCoroutines();
-        //    yield break;
-        //}
         if (gameObject.name == "keeper")
         {
             Debug.Log("fld done");
@@ -763,11 +748,11 @@ public class Fielder : MonoBehaviour
 
         ikControl.PlayAnimation(throwClip);
         yield return new WaitUntil(() => throwable);
-        ballRb.isKinematic = false;
-        //ballRb.WakeUp();
         //ball.SetParent(null, true);
+        ballRb.WakeUp();
+        ballRb.isKinematic = false;
         // --- NEW LOGIC
-        Debug.Log("throw call");
+        
         Vector3 ballPosFlat = new Vector3(ball.position.x, 0, ball.position.z);
         Vector3 keeperPosFlat = new Vector3(fm.keeper.position.x, 0, fm.keeper.position.z);
         float distToKeeper = Vector3.Distance(ballPosFlat, keeperPosFlat);
@@ -779,16 +764,17 @@ public class Fielder : MonoBehaviour
 
         //if (distToKeeper <= 25f) pitchPoint -= dirToKeeper * 3.0f;
 
-        pitchPoint.y = 0;
+        Debug.Log("throw call to "+pitchPoint);
+        //pitchPoint.y = 0;
 
-        Debug.DrawLine(ball.position, pitchPoint, Color.red, 5f);
+        Debug.DrawLine(ball.position, pitchPoint, Color.red, 15f);
 
-        float maxArcHeight = 14000f;
+        float maxArcHeight = 60f;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
         float verticalVelocity = Mathf.Sqrt(2 * gravity * maxArcHeight);
 
-        float flightTime = 200 * (verticalVelocity / gravity);
+        float flightTime = 2 * (verticalVelocity / gravity);
 
         float distanceToPitch = Vector3.Distance(ballPosFlat, pitchPoint);
         float horizontalSpeed = distanceToPitch / flightTime;
@@ -796,7 +782,9 @@ public class Fielder : MonoBehaviour
         Vector3 velocity = dirToKeeper * horizontalSpeed;
         velocity.y = verticalVelocity;
 
-        //ballRb.velocity = velocity;
+        ball.parent = null;
+
+        ballRb.velocity = velocity;
         //ballRb.AddForce(velocity);
 
         //ThrowToTarget(ballRb, ball.position, fm.keeper.position, 5f);
