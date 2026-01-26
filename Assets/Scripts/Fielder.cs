@@ -749,8 +749,7 @@ public class Fielder : MonoBehaviour
         ikControl.PlayAnimation(throwClip);
         yield return new WaitUntil(() => throwable);
         //ball.SetParent(null, true);
-        ballRb.WakeUp();
-        ballRb.isKinematic = false;
+        
         // --- NEW LOGIC
         
         Vector3 ballPosFlat = new Vector3(ball.position.x, 0, ball.position.z);
@@ -767,8 +766,6 @@ public class Fielder : MonoBehaviour
         Debug.Log("throw call to "+pitchPoint);
         //pitchPoint.y = 0;
 
-        Debug.DrawLine(ball.position, pitchPoint, Color.red, 15f);
-
         float maxArcHeight = 60f;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
@@ -778,13 +775,17 @@ public class Fielder : MonoBehaviour
 
         float distanceToPitch = Vector3.Distance(ballPosFlat, pitchPoint);
         float horizontalSpeed = distanceToPitch / flightTime;
+        Vector3 latePos = ball.position;
 
         Vector3 velocity = dirToKeeper * horizontalSpeed;
         velocity.y = verticalVelocity;
-
-        ball.parent = null;
-
-        ballRb.velocity = velocity;
+        Debug.DrawLine(ball.position, pitchPoint, Color.red, 15f);
+        ball.SetParent(null, true);
+        ball.position = latePos;
+        //ballRb.WakeUp();
+        //ballRb.isKinematic = false;
+        //ballRb.velocity = velocity;
+        
         //ballRb.AddForce(velocity);
 
         //ThrowToTarget(ballRb, ball.position, fm.keeper.position, 5f);
