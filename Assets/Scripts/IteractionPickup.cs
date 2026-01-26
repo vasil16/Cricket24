@@ -37,7 +37,7 @@ public class SmoothInteractionPickup : MonoBehaviour
             //fbbik.solver.lookAt.weight = 0f;
         }
 
-        Debug.Log("Smooth Pickup Ready. Press E to Interact.");
+        //Debug.Log("Smooth Pickup Ready. Press E to Interact.");
     }
 
     //void Update()

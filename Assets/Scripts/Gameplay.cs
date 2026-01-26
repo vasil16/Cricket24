@@ -126,7 +126,7 @@ public class Gameplay : MonoBehaviour
 
             pitchPoint = BowlingEngine.instance.DecidePoint(false);
 
-            Debug.Log("bound poss " + pitchPoint);
+            //Debug.Log("bound poss " + pitchPoint);
 
             mark.transform.position = pitchPoint;
 

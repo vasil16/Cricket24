@@ -91,8 +91,11 @@ public class BallHit : MonoBehaviour
                 break;
 
             case "Ground":
-                if(secondTouch)
+                if (secondTouch && !groundShot)
+                {
                     groundShot = true;
+                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.04f, rb.velocity.z);
+                }
                 break;
 
             case "boundary":
@@ -144,9 +147,9 @@ public class BallHit : MonoBehaviour
             stopTriggered = true;
             rb.isKinematic = true;
             transform.SetParent(other.transform, true);
-            //transform.position = other.transform.position;
-            stopper = other.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.gameObject;
-            stopper.GetComponent<Fielder>().DropBall(stopper.CompareTag("keeper")?true:false);
+            transform.position = other.transform.position;
+            stopper = other.gameObject;
+            stopper.GetComponent<BallStopper>().fieldScript.DropBall(stopper.CompareTag("keeper")?true:false);
             //Debug.Log("stopped by " + stopper.name);
         }
 
