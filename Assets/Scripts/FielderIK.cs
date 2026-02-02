@@ -305,6 +305,11 @@ public class FielderIK : MonoBehaviour
         m_RightElbowHintEffector.GetComponent<HintEffector>().weight = 0;
     }
 
+    //public void StopAnimation()
+    //{
+    //    m_IKPlayable.DisconnectInput(0);
+    //}
+
     public void PlayAnimation(AnimationClip newClip)
     {
         if (!m_Graph.IsValid()) return;

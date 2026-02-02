@@ -830,7 +830,6 @@ GameObject:
   - component: {fileID: 6404588627316019831}
   - component: {fileID: 3856494804610730600}
   - component: {fileID: 5735660204954236223}
-  - component: {fileID: 1420073053282373018}
   m_Layer: 13
   m_Name: fielder_prefab
   m_TagString: fielder
@@ -1069,10 +1068,10 @@ MonoBehaviour:
         defaultLocalDirection: {x: 0, y: 0, z: 0}
         defaultChildDirection: {x: 0, y: 0, z: 0}
     - pin: 0
-      pull: 1
+      pull: 0.5
       push: 0
       pushParent: 0
-      reach: 0.1
+      reach: 0.2
       reachSmoothing: 1
       pushSmoothing: 1
       nodes:
@@ -1119,10 +1118,10 @@ MonoBehaviour:
         defaultLocalDirection: {x: 0, y: 0, z: 0}
         defaultChildDirection: {x: 0, y: 0, z: 0}
     - pin: 0
-      pull: 1
+      pull: 0.5
       push: 0
       pushParent: 0
-      reach: 0.1
+      reach: 0.2
       reachSmoothing: 1
       pushSmoothing: 1
       nodes:
@@ -1362,6 +1361,9 @@ MonoBehaviour:
   holdDuration: 0.32
   rightHandEffector: 6
   leftHandEffector: 5
+  stepDistance: 2.6
+  stepHeight: 0.2
+  stepSpeed: 20
 --- !u!114 &6404588627316019831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1377,7 +1379,7 @@ MonoBehaviour:
   targetTag: 
   fadeInTime: 0.3
   speed: 1
-  resetToDefaultsSpeed: 1
+  resetToDefaultsSpeed: 0.5
   characterCollider: {fileID: 0}
   FPSCamera: {fileID: 0}
   camRaycastLayers:
@@ -1423,7 +1425,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02da525d320ca4893b06a0452efcf995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 35
+  runSpeed: 28
   score: 0
   angleDiff: 0
   timeToReachLanding: 0
@@ -1440,12 +1442,12 @@ MonoBehaviour:
   headAim: {fileID: 0}
   neckAim: {fileID: 0}
   ikControl: {fileID: 3856494804610730600}
-  rayTestObject: {fileID: 8882391688563094824}
+  rayTestObject: {fileID: 0}
   agent: {fileID: 0}
   chaseMode: 0
   animator: {fileID: 0}
   actualFetchPosition: {x: 0, y: 0, z: 0}
-  pickScript: {fileID: 8247499380264945114}
+  pickScript: {fileID: 0}
   idleClip: {fileID: -203655887218126122, guid: 6fdaba8655e5f480e8be7dd916c6abaa, type: 3}
   runningClip: {fileID: -203655887218126122, guid: 404023fd616d345e68c2a5408c5d9a0f, type: 3}
   jumpClip: {fileID: 0}
@@ -1458,27 +1460,15 @@ MonoBehaviour:
   pickUpClip: {fileID: 0}
   throwClip: {fileID: -203655887218126122, guid: 26c48ac26892549738c2a198332b6246, type: 3}
   kneelClip: {fileID: 0}
-  handReachDuration: 0.35
+  handReachDuration: 0.55
   earlyBias: 0.03
   fielderTargetMark: {fileID: 3590798138699095066}
   distanceToTarget: 0
   isRightHanded: 0
-  refDistance: 186.2869
-  refSpeed: 15
+  refDistance: 0
+  refSpeed: 0
   isKeeper: 0
   throwable: 0
---- !u!114 &1420073053282373018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3380714975012631072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12ab0b1848d24f24afb850a9f0b707f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3446243622316460737
 GameObject:
   m_ObjectHideFlags: 0

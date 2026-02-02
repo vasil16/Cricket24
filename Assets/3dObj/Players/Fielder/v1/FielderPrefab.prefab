@@ -755,7 +755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02da525d320ca4893b06a0452efcf995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 35
+  runSpeed: 128
   score: 0
   angleDiff: 0
   timeToReachLanding: 0
@@ -797,6 +797,7 @@ MonoBehaviour:
   isRightHanded: 1
   refDistance: 186.2869
   refSpeed: 15
+  isKeeper: 0
   throwable: 0
 --- !u!114 &4784015976026141879
 MonoBehaviour:
@@ -1270,7 +1271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactionSystem: {fileID: -4680070101703404322}
-  fbbik: {fileID: 0}
+  fbbik: {fileID: 4784015976026141879}
   pickupObject: {fileID: 0}
   lookAtSmoothSpeed: 5
   lookAtIntensity: 0.8

@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.AI;
 using RootMotion.FinalIK;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 public class Fielder : MonoBehaviour
 {
@@ -18,10 +20,8 @@ public class Fielder : MonoBehaviour
     [SerializeField] FieldManager fm;
     [SerializeField] MultiAimConstraint headAim, neckAim;
     public FielderIK ikControl;
-    List<Effector> effectors;
     [SerializeField] GameObject rayTestObject;
     [SerializeField] NavMeshAgent agent;
-    Vector3 initialTarget;
     [SerializeField] bool chaseMode;
     float groundY = .001f;
     public Animator animator;
@@ -33,11 +33,10 @@ public class Fielder : MonoBehaviour
     {        
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
-        idleRightHand = rightHand.localPosition;
-        idleLeftHand = leftHand.localPosition;
         animator = GetComponent<Animator>();
         ikControl = GetComponent<FielderIK>();
         pickScript = this.GetComponent<SmoothInteractionPickup>();
+        groundY = transform.position.y;
     }
 
 
@@ -51,22 +50,23 @@ public class Fielder : MonoBehaviour
     {
         ballComp = ball.GetComponent<BallHit>();
         this.ball = ball;
-
+        ballRb = ball.GetComponent<Rigidbody>();
         if (targetPosition == Vector3.zero)
         {
-            while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > 7)
+            while (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) > GetCollectionStartDistance())
             {
                 yield return null;
             }
-            targetPosition = ball.position;
-            targetPosition.y += 1f;
-            rightHand.position = leftHand.position = targetPosition;
+            pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+            pickScript.StartPickup(false);
+            yield break;
         }
 
         else
         {
             while (Mathf.Abs(targetPosition.x - transform.position.x) > .2f)
             {
+                Debug.Log("target x " + targetPosition.x + " current x " + transform.position.x);
                 if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 60f)
                     break;
                 if(Mathf.Abs(targetPosition.x - transform.position.x) < 1f)
@@ -74,44 +74,26 @@ public class Fielder : MonoBehaviour
                     ikControl.PlayAnimation(idleClip);
                     break;
                 }
-
-                AnimationClip clipToPlay = null;
-                float directionMultiplier = 0; 
-
+                float direction = (targetPosition.x > transform.position.x) ? -1f : 1f;
                 if (targetPosition.x > transform.position.x)
                 {
-                    Debug.Log("Stepping Left...");
-                    clipToPlay = moveLeftClip;
-                    directionMultiplier = 1f;
-                                             
+                    Debug.Log("Stepping Left...");                                             
+                    yield return new WaitUntil(() => pickScript.StrafeStep(direction));
+                    Debug.Log("Stepcom");
                 }
                 else
                 {
                     Debug.Log("Stepping Right...");
-                    clipToPlay = moveRightClip;
-                    directionMultiplier = -1f;
+                    yield return new WaitUntil(() => pickScript.StrafeStep(direction));
                 }
 
-                if (clipToPlay != null)
-                {
-                    ikControl.PlayAnimation(clipToPlay);
-
-                    yield return new WaitForSeconds(clipToPlay.length);
-
-                    Vector3 newPos = transform.position;
-                    newPos.x += (2.4f * directionMultiplier);
-                    transform.position = newPos;
-                }
-                else
-                {
-                    yield return null;
-                }
+                yield return null;
+                
             }
-            //ikControl.PlayAnimation(idleClip);
             if (targetPosition.y > 12.93f)
             {
                 Debug.Log("jump..");
-                ikControl.PlayAnimation(jumpClip);
+                //ikControl.PlayAnimation(jumpClip);
             }
             else if (targetPosition.y < 3f)
             {
@@ -123,10 +105,11 @@ public class Fielder : MonoBehaviour
         {
             float addConstant = targetPosition.x > transform.position.x ? -1 : 1;
             fm.marker.position = targetPosition;
-            rightHand.position = leftHand.position = targetPosition;
         }
 
-        yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 55);
+        //yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 75);
+
+        yield return new WaitUntil(()=>ShouldStartCollection(ball, out neededSpeed));
 
         Debug.Log("recive start");
 
@@ -172,7 +155,7 @@ public class Fielder : MonoBehaviour
         return toTarget.magnitude / speedTowardsTarget;
     }
 
-    [SerializeField] float handReachDuration = 0.55f; // tune once
+    [SerializeField] float handReachDuration = 0.5109f; // tune once
     [SerializeField] float earlyBias = 0.03f; // micro-anticipation (human-like)
 
 
@@ -205,8 +188,6 @@ public class Fielder : MonoBehaviour
 
         targetPosition = actualFetchPosition;
 
-        initialTarget = targetPosition;
-
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
         ballComp = ball.GetComponent<BallHit>();
@@ -229,15 +210,11 @@ public class Fielder : MonoBehaviour
         {
             targetPosition = Gameplay.instance.stadiumBounds.ClosestPoint(targetPosition);
         }
-        targetPosition.y = transform.position.y;
-
-
-        //-----------------------------------------||------------------------------------------------\\
-
+        targetPosition.y = groundY;
 
         if(ballRb.velocity.magnitude<10)
         {
-            targetPosition = new Vector3(ball.position.x, transform.position.y, ball.position.z);
+            targetPosition = new Vector3(ball.position.x, groundY, ball.position.z);
         }
         if (IsBallComingAtFielder() && !this.gameObject.CompareTag("DeepFielder") && ballComp.groundShot)
         {
@@ -251,49 +228,6 @@ public class Fielder : MonoBehaviour
             StartCoroutine(RunToBall());
         }
         yield break;
-    }
-
-    Vector3 FindIdealInterceptPoint(Vector3 fielderPos, Vector3 ballPos, Vector3 ballVelocity, bool isDeepFielder)
-    {
-        // Flatten everything to ground
-        Vector3 ballDir = ballVelocity;
-        ballDir.y = 0f;
-
-        float ballSpeed = ballDir.magnitude;
-        if (ballSpeed < 0.1f)
-            return ballPos;
-
-        ballDir.Normalize();
-
-        Vector3 toBall = ballPos - fielderPos;
-        toBall.y = 0f;
-
-        // Project ball relative to fielder ONTO ball direction
-        float forwardDistance = Vector3.Dot(toBall, ballDir);
-
-        // --- CRITICAL RULE ---
-        // Never allow target behind fielder
-        forwardDistance = Mathf.Max(forwardDistance, 0f);
-
-        float extraLead;
-
-        if (isDeepFielder)
-        {
-            // Deep fielder commits further FORWARD
-            extraLead = Mathf.Lerp(8f, 18f, Mathf.Clamp01(ballSpeed / 25f));
-        }
-        else
-        {
-            // Infield cuts early
-            extraLead = Mathf.Lerp(4f, 10f, Mathf.Clamp01(ballSpeed / 20f));
-        }
-
-        float interceptDistance = forwardDistance + extraLead;
-
-        Vector3 interceptPoint = fielderPos + ballDir * interceptDistance;
-        interceptPoint.y = fielderPos.y;
-
-        return interceptPoint;
     }
 
     bool targetBall = false;
@@ -318,11 +252,11 @@ public class Fielder : MonoBehaviour
                 float speed = ballVel.magnitude;
                 float lookAhead = Mathf.Max(minLookAhead, speed * lookAheadFactor);
                 Vector3 interceptPoint = ball.transform.position + flatDir * lookAhead;
-                targetPosition = new Vector3(interceptPoint.x, transform.position.y, interceptPoint.z);
+                targetPosition = new Vector3(interceptPoint.x, groundY, interceptPoint.z);
             }
             else
             {
-                targetPosition = new Vector3(ball.transform.position.x, transform.position.y, ball.transform.position.z);
+                targetPosition = new Vector3(ball.transform.position.x, groundY, ball.transform.position.z);
             }
         }
 
@@ -336,29 +270,97 @@ public class Fielder : MonoBehaviour
             Vector3 localRight = Vector3.Cross(Vector3.up, transform.forward).normalized;
             Vector3 throwingHandSide = isRightHanded ? -localRight : localRight;
             targetPosition = ball.position + (ballDir * interceptDistance) + (throwingHandSide * sideBuffer);
-            targetPosition.y = transform.position.y;
+            targetPosition.y = groundY;
         }
 
         fielderTargetMark.position = targetPosition;
         return targetPosition;
     }
 
-    public bool isRightHanded;
+    public bool isRightHanded, targetMode;
 
-    float reachDistance = 1.2f; // The physical length of the arm + small buffer
-    float prepareDistance = 4.0f; // Distance to start slowing down/blending animation
-    float chaseThreshold = 1.5f; // If ball is this far behind us, switch to chase
+
+    float GetCollectionStartDistance()
+    {
+        float ballSpeed = ballRb.velocity.magnitude; // m/s
+        float collectionTime = .50253f; // seconds
+        float reqDistance = ballSpeed * collectionTime;
+        return Mathf.Clamp(reqDistance, 1, 12);
+    }
+
+    // Returns TRUE when it's the exact frame to start the pickup.
+    // 'speedMultiplier' tells you how fast to play the animation (1x, 2x, etc) to ensure the catch.
+    public bool ShouldStartCollection(Transform ball, out float speedMultiplier)
+    {
+        speedMultiplier = 1.0f;
+        float standardAnimTime = 0.50253f; // Your animation length
+        float maxPickupDistance = 3.0f;    // NEVER start pickup further than this (visual limit)
+
+        // 1. Calculate Relative Velocity (Crucial for chasing vs head-on)
+        // If we are running towards ball, the gap closes faster.
+        Vector3 myVelocity = Vector3.zero;
+        // Assuming you have a Rigidbody or know your speed. If not, use zero (acceptable for basic logic)
+        // if (GetComponent<Rigidbody>()) myVelocity = GetComponent<Rigidbody>().velocity; 
+
+        Vector3 relativeVelocity = ball.GetComponent<Rigidbody>().velocity - myVelocity;
+        Vector3 toFielder = transform.position - ball.position;
+
+        // 2. Calculate Closing Speed (How fast is the ball coming at me?)
+        float closingSpeed = Vector3.Dot(relativeVelocity, toFielder.normalized);
+
+        // If ball is moving away or stopped, fallback to simple distance check
+        if (closingSpeed <= 0.1f) return toFielder.magnitude <= 1.5f;
+
+        // 3. Time To Impact (The most important number)
+        float timeToImpact = toFielder.magnitude / closingSpeed;
+
+        // 4. THE LOGIC
+        // We start IF:
+        // (We have exactly enough time for the normal animation)
+        // AND
+        // (The ball is physically close enough to look natural)
+
+        // Check 1: Are we running out of time?
+        bool timeIsCritical = timeToImpact <= standardAnimTime;
+
+        // Check 2: Are we within the visual limit?
+        bool withinVisualRange = toFielder.magnitude <= maxPickupDistance;
+
+        // 5. The "Fast Ball" Compensation
+        // If the ball is super fast, 'timeIsCritical' will be true at 15m away.
+        // But 'withinVisualRange' is false. So we WAIT.
+        // We keep waiting until the ball hits 'maxPickupDistance' (3m).
+        // At that point, 'timeToImpact' will be very short (e.g., 0.1s).
+        // So we must speed up the animation to match the remaining time.
+
+        if (withinVisualRange && timeIsCritical)
+        {
+            // Calculate needed speed. 
+            // Example: If we have 0.1s left, but anim is 0.5s, we need 5x speed.
+            speedMultiplier = standardAnimTime / Mathf.Max(timeToImpact, 0.01f);
+
+            // Clamp it so it doesn't go crazy (e.g., max 3x speed)
+            speedMultiplier = Mathf.Clamp(speedMultiplier, 1.0f, 3.0f);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    float neededSpeed;
+
 
     IEnumerator RunToBall(bool restart = false)
     {
         if (restart) Debug.Log("second time");
         ikControl.PlayAnimation(runningClip);
-
+        float distToBall = 0;
         while (!ballComp.stopTriggered)
         {
             // 1. Calculate Distances
-            float distToBall = Vector3.Distance(transform.position, ball.position);
-
+            distToBall = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z));
+            distanceToTarget= Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z));
             // 2. Check for "Dead" ball
             if (Gameplay.instance.deliveryDead)
             {
@@ -368,21 +370,15 @@ public class Fielder : MonoBehaviour
 
             // 3. IMMEDIATE PICKUP CHECK: Are we physically close enough?
             // We check this every frame regardless of logic to prevent missing a ball we are standing on.
-            if (distToBall <= reachDistance)
-            {
-                Debug.Log("Ball in hand range - Picking up");
-                ballComp.fieldedPlayer = this.gameObject;
-                StartCoroutine(ReachedBall());
-                yield break;
-            }
 
             // 4. Movement Logic
             if (!ballComp.groundShot)
             {
                 // Aerial logic (Keep existing logic or simplify)
-                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f)
+                if (distanceToTarget<1f)
                 {
-                    StartCoroutine(WaitForBall()); // Switch to waiting logic
+                    Debug.Log("air ball reached taret");
+                    StartCoroutine(GrabBall()); // Switch to waiting logic
                     yield break;
                 }
             }
@@ -391,16 +387,39 @@ public class Fielder : MonoBehaviour
                 // GROUND SHOT LOGIC
                 ComputeTarget(restart); // Ensure this updates targetPosition
 
+
+                if(ShouldStartCollection(ball, out neededSpeed))
+                {
+                    Debug.Log("Ball in hand range - Picking up " + distToBall);
+                    ballComp.fieldedPlayer = this.gameObject;
+                    //StartCoroutine(ReachedBall());
+                    //ikControl.PlayAnimation(idleClip);
+                    ikControl.PlayAnimation(idleClip);
+                    pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+                    pickScript.StartPickup(false);
+                    yield break;
+                }
+
+                //if (distToBall <= GetCollectionStartDistance())
+                //{
+                //    Debug.Log("Ball in hand range - Picking up "+distToBall);
+                //    ballComp.fieldedPlayer = this.gameObject;
+                //    //StartCoroutine(ReachedBall());
+                //    //ikControl.PlayAnimation(idleClip);
+                //    ikControl.PlayAnimation(idleClip);
+                //    pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+                //    pickScript.StartPickup(false);
+                //    yield break;
+                //}
+
                 // 5. Chase Mode Check
                 // If the ball is moving away from us or we passed it
                 if (ShouldChase(ball, transform.position))
                 {
                     chaseMode = true;
-                    // Adjust collider for diving/chasing if needed
-                    transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, -1.47F);
                 }
 
-                if (chaseMode)
+                if (chaseMode||targetMode)
                 {
                     // In chase mode, we run directly at the ball, not the intercept point
                     targetPosition = ball.position;
@@ -417,18 +436,22 @@ public class Fielder : MonoBehaviour
                 // Move
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, runSpeed * Time.deltaTime);
 
-                // 7. Transition to Waiting/Preparing
-                // Only wait if the ball is incoming and we are close to the intercept line
-                if (!chaseMode && distToBall < prepareDistance && IsBallComingAtFielder())
+                if (!chaseMode && IsBallComingAtFielder() && ballRb.velocity.magnitude > 10)
                 {
-                    // Don't stop completely, move into the WaitForBall for fine-tuning
                     StartCoroutine(WaitForBall());
                     yield break;
+                }
+
+                if(distanceToTarget<=2f)
+                {
+                    targetMode = true;
                 }
             }
             yield return null;
         }
     }
+
+
 
     void StopAll()
     {
@@ -452,153 +475,37 @@ public class Fielder : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDir), Time.deltaTime * 15f);
             }
 
-
-            // 1. FAILSAFE: Switch back to Run if ball passes us
-            if (ShouldChase(ball, transform.position) || distToBall > prepareDistance + 2f)
+            if (distToBall <= GetCollectionStartDistance())
             {
-                Debug.Log("Ball passed while waiting - switching back to Run/Chase");
+                //StartCoroutine(ReachedBall(true));
+                pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+                pickScript.StartPickup(false);
+                yield break;
+            }
+
+            if (ballRb.velocity.magnitude < 5.0f)
+            {
+                Debug.Log("restart runn");
                 StartCoroutine(RunToBall(true));
                 yield break;
             }
-
-            // 2. PICKUP TRIGGER: Fixed distance
-            // We use reachDistance (e.g. 1.2f). We do NOT multiply by velocity.
-            // If the ball is fast, we need to trigger slightly earlier to account for frame drops? 
-            // No, Physics.Overlap or Distance check is usually enough. 
-            // If you really need velocity prediction:
-            float dynamicReach = reachDistance + (ballRb.velocity.magnitude * Time.deltaTime * 2);
-
-            if (distToBall <= dynamicReach)
-            {
-                StartCoroutine(ReachedBall(true));
-                yield break;
-            }
-
-            // 3. Fine Tuning Position while waiting
-            // Do not stand still. Rotate to face ball and micro-adjust position.
- 
-            // If ball is slowing down significantly, creep towards it
-            if (ballRb.velocity.magnitude < 5.0f)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, ball.position, (runSpeed * 0.5f) * Time.deltaTime);
-            }
-            // If ball is fast, ensure we are standing directly in its path (Lateral movement)
-            else
-            {
-                // Project ball velocity to find closest point on line
-                Vector3 closestPointOnLine = ClosestPointOnLine(ball.position, ballRb.velocity, transform.position);
-                transform.position = Vector3.MoveTowards(transform.position, closestPointOnLine, (runSpeed * 0.2f) * Time.deltaTime);
-            }
-
             yield return null;
         }
-        StartCoroutine(ReachedBall(true));
-    }
-
-    // Helper to keep fielder in the ball's path while waiting
-    Vector3 ClosestPointOnLine(Vector3 vA, Vector3 vB, Vector3 vPoint)
-    {
-        var vVector1 = vPoint - vA;
-        var vVector2 = (vB - vA).normalized;
-        var d = Vector3.Distance(vA, vB);
-        var t = Vector3.Dot(vVector2, vVector1);
-        if (t <= 0) return vA;
-        if (t >= d) return vB;
-        var vVector3 = vVector2 * t;
-        var vClosestPoint = vA + vVector3;
-        return vClosestPoint;
-    }
-
-    IEnumerator ReachedBall(bool waited = false)
-    {
-        Debug.Log("111");
-
-        Debug.Log("222");
-
-        //ikControl.PlayAnimation(pickUpClip);
-
-        float pickupDuration = 0.5f;
-
-        if (ballRb.velocity.magnitude < 20f && !chaseMode)
-        {
-            Debug.Log("slow front");
-            pickupDuration = .4f;
-        }
-
-        if (waited)
-        {
-            Debug.Log("waited");
-            //ikControl.PlayAnimation(kneelClip);
-        }
-
-        else
-        {
-            //ikControl.PlayAnimation(pickUpClip);
-            Debug.Log("pkup");
-        }
-
-        // 21 - 0.5
-        // x  -  y
+        ikControl.PlayAnimation(idleClip);
         pickScript.pickupObject = ball.GetComponent<InteractionObject>();
-        pickScript.StartPickup(chaseMode||waited? true:false);
-        float checkDuration = (.5f * ballRb.velocity.magnitude) / 21;
-
-        Vector3 incomingDir = (transform.position - ball.position);
-
-        incomingDir.y = 0f;
-        incomingDir.Normalize();
-
-        float handAhead = 0.35f;
-
-        Vector3 predictedXZ = transform.position + incomingDir * handAhead;
-
-        Vector3 interceptPoint = predictedXZ;
-
-        interceptPoint.y = ball.position.y;
-
-        rightHand.position = interceptPoint;
-        if(!chaseMode)
-            leftHand.position = interceptPoint;
-
-        float timer = 0;            
-        float lerpValue = 0;
-        while (timer <= checkDuration)
-        {                
-
-            timer += Time.deltaTime;
-            lerpValue = Mathf.Lerp(0, 1, timer / pickupDuration);
-            //ikControl.SetIKWeight(lerpValue);
-            yield return null;
-        }
-
-        timer = 0;
-        pickupDuration = 0.4f;
-        lerpValue = 1;
-        while (timer <= pickupDuration)
-        {
-            timer += Time.deltaTime;
-            lerpValue = Mathf.Lerp(1, 0, timer / pickupDuration);
-            //ikControl.SetIKWeight(lerpValue);
-            yield return null;
-        }     
-                
-        Debug.Log("333");        
-    }
-
-    Vector3 latePos;
-
-    bool ballWithinReach()
-    {
-        if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z)) < 1f)
-        {
-            return true;
-        }
-        return false;
+        pickScript.StartPickup(false);
     }
 
     IEnumerator GrabBall()
     {
-        yield return new WaitForEndOfFrame();
+        ikControl.PlayAnimation(idleClip);
+        while(Vector3.Distance(ball.position,transform.position)<GetCollectionStartDistance())
+        {
+            yield return null;
+        }
+        pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+        pickScript.StartPickup(false);
+        
     }
 
     [SerializeField] float refDistance, refSpeed;
@@ -608,7 +515,6 @@ public class Fielder : MonoBehaviour
         if (gameObject.name == "keeper")
         {
             Debug.Log("fld done");
-            KeeperRecieve(ball.position, ball);
             Gameplay.instance.deliveryDead = true;
             yield break;
         }
@@ -665,41 +571,34 @@ public class Fielder : MonoBehaviour
         ballRb.isKinematic = false;
         ballRb.velocity = velocity;
 
-        //ballRb.AddForce(velocity);
-
-        //ThrowToTarget(ballRb, ball.position, fm.keeper.position, 5f);
-
-        Vector3 keeperRight = fm.keeper.right;
-
-        while (Vector2.Distance(new Vector2(ball.position.x, ball.position.z), new Vector2(fm.keeper.position.x, fm.keeper.position.z)) > 4f)
-        {
-            Vector3 toBall = ball.position - fm.keeper.position;
-            float lateralOffset = Vector3.Dot(toBall, keeperRight);
-            if (lateralOffset > 0.2f)
-            {
-                fm.keeper.GetComponent<FielderIK>().PlayAnimation(moveRightClip);
-            }
-            else if (lateralOffset < -0.2f)
-            {
-                fm.keeper.GetComponent<FielderIK>().PlayAnimation(moveLeftClip);
-            }
-            Vector3 sidewaysMove = keeperRight * lateralOffset;
-
-            Vector3 newPos = Vector3.MoveTowards(fm.keeper.position, fm.keeper.position + sidewaysMove, Time.deltaTime * 10);
-            newPos.z = fm.keeper.position.z;
-            fm.keeper.position = newPos;
-
-            if (Vector3.Distance(ball.position, fm.keeper.position) < 4)
-            {
-                fm.keeper.GetComponent<Fielder>().KeeperRecieve(Vector3.zero, ball);
-            }
-            yield return null;
-        }
-        Debug.Log("keeper catchig");
         fm.keeper.GetComponent<Fielder>().KeeperRecieve(Vector3.zero, ball);
-        Debug.Log("fld done");
 
-        yield return new WaitForSeconds(0.3f);
+        //Vector3 keeperRight = fm.keeper.right;
+
+        //while (Vector2.Distance(new Vector2(fm.stumps.position.x, fm.stumps.position.z), new Vector2(fm.keeper.position.x, fm.keeper.position.z)) > 2f)
+        //{
+        //    Vector3 toBall = ball.position - fm.keeper.position;
+        //    float lateralOffset = Vector3.Dot(toBall, keeperRight);
+        //    //if (lateralOffset > 0.2f)
+        //    //{
+        //    //    fm.keeper.GetComponent<FielderIK>().PlayAnimation(moveRightClip);
+        //    //}
+        //    //else if (lateralOffset < -0.2f)
+        //    //{
+        //    //    fm.keeper.GetComponent<FielderIK>().PlayAnimation(moveLeftClip);
+        //    //}
+        //    Vector3 sidewaysMove = keeperRight * lateralOffset;
+
+        //    Vector3 newPos = Vector3.MoveTowards(fm.keeper.position, fm.stumps.position + sidewaysMove, Time.deltaTime * 118);
+        //    newPos.z = fm.keeper.position.z;
+        //    fm.keeper.position = newPos;
+            
+        //    yield return null;
+        //}
+        
+        //Debug.Log("fld done");
+
+        yield return new WaitForSeconds(0.5f);
 
         Gameplay.instance.deliveryDead = true;
 
@@ -747,22 +646,56 @@ public class Fielder : MonoBehaviour
 
     #region HelperMethods
 
-    private bool IsBallComingAtFielder()
-    {
-        Vector3 ballVelocity = ballRb.velocity;
-        ballVelocity.y = 0f;
+    //private bool IsBallComingAtFielder()
+    //{
+    //    Vector3 ballVelocity = ballRb.velocity;
+    //    ballVelocity.y = 0f;
 
-        if (ballVelocity.sqrMagnitude < 0.01f)
+    //    if (ballVelocity.sqrMagnitude < 0.01f)
+    //        return false;
+
+    //    Vector3 ballToFielder = transform.position - ball.position;
+    //    ballToFielder.y = 0f;
+
+    //    float dot = Vector3.Dot(ballVelocity.normalized, ballToFielder.normalized);
+
+    //    // dot > 0 → ball moving toward fielder
+    //    return dot > 0.9f; // ~53 degrees cone
+    //}
+
+    private bool IsBallComingAtFielder(float maxLateralDistance = 0.6f)
+    {
+        Vector3 ballPos = ball.position;
+        Vector3 fielderPos = transform.position;
+
+        Vector3 v = ballRb.velocity;
+        v.y = 0f;
+
+        if (v.sqrMagnitude < 0.01f)
             return false;
 
-        Vector3 ballToFielder = transform.position - ball.position;
-        ballToFielder.y = 0f;
+        Vector3 toFielder = fielderPos - ballPos;
+        toFielder.y = 0f;
 
-        float dot = Vector3.Dot(ballVelocity.normalized, ballToFielder.normalized);
+        // Time of closest approach along velocity vector
+        float t = Vector3.Dot(toFielder, v) / v.sqrMagnitude;
 
-        // dot > 0 → ball moving toward fielder
-        return dot > 0.6f; // ~53 degrees cone
+        // Ball is moving away or already passed
+        if (t <= 0f)
+            return false;
+
+        // Closest point on ball trajectory
+        Vector3 closestPoint = ballPos + v * t;
+
+        // Horizontal miss distance
+        float missDistance = Vector3.Distance(
+            new Vector3(closestPoint.x, 0, closestPoint.z),
+            new Vector3(fielderPos.x, 0, fielderPos.z)
+        );
+
+        return missDistance <= maxLateralDistance;
     }
+
 
     bool FielderCanReachOnTime(Vector3 position)
     {
@@ -773,38 +706,68 @@ public class Fielder : MonoBehaviour
         return fielderDistanceToPredictedPos / runSpeed <= timeReq;
     }
 
-    Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float ballDrag)
+    //Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float ballDrag)
+    //{
+    //    float timestep = Time.fixedDeltaTime;
+    //    Vector3 currentPosition = initialPosition;
+    //    Vector3 previousPosition = initialPosition;
+    //    Vector3 currentVelocity = velocity;
+
+    //    int maxSteps = 1000;
+
+    //    for (int i = 0; i < maxSteps; i++)
+    //    {
+    //        previousPosition = currentPosition;
+
+    //        currentVelocity += Physics.gravity * timestep;
+
+    //        currentVelocity /= (1f + ballDrag * timestep);
+
+    //        currentPosition += currentVelocity * timestep;
+
+    //        //if (Physics.Linecast( previousPosition, currentPosition, out RaycastHit hit))
+    //        //{
+    //        //    if (hit.collider.gameObject.CompareTag("rayTest")) return hit.point;
+    //        //}
+
+    //        if (currentPosition.y <= groundY)
+    //        {
+    //            return currentPosition;
+    //        }
+    //    }
+
+    //    return currentPosition;
+    //}
+
+    public Vector3 PredictBallPosition(Vector3 startPos, Vector3 velocity, float drag)
     {
-        float timestep = Time.fixedDeltaTime;
-        Vector3 currentPosition = initialPosition;
-        Vector3 previousPosition = initialPosition;
-        Vector3 currentVelocity = velocity;
+        Vector3 currentPos = startPos;
+        Vector3 currentVel = velocity;
+        float timeStep = 0.02f; // Matches FixedUpdate default
 
-        float groundY = transform.position.y;
-        int maxSteps = 1000;
-
-        for (int i = 0; i < maxSteps; i++)
+        // Simulate until the ball hits the ground (y <= 0)
+        // Limit to 500 iterations to prevent infinite loops if the ball never falls
+        for (int i = 0; i < 500; i++)
         {
-            previousPosition = currentPosition;
+            // 1. Apply Gravity
+            currentVel += Physics.gravity * timeStep;
 
-            currentVelocity += Physics.gravity * timestep;
+            // 2. Apply Drag (Unity's formula: vel = vel * (1 - timeStep * drag))
+            currentVel *= (1f - timeStep * drag);
 
-            currentVelocity /= (1f + ballDrag * timestep);
+            // 3. Move position
+            currentPos += currentVel * timeStep;
 
-            currentPosition += currentVelocity * timestep;
-
-            //if (Physics.Linecast( previousPosition, currentPosition, out RaycastHit hit))
-            //{
-            //    if (hit.collider.gameObject.CompareTag("rayTest")) return hit.point;
-            //}
-
-            if (currentPosition.y <= groundY)
+            // 4. Check if we hit the ground level
+            if (currentPos.y <= 0)
             {
-                return currentPosition;
+                // Set y to 0 for a clean marker placement
+                currentPos.y = 0;
+                return currentPos;
             }
         }
 
-        return currentPosition;
+        return currentPos;
     }
 
 

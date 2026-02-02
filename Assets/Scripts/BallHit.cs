@@ -155,7 +155,7 @@ public class BallHit : MonoBehaviour
 
         if (other.gameObject.CompareTag("camTrigger"))
         {
-            Debug.Log("os");
+            //Debug.Log("os");
             Vector3 contactPoint = transform.position;
             CheckLegalDelivery(contactPoint);
             cover = true;
@@ -297,12 +297,12 @@ public class BallHit : MonoBehaviour
     {
         if(enterPos.z is <= -4.71f or >=1.8f || enterPos.y > 2.96f)
         {
-            Debug.Log("wideball");
+            //Debug.Log("wideball");
             //Gameplay.instance.legalDelivery = false;
         }
         else
         {
-            Debug.Log("goodball");
+            //Debug.Log("goodball");
             //Gameplay.instance.legalDelivery = true;
         }
     }
