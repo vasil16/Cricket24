@@ -12,6 +12,7 @@ public class FieldManager : MonoBehaviour
     public bool tryingPickup;
 
     public List<Fielder> bestFielders = new List<Fielder>();
+    public static Action<Fielder> StopOther;
     public static Action<Vector3> StartCheckField;
     public static Action ResetFielder, StopField;
 
@@ -27,6 +28,7 @@ public class FieldManager : MonoBehaviour
         StartCheckField = AssignBestFielders;
         ResetFielder = ResetFielders;
         StopField = StopFielders;
+        StopOther += StopOtherFiedlers;
     }
 
     public void AssignBestFielders(Vector3 ballAt)
@@ -61,23 +63,6 @@ public class FieldManager : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            //if (bestFielders.Count >= 1)
-            //{
-            //    break;
-            //}
-            //Debug.Log(hit.transform.name+" hhh");
-            //if (hit.transform.parent.gameObject.CompareTag("DeepFielder"))
-            //{
-            //    Debug.Log(hit.transform.parent.name + "  a deep filder");                
-            //}
-
-            //else
-            //{
-            //    Debug.Log(hit.transform.parent.name + "  nnot a deep filder");
-            //    //continue;
-            //}
-
-
             if (hit.collider.CompareTag("rayTest")||hit.collider.CompareTag("keeper"))
             {
                 Debug.Log("Added fielder  " + hit.collider.transform.parent.gameObject.name);
@@ -87,11 +72,11 @@ public class FieldManager : MonoBehaviour
                 //fielder.targetPosition = closestPoint;
                 if(!Gameplay.instance.stadiumBounds.Contains(hit.point))
                 {
-                    fielder.actualFetchPosition = Gameplay.instance.stadiumBounds.ClosestPoint(hit.point);
+                    fielder.targetPosition = Gameplay.instance.stadiumBounds.ClosestPoint(hit.point);
                 }
                 else
                 {
-                    fielder.actualFetchPosition =  hit.point;
+                    fielder.targetPosition =  hit.point;
                 }
                 bestFielders.Add(fielder);
                 Debug.Log("fielders added " + bestFielders.Count);
@@ -144,14 +129,22 @@ public class FieldManager : MonoBehaviour
             keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 100f);
             keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
             yield return null;
-        }
-        moveDirection = (ball.position - keeper.transform.position).normalized;
-        lookRotation = Quaternion.LookRotation(moveDirection);
-        lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
+        }        
         keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().idleClip);
-        keeper.transform.rotation = lookRotation;
+    }
 
-    }   
+    public void StopOtherFiedlers(Fielder fielded)
+    {
+        foreach (var fielder in bestFielders)
+        {
+            if (fielder == fielded) continue;
+
+            fielder.StopAll();
+            //fielder.enabled = false;
+        }
+    }
+
+    
 
 
     public void ResetFielders()

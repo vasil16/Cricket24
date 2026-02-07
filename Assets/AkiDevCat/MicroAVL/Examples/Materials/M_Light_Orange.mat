@@ -121,7 +121,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Intensity: 53.9
+    - _Intensity: 17.9
     - _MaskHeight: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
@@ -129,10 +129,10 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RampOffset: 0
-    - _RampPower: 2.1
+    - _RampPower: 2.21
     - _RampSmooth: 0.149
     - _ReceiveShadows: 1
-    - _Scattering: 4900
+    - _Scattering: 1000
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -145,7 +145,7 @@ Material:
     - _ZWriteControl: 2
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.9811321, g: 0.9673082, b: 0.8746885, a: 1}
+    - _Color: {r: 1, g: 0.99358493, b: 0.9198113, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

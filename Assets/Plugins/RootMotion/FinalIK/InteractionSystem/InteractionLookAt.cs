@@ -36,7 +36,7 @@ namespace RootMotion.FinalIK {
 		}
 
 		[HideInInspector] public bool isPaused;
-		private Transform lookAtTarget; // The target Transform to look at
+		public Transform lookAtTarget; // The target Transform to look at
 		private float stopLookTime; // Time to start fading out the LookAtIK
 		private float weight; // Current weight
 		private bool firstFBBIKSolve; // Has the FBBIK already solved for this frame? In case it is solved more than once, for example when using the ShoulderRotator

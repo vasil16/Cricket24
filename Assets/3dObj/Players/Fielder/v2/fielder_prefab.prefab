@@ -830,6 +830,7 @@ GameObject:
   - component: {fileID: 6404588627316019831}
   - component: {fileID: 3856494804610730600}
   - component: {fileID: 5735660204954236223}
+  - component: {fileID: 642961738744211812}
   m_Layer: 13
   m_Name: fielder_prefab
   m_TagString: fielder
@@ -1358,12 +1359,14 @@ MonoBehaviour:
   pickupObject: {fileID: 0}
   lookAtSmoothSpeed: 5
   lookAtIntensity: 0.8
-  holdDuration: 0.32
+  holdDuration: 0
   rightHandEffector: 6
   leftHandEffector: 5
+  isTransitioning: 0
   stepDistance: 2.6
   stepHeight: 0.2
   stepSpeed: 20
+  throwArm: {fileID: 4922493629970488337}
 --- !u!114 &6404588627316019831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1379,7 +1382,7 @@ MonoBehaviour:
   targetTag: 
   fadeInTime: 0.3
   speed: 1
-  resetToDefaultsSpeed: 0.5
+  resetToDefaultsSpeed: 1
   characterCollider: {fileID: 0}
   FPSCamera: {fileID: 0}
   camRaycastLayers:
@@ -1388,10 +1391,11 @@ MonoBehaviour:
   camRaycastDistance: 1
   fullBody: {fileID: 1211089067550517726}
   lookAt:
-    ik: {fileID: 0}
+    ik: {fileID: 642961738744211812}
     lerpSpeed: 5
     weightSpeed: 1
     isPaused: 0
+    lookAtTarget: {fileID: 0}
 --- !u!114 &3856494804610730600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1411,7 +1415,7 @@ MonoBehaviour:
   defaultEffectorRotationWeight: 1
   defaultEffectorPullWeight: 0.66
   defaultHintWeight: 1
-  idleClip: {fileID: -203655887218126122, guid: 6fdaba8655e5f480e8be7dd916c6abaa, type: 3}
+  idleClip: {fileID: -203655887218126122, guid: f9c3d4e3e26c54cd084eb1b22652fce8, type: 3}
   effectorParent: {fileID: 9001774952128007141}
 --- !u!114 &5735660204954236223
 MonoBehaviour:
@@ -1446,9 +1450,8 @@ MonoBehaviour:
   agent: {fileID: 0}
   chaseMode: 0
   animator: {fileID: 0}
-  actualFetchPosition: {x: 0, y: 0, z: 0}
   pickScript: {fileID: 0}
-  idleClip: {fileID: -203655887218126122, guid: 6fdaba8655e5f480e8be7dd916c6abaa, type: 3}
+  idleClip: {fileID: -203655887218126122, guid: f9c3d4e3e26c54cd084eb1b22652fce8, type: 3}
   runningClip: {fileID: -203655887218126122, guid: 404023fd616d345e68c2a5408c5d9a0f, type: 3}
   jumpClip: {fileID: 0}
   crouchClip: {fileID: 0}
@@ -1469,6 +1472,70 @@ MonoBehaviour:
   refSpeed: 0
   isKeeper: 0
   throwable: 0
+--- !u!114 &642961738744211812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3380714975012631072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 776adaaacdc5c4e8ab0395120a6e972b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fixTransforms: 1
+  solver:
+    executedInEditor: 0
+    IKPosition: {x: 0, y: 0, z: 0}
+    IKPositionWeight: 1
+    root: {fileID: 0}
+    target: {fileID: 0}
+    spine: []
+    head:
+      transform: {fileID: 0}
+      weight: 1
+      solverPosition: {x: 0, y: 0, z: 0}
+      solverRotation: {x: 0, y: 0, z: 0, w: 1}
+      defaultLocalPosition: {x: 0, y: 0, z: 0}
+      defaultLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+      length: 0
+      sqrMag: 0
+      axis: {x: -1, y: -0, z: -0}
+      baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
+    eyes: []
+    bodyWeight: 0.5
+    headWeight: 0.5
+    eyesWeight: 1
+    clampWeight: 0.5
+    clampWeightHead: 0.5
+    clampWeightEyes: 0.5
+    clampSmoothing: 2
+    spineWeightCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.3
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    spineTargetOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &3446243622316460737
 GameObject:
   m_ObjectHideFlags: 0
@@ -2116,7 +2183,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5091952408200936849}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2131,7 +2198,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0f7c739d760c4b44c946dd36ab2651f7, type: 2}
+  - {fileID: 2100000, guid: ca7d34d59a8424cc5a2fecb099a96a5c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2455,7 +2522,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1884740790795257601
 Transform:
   m_ObjectHideFlags: 0

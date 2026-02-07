@@ -61,6 +61,7 @@ public class BallHit : MonoBehaviour
             case "pitch":
                 if (secondTouch)
                 {
+                    if (groundShot) return;
                     groundShot = true;
                     rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.04f, rb.velocity.z);
                 }
@@ -94,17 +95,23 @@ public class BallHit : MonoBehaviour
                 if (secondTouch && !groundShot)
                 {
                     groundShot = true;
-                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.04f, rb.velocity.z);
+                    //rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.04f, rb.velocity.z);
                 }
                 break;
 
             case "boundary":
+                FieldManager.StopOther?.Invoke(null);
                 Debug.Log("Stopped by " + collision.gameObject.name);
                 stopTriggered = true;
                 boundary = true;
                 Gameplay.instance.deliveryDead = true;
                 //FieldManager.StopField?.Invoke();
                 break;
+
+            case "gallery":
+                Gameplay.instance.deliveryDead = true;
+                break;
+
         }
     }
 
@@ -117,7 +124,6 @@ public class BallHit : MonoBehaviour
             keeperExit = true;
         }
     }
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -146,10 +152,11 @@ public class BallHit : MonoBehaviour
             if (stopTriggered) return;
             stopTriggered = true;
             rb.isKinematic = true;
-            transform.SetParent(other.transform, true);
-            transform.position = other.transform.position;
+            //transform.SetParent(other.transform, true);
+            //transform.position = other.transform.position;
             stopper = other.gameObject;
             stopper.GetComponent<BallStopper>().fieldScript.DropBall(stopper.CompareTag("keeper")?true:false);
+            FieldManager.StopOther?.Invoke(stopper.GetComponent<BallStopper>().fieldScript);
             //Debug.Log("stopped by " + stopper.name);
         }
 
@@ -188,50 +195,6 @@ public class BallHit : MonoBehaviour
     }
 
     [SerializeField] LayerMask keeperLayer;
-
-
-    //IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
-    //{
-    //    float timestep = 0.005f;
-    //    float maxTime = 2f;
-    //    float ballRadius = 0.12f;
-    //    int stepsPerFrame = 5;
-
-    //    Vector3 currentPosition = startPosition;
-    //    Vector3 velocity = initialVelocity;
-
-    //    for (float t = 0f; t < maxTime; t += timestep)
-    //    {
-    //        for (int i = 0; i < stepsPerFrame; i++)
-    //        {
-    //            Vector3 nextPosition = currentPosition + velocity * timestep + 0.5f * Physics.gravity * timestep * timestep;
-    //            Vector3 direction = nextPosition - currentPosition;
-
-    //            Debug.DrawRay(currentPosition, direction, Color.red, 2f);
-
-    //            if (Physics.SphereCast(currentPosition, ballRadius, direction.normalized, out RaycastHit hit, direction.magnitude, keeperLayer, QueryTriggerInteraction.Collide))
-    //            {
-    //                if (hit.collider.CompareTag("keeper") || (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
-    //                {
-    //                    Debug.Log("Keeper will catch ball at: " + hit.point);
-    //                    Vector3 fixedCatchPoint = hit.point;
-    //                    fixedCatchPoint.x = -91.12f;
-    //                    ballCatchPoint = fixedCatchPoint;
-    //                    shootMarker.transform.position = ballCatchPoint;
-    //                    yield return new WaitUntil(() => cover);
-    //                    keeper.GetComponent<Fielder>().enabled = true;
-    //                    keeper.KeeperRecieve(ballCatchPoint, this.transform);
-    //                    yield break;
-    //                }
-    //            }
-
-    //            velocity += Physics.gravity * timestep;
-    //            currentPosition = nextPosition;
-    //        }
-
-    //        yield return null;
-    //    }
-    //}
 
     IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
     {

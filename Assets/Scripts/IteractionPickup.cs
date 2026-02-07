@@ -22,7 +22,7 @@ public class SmoothInteractionPickup : MonoBehaviour
 
     // Internal State
     private bool isHolding = false;
-    private bool isTransitioning = false;
+    public bool isTransitioning = false;
     private float currentLookWeight = 0f;
     private Transform currentLookTarget;
 
@@ -190,7 +190,7 @@ public class SmoothInteractionPickup : MonoBehaviour
         // 1. ANTICIPATION: Look at the ball first
         currentLookTarget = pickupObject.transform;
         currentLookWeight = lookAtIntensity;
-
+        interactionSystem.lookAt.lookAtTarget = currentLookTarget;
         // Optional: Small delay so the head moves slightly before the arm
         yield return new WaitForSeconds(0.1f);
 
@@ -201,6 +201,7 @@ public class SmoothInteractionPickup : MonoBehaviour
             interactionSystem.StartInteraction(leftHandEffector, pickupObject, false);
         }
         interactionSystem.StartInteraction(rightHandEffector, pickupObject, false);
+        interactionSystem.lookAt.lookAtTarget = pickupObject.transform;
 
         Debug.Log("Fielder reaching for ball..."+Time.time);
 
@@ -219,28 +220,37 @@ public class SmoothInteractionPickup : MonoBehaviour
 
         // 4. THE COLLECTION: The hand is now at the ball
         isHolding = true;
-        Debug.Log("Ball Collected! Cradling..."+Time.time);
 
-        // Wait for the 'holdDuration' (the moment the fielder secures the ball)
-        if (holdDuration > 0)
-        {
-            yield return new WaitForSeconds(holdDuration);
-        }
+        // Parent the ball immediately so it travels with us
+        //pickupObject.transform.SetParent(null);
 
-        // 5. THE RETURN: Resume the interaction curve
-        // This triggers the second half of your Weight Curve (returning the arm)
+        // Optional: Small cradle time
+        if (holdDuration > 0) yield return new WaitForSeconds(holdDuration);
+
+        // --- THE FIX FOR "HANDS BEHIND" ---
+        // We are running. If we let the curve play at normal speed (Speed 1),
+        // the hand will get stuck on the ground behind us for 0.5 seconds.
+        // We boost speed to 5x or 10x to force the hand to "swish" back to the body immediately.
+        //interactionSystem.speed = 10.0f;
+
+        // 5. THE RETURN
         interactionSystem.ResumeInteraction(rightHandEffector);
         if (!singleHand) interactionSystem.ResumeInteraction(leftHandEffector);
 
-        // Wait for the interaction to fully finish (arm returns to animation state)
+        // Wait for the fast return to finish
         while (interactionSystem.IsInInteraction(rightHandEffector))
         {
             yield return null;
         }
 
+        // Reset speed for the next interaction!
+        interactionSystem.speed = 1.0f;
+
         isTransitioning = false;
         Debug.Log("Pickup Sequence Complete.");
     }
+
+    [SerializeField] Transform throwArm;
 
     public void StartDrop()
     {
