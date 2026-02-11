@@ -234,7 +234,7 @@ public class BallHit : MonoBehaviour
                 if (hit.collider.CompareTag("keeper") || (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
                 {
                     Vector3 fixedCatchPoint = hit.point;
-                    fixedCatchPoint.z = 155f;
+                    fixedCatchPoint.z = 141.49f;
                     ballCatchPoint = fixedCatchPoint;
 
                     shootMarker.transform.position = ballCatchPoint;

@@ -112,7 +112,7 @@ public class Fielder : MonoBehaviour
 
         Debug.Log("recive start");
 
-        pickScript.pickupObject = fm.marker.GetComponent<InteractionObject>();
+        pickScript.pickupObject = ball.GetComponent<InteractionObject>();
         float ballArrivalTime = GetBallArrivalTime(fm.marker.position, ball.GetComponent<Rigidbody>());
         float delay = ballArrivalTime - handReachDuration - earlyBias;
 
@@ -369,20 +369,17 @@ public class Fielder : MonoBehaviour
 
     public bool CanStartPickup(float distanceToBall)
     {
-        //distanceToBall -= (ballRb.velocity.magnitude/6);
-        distanceToBall -= 12;
-
-        if (distanceToBall<5 && distanceToBall <= GetCollectionStartDistance())
+        if(distanceToBall<15&&distanceToBall<GetCollectionStartDistance())
         {
-            Debug.Log("ballSpeed to pass "+ballRb.velocity.magnitude);
             return true;
         }
         return false;
     }
 
+    
+
     public void StopAll()
     {
-        //agent.Stop();
         ikControl.PlayAnimation(idleClip);
     }
 
@@ -436,7 +433,6 @@ public class Fielder : MonoBehaviour
         
     }
 
-    [SerializeField] float refDistance, refSpeed;
 
     IEnumerator FielderPickupThrow()
     {
@@ -446,9 +442,7 @@ public class Fielder : MonoBehaviour
             Gameplay.instance.deliveryDead = true;
             yield break;
         }
-        Debug.Log("call throw");
         yield return new WaitUntil(() => pickScript.isTransitioning == false);
-        Debug.Log("throw init");
         ball.transform.position = throwingArm.position;
         ball.transform.SetParent(throwingArm);
         Vector3 lookDirection = (fm.keeper.position - transform.position).normalized;
@@ -463,25 +457,21 @@ public class Fielder : MonoBehaviour
         yield return new WaitForEndOfFrame();
         Vector3 latePos = ball.position;
         Vector3 lateScale = new Vector3(.3822f,.3822f,.3822f);
-        Debug.Log("early pos " + latePos);
         ball.SetParent(null, false);
         ball.position = latePos;
         ball.localScale = lateScale;
-        Debug.Log("later pos " + ball.position);
         // --- NEW LOGIC
 
         Vector3 ballPosFlat = new Vector3(ball.position.x, 0, ball.position.z);
         Vector3 keeperPosFlat = new Vector3(fm.keeper.position.x, 0, fm.keeper.position.z);
         float distToKeeper = Vector3.Distance(ballPosFlat, keeperPosFlat);
 
-        float pitchRatio = (distToKeeper > 25f) ? .6f : 1f;
+        float pitchRatio = (distToKeeper > 45f) ? .5f : 1f;
 
         Vector3 dirToKeeper = (fm.keeper.position - ball.position).normalized;
         Vector3 pitchPoint = ballPosFlat + (dirToKeeper * (distToKeeper * 1));
 
-        if (distToKeeper <= 25f) pitchPoint -= dirToKeeper * 3.0f;
-
-        Debug.Log("throw call to "+pitchPoint);
+        if (distToKeeper <= 45f) pitchPoint -= dirToKeeper * 3.0f;
         //pitchPoint.y = 0;
 
         float maxArcHeight = 14f;
@@ -510,45 +500,6 @@ public class Fielder : MonoBehaviour
 
         StopAllCoroutines();
     }
-
-    private Vector3 CalculateVelocityForSpeed(Vector3 target, float speed)
-    {
-        Vector3 origin = ball.position;
-        Vector3 toTarget = target - origin;
-
-        // Calculate time based on 3D distance and speed
-        float distance = toTarget.magnitude;
-        float time = distance / speed;
-
-        // X and Z components (Constant velocity)
-        float vx = toTarget.x / time;
-        float vz = toTarget.z / time;
-
-        // Y component (Accounting for gravity)
-        // Formula: y = v0y*t + 0.5*g*t^2  => v0y = (y - 0.5*g*t^2) / t
-        float vy = (toTarget.y - (0.5f * Physics.gravity.y * time * time)) / time;
-
-        return new Vector3(vx, vy, vz);
-    }
-
-    public static void ThrowToTarget(Rigidbody rb, Vector3 start, Vector3 target, float flightTime)
-    {
-        Vector3 displacement = target - start;
-
-        Vector3 displacementXZ = new Vector3(displacement.x, 0f, displacement.z);
-        Vector3 displacementY = Vector3.up * displacement.y;
-
-        float gravity = Mathf.Abs(Physics.gravity.y);
-
-        Vector3 velocityY =
-            displacementY / flightTime +
-            Vector3.up * (gravity * flightTime * 0.5f);
-
-        Vector3 velocityXZ = displacementXZ / flightTime;
-
-        rb.velocity = velocityXZ + velocityY;
-    }
-
 
     #region HelperMethods
 

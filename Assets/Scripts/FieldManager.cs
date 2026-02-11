@@ -129,8 +129,11 @@ public class FieldManager : MonoBehaviour
             keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 100f);
             keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
             yield return null;
-        }        
+        }
         keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().idleClip);
+        moveDirection = (ball.position - keeper.transform.position).normalized;
+        lookRotation = Quaternion.LookRotation(moveDirection);
+        keeper.transform.rotation = lookRotation;
     }
 
     public void StopOtherFiedlers(Fielder fielded)

@@ -113,7 +113,7 @@ public class Bat : MonoBehaviour
     public void PlayClip()
     {
         Debug.Log("sommee");        
-        audioSource.PlayOneShot(batHittingGround);
+        //audioSource.PlayOneShot(batHittingGround);
         
     }
 }
