@@ -40,6 +40,11 @@ public class Fielder : MonoBehaviour
 
 
     #region keeper
+
+
+    [SerializeField] float handReachDuration = 0.52362f; // tune once
+    [SerializeField] float earlyBias = 0.03f; // micro-anticipation (human-like)
+
     public void KeeperRecieve(Vector3 targetPosition, Transform ball, bool isEdge=false)
     {        
         StartCoroutine(SetTarget(targetPosition, ball, isEdge));
@@ -106,8 +111,8 @@ public class Fielder : MonoBehaviour
             fm.marker.position = targetPosition;
         }
 
-        yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 75);
-
+        //yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 75);
+        yield return new WaitUntil(() => CanStartPickup(Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)),true));
         //yield return new WaitUntil(()=>ShouldStartCollection(ball, out neededSpeed));
 
         Debug.Log("recive start");
@@ -118,21 +123,10 @@ public class Fielder : MonoBehaviour
 
         delay = Mathf.Clamp(delay, 0f, 1.2f);
 
-        if (delay > 0f)
-            yield return new WaitForSeconds(delay);
+        //if (delay > 0f)
+        //    yield return new WaitForSeconds(delay);
 
         pickScript.StartPickup(false);
-
-        float time = 0;
-        float duration = .4f;
-        float lerpValue;
-
-        while (time <= duration)
-        {
-            time += Time.deltaTime;
-            lerpValue = Mathf.Lerp(0, 1, time / duration);
-            yield return null;
-        }
     }
 
     public void DropBall(bool keeper)
@@ -154,8 +148,7 @@ public class Fielder : MonoBehaviour
         return toTarget.magnitude / speedTowardsTarget;
     }
 
-    [SerializeField] float handReachDuration = 0.5109f; // tune once
-    [SerializeField] float earlyBias = 0.03f; // micro-anticipation (human-like)
+    
 
 
     IEnumerator ReleaseTarget(bool keeper)
@@ -185,7 +178,7 @@ public class Fielder : MonoBehaviour
     {
         yield return new WaitForSeconds(0.2f);
 
-
+        targetPosition.y = groundY;
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
         ballComp = ball.GetComponent<BallHit>();
@@ -199,10 +192,10 @@ public class Fielder : MonoBehaviour
             Debug.Log("airball cal");
             targetPosition = PredictBallPosition(ballComp.shotPoint, ballComp.shotForce, ballRb.drag);
             fm.marker.position = targetPosition;
-        }
-        targetPosition.y = groundY;
+            StartCoroutine(RunToBall(false));
+        }        
 
-        if (IsBallComingAtFielder() && !this.gameObject.CompareTag("DeepFielder") && ballComp.groundShot)
+        else if (IsBallComingAtFielder() && !this.gameObject.CompareTag("DeepFielder") && ballComp.groundShot)
         {
             Debug.Log("Coming to fielder");
             StartCoroutine(WaitForBall());
@@ -213,7 +206,6 @@ public class Fielder : MonoBehaviour
             Debug.Log("away from fielder");
             StartCoroutine(RunToBall(false));
         }
-        yield break;
     }
 
 
@@ -227,17 +219,17 @@ public class Fielder : MonoBehaviour
     float lookAheadFactor = 0.15f;
 
     void ComputeTarget(bool restart)
-    {
-        
+    {        
         if (restart)
         {
-            Debug.Log("resss");
-            Vector3 ballVel = ballRb.velocity;
-            Vector3 flatDir = new Vector3(ballVel.x, 0f, ballVel.z).normalized;
-            float speed = ballVel.magnitude;
-            float lookAhead = Mathf.Max(minLookAhead, speed * lookAheadFactor);
-            Vector3 interceptPoint = ball.transform.position + flatDir * lookAhead;
-            targetPosition = new Vector3(interceptPoint.x, groundY, interceptPoint.z);
+            //Debug.Log("resss");
+            //Vector3 ballVel = ballRb.velocity;
+            //Vector3 flatDir = new Vector3(ballVel.x, 0f, ballVel.z).normalized;
+            //float speed = ballVel.magnitude;
+            //float lookAhead = Mathf.Max(minLookAhead, speed * lookAheadFactor);
+            //Vector3 interceptPoint = ball.transform.position + flatDir * lookAhead;
+            //targetPosition = new Vector3(interceptPoint.x, groundY, interceptPoint.z);
+            targetPosition = ball.position;
         }
         else if (chaseMode)
         {
@@ -258,6 +250,10 @@ public class Fielder : MonoBehaviour
 
             targetPosition.y = groundY;
         }
+        else if(!ballComp.groundShot)
+        {
+
+        }
     }
 
     public bool isRightHanded;
@@ -265,8 +261,8 @@ public class Fielder : MonoBehaviour
     float GetCollectionStartDistance()
     {
         float ballSpeed = ballRb.velocity.magnitude;
-        float collectionTime = 0.50253f; 
-        float reqDistance = ballSpeed * collectionTime;
+        
+        float reqDistance = ballSpeed * handReachDuration;
         return reqDistance;
     }
 
@@ -288,7 +284,13 @@ public class Fielder : MonoBehaviour
 
             if (!ballComp.groundShot)
             {
-                if (distanceToTarget<1f)
+                //if (distanceToTarget<1f)
+                //{
+                //    Debug.Log("air ball reached taret");
+                //    StartCoroutine(GrabBall());
+                //    yield break;
+                //}
+                if (CanStartPickup(Vector3.Distance(ball.position,transform.position)))
                 {
                     Debug.Log("air ball reached taret");
                     StartCoroutine(GrabBall());
@@ -367,16 +369,49 @@ public class Fielder : MonoBehaviour
     }
 
 
-    public bool CanStartPickup(float distanceToBall)
+    //public bool CanStartPickup(float distanceToBall, bool keeper=false)
+    //{
+    //    if(keeper)
+    //    {
+    //        if(distanceToBall < GetCollectionStartDistance())
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    else if(distanceToBall<15&&distanceToBall<GetCollectionStartDistance())
+    //    {
+    //        return true;
+    //    }
+    //    return false;
+    //}
+
+    public bool CanStartPickup(float distanceToBall, bool isKeeper = false)
     {
-        if(distanceToBall<15&&distanceToBall<GetCollectionStartDistance())
+        // 1. Setup Constants
+        // The fixed duration of your picking action
+
+        // How far the character can physically reach (in Unity units/meters)
+        // The keeper usually has a longer reach (diving/arms) than a normal player.
+        float maxReach = isKeeper ? 2.5f : 2.5f;
+
+        // 2. Calculate Prediction
+        // How far the ball moves while the animation is playing
+        float ballSpeed = ballRb.velocity.magnitude;
+        float predictionBuffer = ballSpeed * handReachDuration;
+
+        // 3. Final Decision
+        // We add the buffer to the current distance. 
+        // If the ball is moving away, this predicts where it will be when the hand closes.
+        // If (Current Dist + Movement) is still inside MaxReach, we can pick it up.
+        if ((distanceToBall + predictionBuffer) <= maxReach)
         {
             return true;
         }
+
         return false;
     }
 
-    
+
 
     public void StopAll()
     {
@@ -600,32 +635,37 @@ public class Fielder : MonoBehaviour
     {
         Vector3 currentPos = startPos;
         Vector3 currentVel = velocity;
-        float timeStep = 0.02f; // Matches FixedUpdate default
 
-        // Simulate until the ball hits the ground (y <= 0)
-        // Limit to 500 iterations to prevent infinite loops if the ball never falls
-        for (int i = 0; i < 500; i++)
+        float timeStep = Time.fixedDeltaTime; // Always use engine value
+        Vector3 previousPos = currentPos;
+
+        for (int i = 0; i < 1000; i++)
         {
-            // 1. Apply Gravity
+            previousPos = currentPos;
+
+            // Apply gravity
             currentVel += Physics.gravity * timeStep;
 
-            // 2. Apply Drag (Unity's formula: vel = vel * (1 - timeStep * drag))
-            currentVel *= (1f - timeStep * drag);
+            // Apply drag (Unity Rigidbody formula)
+            currentVel *= 1f / (1f + drag * timeStep);
 
-            // 3. Move position
+            // Move
             currentPos += currentVel * timeStep;
 
-            // 4. Check if we hit the ground level
-            if (currentPos.y <= 0)
+            // Ground crossing check
+            if (currentPos.y <= 0f)
             {
-                // Set y to 0 for a clean marker placement
-                currentPos.y = 0;
-                return currentPos;
+                // Interpolate exact hit point
+                float t = previousPos.y / (previousPos.y - currentPos.y);
+                Vector3 hitPoint = Vector3.Lerp(previousPos, currentPos, t);
+                hitPoint.y = 0f;
+                return hitPoint;
             }
         }
 
         return currentPos;
     }
+
 
 
     bool ShouldChase(Transform ball, Vector3 fielderPosition)
