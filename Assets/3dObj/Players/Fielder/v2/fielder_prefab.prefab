@@ -1468,8 +1468,6 @@ MonoBehaviour:
   fielderTargetMark: {fileID: 3590798138699095066}
   distanceToTarget: 0
   isRightHanded: 0
-  refDistance: 0
-  refSpeed: 0
   isKeeper: 0
   throwable: 0
 --- !u!114 &642961738744211812
@@ -1487,21 +1485,31 @@ MonoBehaviour:
   fixTransforms: 1
   solver:
     executedInEditor: 0
-    IKPosition: {x: 0, y: 0, z: 0}
+    IKPosition: {x: -4.698984, y: 6.6296463, z: 6.7306128}
     IKPositionWeight: 1
-    root: {fileID: 0}
+    root: {fileID: 4435933986559664569}
     target: {fileID: 0}
-    spine: []
+    spine:
+    - transform: {fileID: 377408783057304004}
+      weight: 0
+      solverPosition: {x: 0, y: 0, z: 0}
+      solverRotation: {x: 0, y: 0, z: 0, w: 0}
+      defaultLocalPosition: {x: -0.063142344, y: -0.00006296128, z: 0.000000017195}
+      defaultLocalRotation: {x: 0, y: -0, z: -0, w: 1}
+      length: 0
+      sqrMag: 0
+      axis: {x: -0.16914842, y: 0.7631389, z: 0.623705}
+      baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     head:
-      transform: {fileID: 0}
+      transform: {fileID: 3704881002825459480}
       weight: 1
       solverPosition: {x: 0, y: 0, z: 0}
       solverRotation: {x: 0, y: 0, z: 0, w: 1}
-      defaultLocalPosition: {x: 0, y: 0, z: 0}
-      defaultLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+      defaultLocalPosition: {x: -0.024256507, y: 0.0000000035750878, z: 0.0000000018670925}
+      defaultLocalRotation: {x: 0.11439893, y: 0.0240356, z: 0.022381946, w: 0.99289185}
       length: 0
       sqrMag: 0
-      axis: {x: -1, y: -0, z: -0}
+      axis: {x: -0.4780287, y: 0.7703315, z: 0.42199326}
       baseForwardOffsetEuler: {x: 0, y: 0, z: 0}
     eyes: []
     bodyWeight: 0.5

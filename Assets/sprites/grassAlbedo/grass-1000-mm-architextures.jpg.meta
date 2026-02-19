@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ca7788db2773c475585eb2869ca0c0f5
+guid: f4d9c084420224ee1a8a1bf34a346d44
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1514091850695786129
-    second: ChatGPT Image Feb 10, 2026, 09_13_11 AM_0
+      213: 2590873743938939968
+    second: grass-1000-mm-architextures_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -25,7 +25,7 @@ TextureImporter:
     normalMapFilter: 0
     flipGreenChannel: 0
   isReadable: 0
-  streamingMipmaps: 0
+  streamingMipmaps: 1
   streamingMipmapsPriority: 0
   vTOnly: 0
   ignoreMipmapLimit: 0
@@ -55,7 +55,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
   textureType: 0
   textureShape: 1
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChatGPT Image Feb 10, 2026, 09_13_11 AM_0
+      name: grass-1000-mm-architextures_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 900
+        height: 900
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +140,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 19e39062482230510800000000000000
-      internalID: 1514091850695786129
+      spriteID: 04ced5d61f1a4f320800000000000000
+      internalID: 2590873743938939968
       vertices: []
       indices: 
       edges: []

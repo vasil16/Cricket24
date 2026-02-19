@@ -27,7 +27,6 @@ Material:
   m_ValidKeywords:
   - _ALPHAPREMULTIPLY_ON
   - _ENVIRONMENTREFLECTIONS_OFF
-  - _NORMALMAP
   - _SPECULARHIGHLIGHTS_OFF
   - _SPECULAR_SETUP
   - _SURFACE_TYPE_TRANSPARENT
@@ -183,8 +182,8 @@ Material:
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:
-    - _BaseColor: {r: 0.4588114, g: 0.43633533, b: 0.34741655, a: 0.43137255}
-    - _Color: {r: 0.45881134, g: 0.4363353, b: 0.34741652, a: 0.43137255}
+    - _BaseColor: {r: 0.38679248, g: 0.37467262, b: 0.3302332, a: 1}
+    - _Color: {r: 0.38679245, g: 0.3746726, b: 0.33023316, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}

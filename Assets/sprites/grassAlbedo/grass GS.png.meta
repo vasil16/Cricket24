@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8b90dc46ec2c9473ba9823db112b2727
+guid: c4d27ec00abd341458efa1baa944c999
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -47951103904357517
-    second: dft_0
+      213: 1147440298109216079
+    second: grass GS_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -25,8 +25,8 @@ TextureImporter:
     normalMapFilter: 0
     flipGreenChannel: 0
   isReadable: 0
-  streamingMipmaps: 0
-  streamingMipmapsPriority: 0
+  streamingMipmaps: 1
+  streamingMipmapsPriority: 1
   vTOnly: 0
   ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
@@ -55,7 +55,7 @@ TextureImporter:
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
   textureType: 0
   textureShape: 1
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 512
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: dft_0
+      name: grass GS_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 512
-        height: 512
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,8 +140,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 373613d99b4a55ff0800000000000000
-      internalID: -47951103904357517
+      spriteID: f45a4c92fd68cef00800000000000000
+      internalID: 1147440298109216079
       vertices: []
       indices: 
       edges: []
