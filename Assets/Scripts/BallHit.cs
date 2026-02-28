@@ -68,6 +68,7 @@ public class BallHit : MonoBehaviour
                 else
                 {
                     pitchPoint = collision.contacts[0].point;
+                    shotForce = rb.velocity;
                     StartCoroutine(SimulateBallTrajectory(transform.position, rb.velocity));
                 }
                 break;
@@ -112,16 +113,6 @@ public class BallHit : MonoBehaviour
                 Gameplay.instance.deliveryDead = true;
                 break;
 
-        }
-    }
-
-    
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.tag is "keeper")
-        {
-            keeperExit = true;
         }
     }
 
@@ -194,7 +185,7 @@ public class BallHit : MonoBehaviour
         return pos; // fallback
     }
 
-    [SerializeField] LayerMask keeperLayer;
+    [SerializeField] LayerMask fielderLayer;
 
     IEnumerator SimulateBallTrajectory(Vector3 startPosition, Vector3 initialVelocity)
     {
@@ -229,7 +220,7 @@ public class BallHit : MonoBehaviour
             Debug.DrawLine(currentPosition, nextPosition, Color.red, 2f);
 
             // 3. Collision Detection
-            if (Physics.SphereCast(currentPosition, ballRadius, moveDelta.normalized, out RaycastHit hit, moveDelta.magnitude, keeperLayer, QueryTriggerInteraction.Collide))
+            if (Physics.SphereCast(currentPosition, ballRadius, moveDelta.normalized, out RaycastHit hit, moveDelta.magnitude, fielderLayer, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.CompareTag("keeper") || (hit.collider.CompareTag("rayTest") && hit.collider.transform.parent.CompareTag("keeper")))
                 {

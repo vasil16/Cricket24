@@ -1,12 +1,8 @@
-using System.Collections.Generic;
 using System.Collections;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.AI;
 using RootMotion.FinalIK;
-using UnityEngine.Animations;
-using UnityEngine.Playables;
 
 public class Fielder : MonoBehaviour
 {
@@ -15,16 +11,15 @@ public class Fielder : MonoBehaviour
     public Vector3 targetPosition;
     BallHit ballComp;
     Rigidbody ballRb;
-    public Transform ball, throwingArm, rightHand, leftHand, rightFoot, leftFoot;
+    public Transform ball, throwingArm;
     public bool canReachInTime, startedRun;
     [SerializeField] FieldManager fm;
     [SerializeField] MultiAimConstraint headAim, neckAim;
-    public FielderIK ikControl;
+    public Animator ikControl;
     [SerializeField] GameObject rayTestObject;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] bool chaseMode;
     float groundY = .001f;
-    public Animator animator;
     public SmoothInteractionPickup pickScript;
     public AnimationClip idleClip, runningClip, jumpClip, crouchClip, moveRightClip, moveLeftClip, diveRightClip, diveLeftClip,chasePickupClip, pickUpClip, throwClip, kneelClip;
 
@@ -32,8 +27,7 @@ public class Fielder : MonoBehaviour
     {        
         actualPos = transform.position;
         actualRot = transform.rotation.eulerAngles;
-        animator = GetComponent<Animator>();
-        ikControl = GetComponent<FielderIK>();
+        ikControl = GetComponent<Animator>();
         pickScript = this.GetComponent<SmoothInteractionPickup>();
         groundY = transform.position.y;
     }
@@ -42,8 +36,8 @@ public class Fielder : MonoBehaviour
     #region keeper
 
 
-    [SerializeField] float handReachDuration = 0.52362f; // tune once
-    [SerializeField] float earlyBias = 0.03f; // micro-anticipation (human-like)
+    [SerializeField] float handReachDuration = 0.52362f; 
+    [SerializeField] float earlyBias = 0.03f;
 
     public void KeeperRecieve(Vector3 targetPosition, Transform ball, bool isEdge=false)
     {        
@@ -75,7 +69,7 @@ public class Fielder : MonoBehaviour
                     break;
                 if(Mathf.Abs(targetPosition.x - transform.position.x) < 1f)
                 {
-                    ikControl.PlayAnimation(idleClip);
+                    ikControl.Play("idle");
                     break;
                 }
                 float direction = (targetPosition.x > transform.position.x) ? -1f : 1f;
@@ -97,11 +91,11 @@ public class Fielder : MonoBehaviour
             if (targetPosition.y > 12.93f)
             {
                 Debug.Log("jump..");
-                //ikControl.PlayAnimation(jumpClip);
+                //ikControl.Play(jumpClip);
             }
             else if (targetPosition.y < 3f)
             {
-                // ikControl.PlayAnimation(crouchClip);
+                // ikControl.Play(crouchClip);
             }
         }
 
@@ -112,19 +106,12 @@ public class Fielder : MonoBehaviour
         }
 
         //yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 75);
-        yield return new WaitUntil(() => CanStartPickup(Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)),true));
-        //yield return new WaitUntil(()=>ShouldStartCollection(ball, out neededSpeed));
+
+        yield return new WaitUntil(() => CanStartPickup());
 
         Debug.Log("recive start");
 
         pickScript.pickupObject = ball.GetComponent<InteractionObject>();
-        float ballArrivalTime = GetBallArrivalTime(fm.marker.position, ball.GetComponent<Rigidbody>());
-        float delay = ballArrivalTime - handReachDuration - earlyBias;
-
-        delay = Mathf.Clamp(delay, 0f, 1.2f);
-
-        //if (delay > 0f)
-        //    yield return new WaitForSeconds(delay);
 
         pickScript.StartPickup(false);
     }
@@ -218,11 +205,9 @@ public class Fielder : MonoBehaviour
         }
         else if (chaseMode)
         {
-            // 1. Get the direction the ball is traveling on the ground
             Vector3 ballVelocity = ballRb.velocity;
             Vector3 moveDir = new Vector3(ballVelocity.x, 0f, ballVelocity.z);
 
-            // Safety: If the ball is nearly still, just go to the ball
             if (moveDir.magnitude < 0.1f)
             {
                 targetPosition = ball.position;
@@ -231,19 +216,30 @@ public class Fielder : MonoBehaviour
             {
                 moveDir.Normalize();
 
-                // 2. Calculate the 'Lead' (How far ahead to aim)
-                // A fixed lead of 1-2 meters feels more natural for a pickup than a speed-based one
-                float leadDistance = 1.5f;
+                moveDir.Normalize();
 
-                // 3. Calculate the 'Side Offset' (Standing to the side of the ball's path)
-                Vector3 lateralDir = Vector3.Cross(Vector3.up, moveDir).normalized;
-                Vector3 sideOffset = (isRightHanded ? lateralDir : -lateralDir) * 1.2f;
+                // Check if fielder is already ahead of the ball
+                Vector3 toFielder = transform.position - ball.position;
+                toFielder.y = 0f;
 
-                // 4. Combine: Ball Pos + Forward Lead + Side Offset
-                targetPosition = ball.position + (moveDir * leadDistance) + sideOffset;
+                bool fielderAhead = Vector3.Dot(toFielder.normalized, moveDir) > 0.3f;
+
+                if (fielderAhead)
+                {
+                    // Do NOT lead — go directly to ball
+                    targetPosition = ball.position;
+                }
+                else
+                {
+                    float leadDistance = 1.5f;
+
+                    Vector3 lateralDir = Vector3.Cross(Vector3.up, moveDir).normalized;
+                    Vector3 sideOffset = (isRightHanded ? lateralDir : -lateralDir) * 1.2f;
+
+                    targetPosition = ball.position + (moveDir * leadDistance) + sideOffset;
+                }
             }
 
-            // Always keep the target on the grass
             targetPosition.y = groundY;
         }
     }
@@ -261,12 +257,11 @@ public class Fielder : MonoBehaviour
     IEnumerator RunToBall(bool restart)
     {
         if (restart) Debug.Log("second time");
-        ikControl.PlayAnimation(runningClip);
+        ikControl.Play("running");
         float distToBall = 0;
         while (!ballComp.stopTriggered)
         {
             distToBall = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z));
-            //distToBall = Vector3.Distance(transform.position, ball.position);
             distanceToTarget = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(targetPosition.x, targetPosition.z));
             if (Gameplay.instance.deliveryDead)
             {
@@ -276,12 +271,18 @@ public class Fielder : MonoBehaviour
 
             if (!ballComp.groundShot)
             {
-                if (CanStartPickup(Vector3.Distance(ball.position, transform.position)))
+                if (CanStartPickup())
                 {
                     Debug.Log("air ball reached taret");
                     StartCoroutine(GrabBall());
                     yield break;
                 }
+                //if (CanStartPickup(Vector3.Distance(ball.position, transform.position)))
+                //{
+                //    Debug.Log("air ball reached taret");
+                //    StartCoroutine(GrabBall());
+                //    yield break;
+                //}
             }
             else
             {
@@ -295,7 +296,7 @@ public class Fielder : MonoBehaviour
 
                 if (distanceToTarget <= 2f)
                 {
-                    if (!chaseMode && IsBallComingAtFielder() && ballRb.velocity.magnitude > 30)
+                    if (!chaseMode && IsBallComingAtFielder() && ballRb.velocity.magnitude > 10)
                     {
                         StartCoroutine(WaitForBall());
                         yield break;
@@ -310,14 +311,26 @@ public class Fielder : MonoBehaviour
 
                 if (chaseMode)
                 {
-                    if (distanceToTarget <= 1)
+                    if (CanStartPickup())
                     {
+                        if(fm.tryingPickup)
+                        {
+                            while(fm.tryingPickup)
+                            {
+                                if(ballComp.stopTriggered)
+                                {
+                                    yield break;
+                                }
+                                yield return null;
+                            }
+                        }
                         Debug.Log("Ball in hand range for chase- Picking up " + distToBall);
                         ballComp.fieldedPlayer = this.gameObject;
                         fm.marker.position = ball.position;
-                        ikControl.PlayAnimation(idleClip);
+                        ikControl.Play("idle");
                         pickScript.pickupObject = ball.GetComponent<InteractionObject>();
                         pickScript.StartPickup(false);
+                        fm.tryingPickup = true;
                         yield break;
                     }
                 }
@@ -325,17 +338,28 @@ public class Fielder : MonoBehaviour
                 {
                     //if(distToBall<GetCollectionStartDistance())
                     {
-
-                        if (CanStartPickup(distToBall))
+                        if (CanStartPickup())
                         {
+                            if (fm.tryingPickup)
+                            {
+                                while (fm.tryingPickup)
+                                {
+                                    if (ballComp.stopTriggered)
+                                    {
+                                        yield break;
+                                    }
+                                    yield return null;
+                                }
+                            }
                             Debug.Log("Ball in hand range - Picking up " + distToBall);
                             ballComp.fieldedPlayer = this.gameObject;
                             fm.marker.transform.position = ball.position;
-                            ikControl.PlayAnimation(idleClip);
+                            ikControl.Play("idle");
                             pickScript.pickupObject = ball.GetComponent<InteractionObject>();
                             pickScript.StartPickup(false);
                             yield break;
                         }
+
                     }
                     
                 }
@@ -351,41 +375,11 @@ public class Fielder : MonoBehaviour
         }
     }
 
-    public bool CanStartPickup(float distanceToBall, bool isKeeper = false)
-    {
-        // 1. Setup Constants
-        // The fixed duration of your picking action
-
-        // How far the character can physically reach (in Unity units/meters)
-        // The keeper usually has a longer reach (diving/arms) than a normal player.
-        float maxReach = isKeeper ? 2.5f : 2.5f;
-
-        // 2. Calculate Prediction
-        // How far the ball moves while the animation is playing
-        float ballSpeed = ballRb.velocity.magnitude;
-        float predictionBuffer = ballSpeed * handReachDuration;
-
-        // 3. Final Decision
-        // We add the buffer to the current distance. 
-        // If the ball is moving away, this predicts where it will be when the hand closes.
-        // If (Current Dist + Movement) is still inside MaxReach, we can pick it up.
-        if ((distanceToBall + predictionBuffer) <= maxReach)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public void StopAll()
-    {
-        ikControl.PlayAnimation(idleClip);
-    }
 
     IEnumerator WaitForBall()
     {
         Debug.Log(gameObject.name + " Enter WaitForBall");
-        ikControl.PlayAnimation(idleClip);
+        ikControl.Play("idle");
 
         while (!ballComp.fielderReached)
         {
@@ -399,9 +393,19 @@ public class Fielder : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDir), Time.deltaTime * 15f);
             }
 
-            if (CanStartPickup(distToBall))
+            if (CanStartPickup())
             {
-                //StartCoroutine(ReachedBall(true));
+                if (fm.tryingPickup)
+                {
+                    while (fm.tryingPickup)
+                    {
+                        if (ballComp.stopTriggered)
+                        {
+                            yield break;
+                        }
+                        yield return null;
+                    }
+                }
                 fm.marker.position = ball.position;
                 pickScript.pickupObject = ball.GetComponent<InteractionObject>();
                 pickScript.StartPickup(false);
@@ -416,19 +420,100 @@ public class Fielder : MonoBehaviour
             }
             yield return null;
         }
-        ikControl.PlayAnimation(idleClip);
+        ikControl.Play("idle");
         pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+        if (fm.tryingPickup)
+        {
+            while (fm.tryingPickup)
+            {
+                if (ballComp.stopTriggered)
+                {
+                    yield break;
+                }
+                yield return null;
+            }
+        }
         pickScript.StartPickup(false);
+    }
+
+    private bool CanStartPickup()
+    {
+        Vector3 ballPos = ball.position;
+        Vector3 fielderPos = transform.position;
+
+        ballPos.y = 0f;
+        fielderPos.y = 0f;
+
+        Vector3 ballVel = ballRb.velocity;
+        ballVel.y = 0f;
+
+        // Fielder velocity (based on current movement direction)
+        Vector3 fielderVel = (targetPosition - transform.position).normalized * runSpeed;
+        fielderVel.y = 0f;
+
+        // Relative position and velocity (ball relative to fielder)
+        Vector3 relPos = ballPos - fielderPos;
+        Vector3 relVel = ballVel - fielderVel;
+
+        float relSpeedSq = relVel.sqrMagnitude;
+
+        if (relSpeedSq < 0.01f)
+            return false;
+
+        // Time to closest approach
+        float t = -Vector3.Dot(relPos, relVel) / relSpeedSq;
+
+        // If closest approach is in the past, ignore
+        if (t < 0f || t > handReachDuration)
+            return false;
+
+        // Distance at closest approach
+        Vector3 closest = relPos + relVel * t;
+        float closestDist = closest.magnitude;
+
+        return closestDist <= 0.3f; // pickup radius
+    }
+
+    //public bool CanStartPickup(float distanceToBall, bool isKeeper = false)
+    //{
+    //    float maxReach = isKeeper ? 2.5f : 2.5f;
+
+    //    float ballSpeed = ballComp.shotForce.magnitude;
+    //    float predictionBuffer = ballSpeed * handReachDuration;
+
+    //    if ((distanceToBall + predictionBuffer) <= maxReach && distanceToBall <= maxReach)
+    //    {
+    //        return true;
+    //    }
+
+    //    return false;
+    //}
+
+
+    public void StopAll()
+    {
+        ikControl.Play("idle");
     }
 
     IEnumerator GrabBall()
     {
-        ikControl.PlayAnimation(idleClip);
+        ikControl.Play("idle");
         while(Vector3.Distance(ball.position,transform.position)<GetCollectionStartDistance())
         {
             yield return null;
         }
         pickScript.pickupObject = ball.GetComponent<InteractionObject>();
+        if (fm.tryingPickup)
+        {
+            while (fm.tryingPickup)
+            {
+                if (ballComp.stopTriggered)
+                {
+                    yield break;
+                }
+                yield return null;
+            }
+        }
         pickScript.StartPickup(false);        
     }
 
@@ -449,7 +534,7 @@ public class Fielder : MonoBehaviour
         transform.rotation = lookRotation;
         yield return new WaitForSeconds(.7f);
 
-        ikControl.PlayAnimation(throwClip);
+        ikControl.Play("throw");
         yield return new WaitUntil(() => throwable);
         pickScript.interactionSystem.enabled = false;
         yield return new WaitForEndOfFrame();
@@ -561,38 +646,7 @@ public class Fielder : MonoBehaviour
         return fielderDistanceToPredictedPos / runSpeed <= timeReq;
     }
 
-    //Vector3 PredictBallPosition(Vector3 initialPosition, Vector3 velocity, float ballDrag)
-    //{
-    //    float timestep = Time.fixedDeltaTime;
-    //    Vector3 currentPosition = initialPosition;
-    //    Vector3 previousPosition = initialPosition;
-    //    Vector3 currentVelocity = velocity;
-
-    //    int maxSteps = 1000;
-
-    //    for (int i = 0; i < maxSteps; i++)
-    //    {
-    //        previousPosition = currentPosition;
-
-    //        currentVelocity += Physics.gravity * timestep;
-
-    //        currentVelocity /= (1f + ballDrag * timestep);
-
-    //        currentPosition += currentVelocity * timestep;
-
-    //        //if (Physics.Linecast( previousPosition, currentPosition, out RaycastHit hit))
-    //        //{
-    //        //    if (hit.collider.gameObject.CompareTag("rayTest")) return hit.point;
-    //        //}
-
-    //        if (currentPosition.y <= groundY)
-    //        {
-    //            return currentPosition;
-    //        }
-    //    }
-
-    //    return currentPosition;
-    //}
+    
 
     public Vector3 PredictBallPosition(Vector3 startPos, Vector3 velocity, float drag)
     {
@@ -660,7 +714,7 @@ public class Fielder : MonoBehaviour
 
     public void StopField()
     {
-        ikControl.PlayAnimation(idleClip);
+        ikControl.Play("idle");
         if (isKeeper) KeeperReset();
         else
             Reset();
@@ -674,14 +728,11 @@ public class Fielder : MonoBehaviour
         throwable = false;
         chaseMode = false;
         transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, 0.02f);
-        ikControl.PlayAnimation(idleClip);
-        rightHand.localPosition = idleRightHand;
-        leftHand.localPosition = idleLeftHand;
+        ikControl.Play("idle");
         ball = null;
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        ikControl.SetIKWeight(0);
         this.enabled = false;
     }
 
@@ -691,15 +742,12 @@ public class Fielder : MonoBehaviour
         throwable = false;
         chaseMode = false;
         transform.GetChild(transform.childCount - 1).GetComponent<BoxCollider>().center = new Vector3(0, 0.09848619f, 0.02f);
-        ikControl.PlayAnimation(idleClip);
+        ikControl.Play("idle");
         StopAllCoroutines();
-        rightHand.localPosition = idleRightHand;
-        leftHand.localPosition = idleLeftHand;
         ball = null;
         startedRun = false;
         transform.position = actualPos;
         transform.rotation = Quaternion.Euler(actualRot);
-        ikControl.SetIKWeight(0);
         this.enabled = false;
     }
 

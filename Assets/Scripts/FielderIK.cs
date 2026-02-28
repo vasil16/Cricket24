@@ -266,11 +266,6 @@ public class FielderIK : MonoBehaviour
 
         ResetIKWeight();
 
-        GetComponentInParent<Fielder>().rightHand = m_RightHandEffector.transform;
-        GetComponentInParent<Fielder>().leftHand = m_LeftHandEffector.transform;
-        GetComponentInParent<Fielder>().leftFoot = m_LeftFootEffector.transform;
-        GetComponentInParent<Fielder>().rightFoot = m_RightFootEffector.transform;
-
         m_IKPlayable = AnimationScriptPlayable.Create(m_Graph, job, 1);
         m_IKPlayable.ConnectInput(0, clipPlayable, 0, 1.0f);
 

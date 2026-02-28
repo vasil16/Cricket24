@@ -47,6 +47,8 @@ public class FieldManager : MonoBehaviour
         }
     }
 
+    [SerializeField] LayerMask fielderLayer;
+
     IEnumerator DelayAndCheck(Vector3 ballAt)
     {
         yield return new WaitForSeconds(0.4f);
@@ -57,7 +59,7 @@ public class FieldManager : MonoBehaviour
         Vector3 flatDirection = new Vector3(dir2D.x, 0, dir2D.y);
         Ray ballPath = new Ray(new Vector3(ballAt.x, 0.2f, ballAt.z), flatDirection);
 
-        RaycastHit[] hits = Physics.RaycastAll(ballPath, Mathf.Infinity, ~0, QueryTriggerInteraction.Collide);
+        RaycastHit[] hits = Physics.RaycastAll(ballPath, Mathf.Infinity, fielderLayer, QueryTriggerInteraction.Collide);
 
         Debug.DrawRay(ballPath.origin, ballPath.direction, Color.green, 10);
 
@@ -117,8 +119,7 @@ public class FieldManager : MonoBehaviour
         keeper.GetComponent<Fielder>().StopAllCoroutines();
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
-        keeper.GetComponent<FielderIK>().SetIKWeight(0);
-        keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().runningClip);
+        keeper.GetComponent<Fielder>().ikControl.Play("running");
         Vector3 moveDirection;
         Quaternion lookRotation;
 
@@ -131,7 +132,7 @@ public class FieldManager : MonoBehaviour
             keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
             yield return null;
         }
-        keeper.GetComponent<FielderIK>().PlayAnimation(keeper.GetComponent<Fielder>().idleClip);
+        keeper.GetComponent<Fielder>().ikControl.Play("idle");
         moveDirection = (ball.position - keeper.transform.position).normalized;
         lookRotation = Quaternion.LookRotation(moveDirection);
         keeper.transform.rotation = lookRotation;
@@ -148,9 +149,6 @@ public class FieldManager : MonoBehaviour
         }
     }
 
-    
-
-
     public void ResetFielders()
     {
         keeper.GetComponent<Fielder>().KeeperReset();
@@ -158,8 +156,6 @@ public class FieldManager : MonoBehaviour
         {
             fielder.Reset();
             fielder.startedRun = false;
-            fielder.GetComponent<Animator>().enabled = true;
-            //fielder.enabled = false;
         }
         bestFielders.Clear();
     }

@@ -218,6 +218,7 @@ public class SmoothInteractionPickup : MonoBehaviour
             yield return null;
         }
         Debug.Log("reach Complete." + Time.time);
+        //if (!pickupObject.GetComponent<BallHit>().stopTriggered) yield break;
         // 4. THE COLLECTION: The hand is now at the ball
         isHolding = true;
 

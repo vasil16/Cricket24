@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +9,6 @@ public class MainGame : MonoBehaviour
     [SerializeField] GameObject[] cams;
     [SerializeField] BatMovement batMovement;
     [SerializeField] GameObject homePanel, startObj, lights, sun, canvas;
-    [SerializeField] Animator swingAnim;
     [SerializeField] AnimationClip blockAnim;
     [SerializeField] Material day, Night, floodLight;
     public int camIndex;
@@ -36,10 +32,10 @@ public class MainGame : MonoBehaviour
     {
         camIndex = 1;
         canvas.SetActive(true);
-
+        //Screen.SetResolution(1280, 720, true);
         //mpb = new MaterialPropertyBlock();
 
-        //// Assign different colors to each submesh
+        // Assign different colors to each submesh
         //for (int i = 0; i < stadium.sharedMaterials.Length; i++)
         //{
 
@@ -49,12 +45,13 @@ public class MainGame : MonoBehaviour
         //    stadium.SetPropertyBlock(mpb, i);
         //}
 
-        #if UNITY_IOS
-                Application.targetFrameRate = 90;
+        //#if UNITY_IOS
+        //                Application.targetFrameRate = 90;
 
-        #else
-            Application.targetFrameRate = 600;
-        #endif
+        //#else
+        //        Application.targetFrameRate = 60;
+        //        #endif
+
     }
 
     public Text fpsText;            // Assign in inspector
@@ -64,7 +61,7 @@ public class MainGame : MonoBehaviour
     private int frames = 0;
     private float timer = 0f;
 
-    void Update()
+    void FixedUpdate()
     {
         timeAccum += Time.unscaledDeltaTime;
         frames++;
@@ -83,7 +80,7 @@ public class MainGame : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        floodLight.EnableKeyword("_EMISSION");
+        //floodLight.EnableKeyword("_EMISSION");
     }
 
     public void TimeSelect(int index)
@@ -143,47 +140,11 @@ public class MainGame : MonoBehaviour
         //batMovement.started = true;
     }
 
-    public void PlayShot(string shot)
-    {
-        if (swingAnim.enabled)
-        {
-            swingAnim.Play(shot);
-        }
-        else
-        {
-            StartCoroutine(DelayBlockAnim(shot));
-        }
-    }
-
+    
     public void MoveBatter(int side)
     {
         batter.position += Vector3.right * side *.2f;
         batter.TryGetComponent(out Animator anim);
         //anim.Play("move");
-    }
-
-  
-
-    public void Pull()
-    {     
-        swingAnim.Play("pull");
-    }
-
-    public void vDrive()
-    {
-        swingAnim.Play("shot2");
-    }
-
-    public void loftDrive()
-    {
-        swingAnim.Play("shot");
-    }
-
-    IEnumerator DelayBlockAnim(string animName)
-    {
-        //swingAnim.enabled = true;
-        swingAnim.Play(animName);
-        yield return new WaitForSeconds(blockAnim.length +0.12f);
-        //swingAnim.enabled = false;
     }
 }
