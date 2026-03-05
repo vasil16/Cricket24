@@ -57,50 +57,50 @@ public class Gameplay : MonoBehaviour
         bowlerPalm = ball.transform.parent;
         ballOriginPoint = ball.transform.localPosition;
         ballScale = ball.transform.localScale;
-        deliveryPoints = new List<Vector3>()
-        {
-            // =====================
-            // YORKERS (Blockhole)
-            // =====================
-            new Vector3(-3.8f, 0.01f, 48.5f),
-            new Vector3(-4.2f, 0.01f, 47.5f),
-            new Vector3(-3.5f, 0.01f, 46.0f),
+        //deliveryPoints = new List<Vector3>()
+        //{
+        //    // =====================
+        //    // YORKERS (Blockhole)
+        //    // =====================
+        //    new Vector3(-3.8f, 0.01f, 48.5f),
+        //    new Vector3(-4.2f, 0.01f, 47.5f),
+        //    new Vector3(-3.5f, 0.01f, 46.0f),
 
-            // =====================
-            // FULL / SLOT
-            // =====================
-            new Vector3(-3.2f, 0.01f, 40.0f),
-            new Vector3(-3.6f, 0.01f, 38.5f),
-            new Vector3(-4.0f, 0.01f, 36.5f),
+        //    // =====================
+        //    // FULL / SLOT
+        //    // =====================
+        //    new Vector3(-3.2f, 0.01f, 40.0f),
+        //    new Vector3(-3.6f, 0.01f, 38.5f),
+        //    new Vector3(-4.0f, 0.01f, 36.5f),
 
-            // =====================
-            // GOOD LENGTH
-            // =====================
-            new Vector3(-2.8f, 0.01f, 22.0f),
-            new Vector3(-3.2f, 0.01f, 20.0f),
-            new Vector3(-3.6f, 0.01f, 18.0f),
+        //    // =====================
+        //    // GOOD LENGTH
+        //    // =====================
+        //    new Vector3(-2.8f, 0.01f, 22.0f),
+        //    new Vector3(-3.2f, 0.01f, 20.0f),
+        //    new Vector3(-3.6f, 0.01f, 18.0f),
 
-            // =====================
-            // BACK OF A LENGTH
-            // =====================
-            new Vector3(-3.0f, 0.01f, 8.0f),
-            new Vector3(-3.5f, 0.01f, 5.0f),
-            new Vector3(-4.0f, 0.01f, 2.0f),
+        //    // =====================
+        //    // BACK OF A LENGTH
+        //    // =====================
+        //    new Vector3(-3.0f, 0.01f, 8.0f),
+        //    new Vector3(-3.5f, 0.01f, 5.0f),
+        //    new Vector3(-4.0f, 0.01f, 2.0f),
 
-            // =====================
-            // SHORT / BOUNCERS
-            // =====================
-            new Vector3(-3.4f, 0.01f, -5.0f),
-            new Vector3(-3.8f, 0.01f, -10.0f),
-            new Vector3(-4.2f, 0.01f, -15.0f),
-            new Vector3(-4.6f, 0.01f, -20.0f),
+        //    // =====================
+        //    // SHORT / BOUNCERS
+        //    // =====================
+        //    new Vector3(-3.4f, 0.01f, -5.0f),
+        //    new Vector3(-3.8f, 0.01f, -10.0f),
+        //    new Vector3(-4.2f, 0.01f, -15.0f),
+        //    new Vector3(-4.6f, 0.01f, -20.0f),
 
-            // =====================
-            // TOO SHORT (Punish)
-            // =====================
-            new Vector3(-4.0f, 0.01f, -25.0f),
-            new Vector3(-4.5f, 0.01f, -30.0f),
-        };
+        //    // =====================
+        //    // TOO SHORT (Punish)
+        //    // =====================
+        //    new Vector3(-4.0f, 0.01f, -25.0f),
+        //    new Vector3(-4.5f, 0.01f, -30.0f),
+        //};
         StartCoroutine(LaunchBallsWithDelay());
     }
 
@@ -176,7 +176,7 @@ public class Gameplay : MonoBehaviour
             
             broadcastCamComp.readyToDeliver = true;
             ball.transform.SetParent(null,true);
-            ball.transform.position = ballLaunchPos;
+            //ball.transform.position = ballLaunchPos;
             rb.isKinematic = true;
             currentBall = ball.transform;
             rb.isKinematic = false;

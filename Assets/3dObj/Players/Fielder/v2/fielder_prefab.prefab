@@ -1407,17 +1407,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02da525d320ca4893b06a0452efcf995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runSpeed: 28
+  runSpeed: 4
   score: 0
   angleDiff: 0
   timeToReachLanding: 0
   targetPosition: {x: 0, y: 0, z: 0}
   ball: {fileID: 0}
   throwingArm: {fileID: 4922493629970488337}
-  rightHand: {fileID: 0}
-  leftHand: {fileID: 0}
-  rightFoot: {fileID: 0}
-  leftFoot: {fileID: 0}
   canReachInTime: 0
   startedRun: 0
   fm: {fileID: 0}

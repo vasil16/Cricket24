@@ -5,15 +5,13 @@ public class BallHit : MonoBehaviour
 {
     Rigidbody rb;
     public bool secondTouch, groundShot, keeperReceive, fielderReached, boundary, stopTriggered;
-    public GameObject fieldedPlayer, shootMarker;
+    public GameObject fieldedPlayer, shootMarker, stopper;
     public Vector3 pitchPoint, ballCatchPoint, shotPoint, shotForce;
     [SerializeField] AudioSource soundFx;
     [SerializeField] AudioClip wicketFx, shotFx;
     [SerializeField] public Fielder keeper;
 
     public string lastHit;
-
-    public GameObject stopper;
 
     public bool keeperExit;
 

@@ -6,22 +6,25 @@ using UnityEngine;
 public class FieldManager : MonoBehaviour
 {
     public List<Fielder> fielders;
-    public Transform ball;
-    public float fieldingRange = 1.5f;
-
-    public bool tryingPickup;
-
     public List<Fielder> bestFielders = new List<Fielder>();
+
+    [SerializeField] LayerMask fielderLayer;
+
+    public bool tryingPickup, ballWasAirBorne;
+
+    public float fieldingRange = 1.5f;
+    public float score;
+
+    public static Vector3 hitBallPos, hitVelocity;
+
+    public Transform ball, marker, keeper, stumps;
+
     public static Action<Fielder> StopOther;
     public static Action<Vector3> StartCheckField;
     public static Action ResetFielder, StopField;
 
-    public static Vector3 hitBallPos, hitVelocity;
-
-    public float score;
-    public Transform marker, keeper, stumps;
+    
     [SerializeField] MeshRenderer ignoreBounds;
-    public bool ballWasAirBorne;
 
     private void Start()
     {
@@ -45,9 +48,7 @@ public class FieldManager : MonoBehaviour
         {
             fielder.StopField();
         }
-    }
-
-    [SerializeField] LayerMask fielderLayer;
+    }    
 
     IEnumerator DelayAndCheck(Vector3 ballAt)
     {
@@ -119,7 +120,7 @@ public class FieldManager : MonoBehaviour
         keeper.GetComponent<Fielder>().StopAllCoroutines();
         keeper.GetComponent<Fielder>().enabled = true;
         keeper.GetComponent<Fielder>().ball = ball;
-        keeper.GetComponent<Fielder>().ikControl.Play("running");
+        keeper.GetComponent<Fielder>().animator.Play("running");
         Vector3 moveDirection;
         Quaternion lookRotation;
 
@@ -129,10 +130,10 @@ public class FieldManager : MonoBehaviour
             lookRotation = Quaternion.LookRotation(moveDirection);
             lookRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, lookRotation.eulerAngles.y, lookRotation.eulerAngles.z);
             keeper.transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 100f);
-            keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 28 * Time.deltaTime);
+            keeper.transform.position = Vector3.MoveTowards(keeper.transform.position, new Vector3(stumps.position.x, keeper.transform.position.y, stumps.position.z), 4 * Time.deltaTime);
             yield return null;
         }
-        keeper.GetComponent<Fielder>().ikControl.Play("idle");
+        keeper.GetComponent<Fielder>().animator.Play("idle");
         moveDirection = (ball.position - keeper.transform.position).normalized;
         lookRotation = Quaternion.LookRotation(moveDirection);
         keeper.transform.rotation = lookRotation;

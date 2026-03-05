@@ -64,7 +64,7 @@ public class BowlingEngine : MonoBehaviour
         ballRigidbody.isKinematic = false;
         ballRigidbody.velocity = Vector3.zero;
         ballRigidbody.angularVelocity = Vector3.zero;
-        ballRigidbody.transform.position = handReleasePoint.position;
+        //ballRigidbody.transform.position = handReleasePoint.position;
         ballRigidbody.velocity = launchVelocity;
 
         Debug.Log($"<color=green>RELEASED:</color> Speed {deliverySpeedKmh} km/h toward {chosenPoint}");
@@ -121,32 +121,32 @@ public class BowlingEngine : MonoBehaviour
         deliveryPoints.Clear();
         float groundY = 0.001f;
 
-        // YORKERS (unchanged)
-        AddPoint("Toe-Crusher Straight", new Vector3(0.00f, groundY, 41.5f), DeliveryLength.Yorker);
-        AddPoint("Off-Stump Blockhole", new Vector3(-0.52f, groundY, 40.0f), DeliveryLength.Yorker);
-        AddPoint("Wide Yorker (Legal)", new Vector3(-3.80f, groundY, 39.0f), DeliveryLength.Yorker);
+        // YORKERS
+        AddPoint("Toe-Crusher Straight", new Vector3(0.00f, groundY, 8.30f), DeliveryLength.Yorker);
+        AddPoint("Off-Stump Blockhole", new Vector3(-0.104f, groundY, 8.00f), DeliveryLength.Yorker);
+        AddPoint("Wide Yorker (Legal)", new Vector3(-0.76f, groundY, 7.80f), DeliveryLength.Yorker);
 
-        // FULL / SLOT (stronger off correction)
-        AddPoint("Full at Stumps", new Vector3(-0.70f, groundY, 30.0f), DeliveryLength.Full);
-        AddPoint("Full Outside Off (4th stump)", new Vector3(-1.55f, groundY, 26.0f), DeliveryLength.Full);
-        AddPoint("Driving Full Length (5th stump)", new Vector3(-2.10f, groundY, 20.0f), DeliveryLength.Full);
+        // FULL
+        AddPoint("Full at Stumps", new Vector3(-0.14f, groundY, 6.00f), DeliveryLength.Full);
+        AddPoint("Full Outside Off (4th stump)", new Vector3(-0.31f, groundY, 5.20f), DeliveryLength.Full);
+        AddPoint("Driving Full Length (5th stump)", new Vector3(-0.42f, groundY, 4.00f), DeliveryLength.Full);
 
-        // GOOD / LENGTH (much stronger correction)
-        AddPoint("Top of Off", new Vector3(-1.40f, groundY, 13.5f), DeliveryLength.GoodLength);
-        AddPoint("Fourth Stump Probe", new Vector3(-2.10f, groundY, 11.5f), DeliveryLength.GoodLength);
-        AddPoint("Corridor Control", new Vector3(-2.75f, groundY, 10.0f), DeliveryLength.GoodLength);
-        AddPoint("Into Pads Length", new Vector3(0.20f, groundY, 12.5f), DeliveryLength.GoodLength);
+        // GOOD LENGTH
+        AddPoint("Top of Off", new Vector3(-0.28f, groundY, 2.70f), DeliveryLength.GoodLength);
+        AddPoint("Fourth Stump Probe", new Vector3(-0.42f, groundY, 2.30f), DeliveryLength.GoodLength);
+        AddPoint("Corridor Control", new Vector3(-0.55f, groundY, 2.00f), DeliveryLength.GoodLength);
+        AddPoint("Into Pads Length", new Vector3(0.04f, groundY, 2.50f), DeliveryLength.GoodLength);
 
-        // BACK OF A LENGTH (aggressive correction)
-        AddPoint("Heavy Back Length", new Vector3(-1.90f, groundY, 8.0f), DeliveryLength.BackOfLength);
-        AddPoint("Rising Corridor Length", new Vector3(-2.85f, groundY, 6.5f), DeliveryLength.BackOfLength);
-        AddPoint("Cramping Length", new Vector3(0.60f, groundY, 5.5f), DeliveryLength.BackOfLength);
+        // BACK OF A LENGTH
+        AddPoint("Heavy Back Length", new Vector3(-0.38f, groundY, 1.60f), DeliveryLength.BackOfLength);
+        AddPoint("Rising Corridor Length", new Vector3(-0.57f, groundY, 1.30f), DeliveryLength.BackOfLength);
+        AddPoint("Cramping Length", new Vector3(0.12f, groundY, 1.10f), DeliveryLength.BackOfLength);
 
-        // SHORT / BOUNCERS (already correct)
-        AddPoint("Head-High Bouncer", new Vector3(-2.10f, groundY, -6.0f), DeliveryLength.Short);
-        AddPoint("Rib-Cage Bouncer", new Vector3(-1.70f, groundY, -10.0f), DeliveryLength.Short);
-        AddPoint("Wide Surprise Bouncer", new Vector3(-4.20f, groundY, -15.5f), DeliveryLength.Short);
-        AddPoint("Nasty Throat Ball", new Vector3(-1.95f, groundY, -12.0f), DeliveryLength.Short);
+        // SHORT
+        AddPoint("Head-High Bouncer", new Vector3(-0.42f, groundY, -1.20f), DeliveryLength.Short);
+        AddPoint("Rib-Cage Bouncer", new Vector3(-0.34f, groundY, -2.00f), DeliveryLength.Short);
+        AddPoint("Wide Surprise Bouncer", new Vector3(-0.84f, groundY, -3.10f), DeliveryLength.Short);
+        AddPoint("Nasty Throat Ball", new Vector3(-0.39f, groundY, -2.40f), DeliveryLength.Short);
     }
 
     private void AddPoint(string n, Vector3 pos, DeliveryLength l)

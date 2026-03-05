@@ -26,6 +26,8 @@ public class SmoothInteractionPickup : MonoBehaviour
     private float currentLookWeight = 0f;
     private Transform currentLookTarget;
 
+    [SerializeField] Transform throwArm;
+
     void Start()
     {
         if (interactionSystem == null) interactionSystem = GetComponent<InteractionSystem>();
@@ -39,29 +41,6 @@ public class SmoothInteractionPickup : MonoBehaviour
 
         //Debug.Log("Smooth Pickup Ready. Press E to Interact.");
     }
-
-    //void Update()
-    //{
-    //    // --- 1. Handle Looking smoothly in Update (The Conductor of the Symphony) ---
-    //    if (fbbik != null)
-    //    {
-    //        // Smoothly blend the weight
-    //        //fbbik.solver.lookAt.weight = Mathf.Lerp(fbbik.solver.lookAt.weight, currentLookWeight, Time.deltaTime * lookAtSmoothSpeed);
-
-    //        // Update target if we have one
-    //        if (currentLookTarget != null)
-    //        {
-    //            //fbbik.solver.lookAt.target = currentLookTarget;
-    //        }
-    //    }
-
-    //    // --- 2. Input ---
-    //    if (Input.GetKeyDown(KeyCode.E) && !isTransitioning)
-    //    {
-    //        //if (!isHolding) StartCoroutine(PickupSequence());
-    //        //else StartCoroutine(DropSequence());
-    //    }
-    //}
 
     // Example: Moving the foot AND shifting the body
 
@@ -250,8 +229,6 @@ public class SmoothInteractionPickup : MonoBehaviour
         isTransitioning = false;
         Debug.Log("Pickup Sequence Complete.");
     }
-
-    [SerializeField] Transform throwArm;
 
     public void StartDrop()
     {

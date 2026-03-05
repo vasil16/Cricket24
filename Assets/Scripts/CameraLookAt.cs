@@ -44,7 +44,7 @@ public class CameraLookAt : MonoBehaviour
 
     public bool cover;
 
-    void Update()
+    void LateUpdate()
     {
         if (this.gameObject.name == "draw1")
         {
@@ -106,11 +106,11 @@ public class CameraLookAt : MonoBehaviour
                     }
                     else if (Vector3.Distance(transform.position, ball.transform.position) < 160)
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 16f, ref dampFact, 0.2f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 7f, ref dampFact, 0.2f);
                     }
                     else
                     {
-                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 8f, ref dampFact, 0.2f);
+                        cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, 6f, ref dampFact, 0.2f);
                     }
                     LookAt();
                 }
