@@ -62,10 +62,10 @@ public class BowlingEngine : MonoBehaviour
         Vector3 launchVelocity = CalculateVelocityForSpeed(chosenPoint, speedMs);
 
         ballRigidbody.isKinematic = false;
-        ballRigidbody.velocity = Vector3.zero;
+        ballRigidbody.linearVelocity = Vector3.zero;
         ballRigidbody.angularVelocity = Vector3.zero;
         //ballRigidbody.transform.position = handReleasePoint.position;
-        ballRigidbody.velocity = launchVelocity;
+        ballRigidbody.linearVelocity = launchVelocity;
 
         Debug.Log($"<color=green>RELEASED:</color> Speed {deliverySpeedKmh} km/h toward {chosenPoint}");
     }

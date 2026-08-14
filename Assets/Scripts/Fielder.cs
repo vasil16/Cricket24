@@ -159,7 +159,7 @@ public class Fielder : MonoBehaviour
         if (!ballComp.groundShot)
         {
             Debug.Log("airball cal");
-            targetPosition = PredictBallPosition(ballComp.shotPoint, ballComp.shotForce, ballRb.drag);
+            targetPosition = PredictBallPosition(ballComp.shotPoint, ballComp.shotForce, ballRb.linearDamping);
             fm.marker.position = targetPosition;
             StartCoroutine(RunToBall(false));
         }        
@@ -185,7 +185,7 @@ public class Fielder : MonoBehaviour
         }
         else if (chaseMode)
         {
-            Vector3 ballVelocity = ballRb.velocity;
+            Vector3 ballVelocity = ballRb.linearVelocity;
             Vector3 moveDir = new Vector3(ballVelocity.x, 0f, ballVelocity.z);
 
             if (moveDir.magnitude < 0.1f)
@@ -226,7 +226,7 @@ public class Fielder : MonoBehaviour
 
     float GetCollectionStartDistance()
     {
-        float ballSpeed = ballRb.velocity.magnitude;
+        float ballSpeed = ballRb.linearVelocity.magnitude;
         
         float reqDistance = ballSpeed * handReachDuration;
         return reqDistance;
@@ -274,7 +274,7 @@ public class Fielder : MonoBehaviour
 
                 if (distanceToTarget <= 2f)
                 {
-                    if (!chaseMode && IsBallComingAtFielder() && ballRb.velocity.magnitude > 10)
+                    if (!chaseMode && IsBallComingAtFielder() && ballRb.linearVelocity.magnitude > 10)
                     {
                         StartCoroutine(WaitForBall());
                         yield break;
@@ -389,7 +389,7 @@ public class Fielder : MonoBehaviour
                 yield break;
             }
 
-            if (ballRb.velocity.magnitude < 5.0f)
+            if (ballRb.linearVelocity.magnitude < 5.0f)
             {
                 Debug.Log("restart runn");
                 StartCoroutine(RunToBall(true));
@@ -421,7 +421,7 @@ public class Fielder : MonoBehaviour
         ballPos.y = 0f;
         fielderPos.y = 0f;
 
-        Vector3 ballVel = ballRb.velocity;
+        Vector3 ballVel = ballRb.linearVelocity;
         ballVel.y = 0f;
         // Fielder velocity (based on current movement direction)
         Vector3 fielderVel = (targetPosition - transform.position).normalized * runSpeed;
@@ -533,7 +533,7 @@ public class Fielder : MonoBehaviour
         Debug.DrawLine(ball.position, pitchPoint, Color.red, 15f);
         ballRb.WakeUp();
         ballRb.isKinematic = false;
-        ballRb.velocity = velocity;
+        ballRb.linearVelocity = velocity;
 
         fm.keeper.GetComponent<Fielder>().KeeperRecieve(Vector3.zero, ball);
 
@@ -551,7 +551,7 @@ public class Fielder : MonoBehaviour
         Vector3 ballPos = ball.position;
         Vector3 fielderPos = transform.position;
 
-        Vector3 v = ballRb.velocity;
+        Vector3 v = ballRb.linearVelocity;
         v.y = 0f;
 
         if (v.sqrMagnitude < 0.01f)
@@ -619,7 +619,7 @@ public class Fielder : MonoBehaviour
         Rigidbody ballRb = ball.GetComponent<Rigidbody>();
 
         // 1. Get the ball's movement direction on the horizontal plane
-        Vector2 ballVel2D = new Vector2(ballRb.velocity.x, ballRb.velocity.z);
+        Vector2 ballVel2D = new Vector2(ballRb.linearVelocity.x, ballRb.linearVelocity.z);
 
         // If the ball isn't moving, no need to "chase" it
         if (ballVel2D.sqrMagnitude < 0.1f) return false;

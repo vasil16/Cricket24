@@ -61,13 +61,13 @@ public class BallHit : MonoBehaviour
                 {
                     if (groundShot) return;
                     groundShot = true;
-                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.04f, rb.velocity.z);
+                    rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y * 0.04f, rb.linearVelocity.z);
                 }
                 else
                 {
                     pitchPoint = collision.contacts[0].point;
-                    shotForce = rb.velocity;
-                    StartCoroutine(SimulateBallTrajectory(transform.position, rb.velocity));
+                    shotForce = rb.linearVelocity;
+                    StartCoroutine(SimulateBallTrajectory(transform.position, rb.linearVelocity));
                 }
                 break;
 
@@ -77,9 +77,9 @@ public class BallHit : MonoBehaviour
                     break;
                 }
                 shotPoint = collision.contacts[0].point;
-                shotForce = rb.velocity;
+                shotForce = rb.linearVelocity;
                 FieldManager.hitBallPos = transform.position;
-                FieldManager.hitVelocity = rb.velocity;
+                FieldManager.hitVelocity = rb.linearVelocity;
                 Debug.Log("spot " + collision.gameObject.name);
                 //Gameplay.instance.bb.position = collision.GetContact(0).point;
                 Gameplay.instance.broadcastCamComp.readyToDeliver = false;
@@ -193,7 +193,7 @@ public class BallHit : MonoBehaviour
         float ballRadius = 0.12f;
 
         // Get the drag from the actual Rigidbody component
-        float drag = rb.drag;
+        float drag = rb.linearDamping;
 
         Vector3 currentPosition = startPosition;
         Vector3 velocity = initialVelocity;
