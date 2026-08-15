@@ -50,7 +50,7 @@ public class Wick : MonoBehaviour
     public void ResetPosition()
     {
         gameObject.transform.position = ogPos;
-        rb.velocity = Vector3.zero; // Reset velocity
+        rb.linearVelocity = Vector3.zero; // Reset velocity
         rb.angularVelocity = Vector3.zero; // Reset angular velocity
     }
 }

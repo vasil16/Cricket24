@@ -60,7 +60,7 @@ public class FieldManager : MonoBehaviour
     {
         
         hitBallPos = ballAt;
-        hitVelocity = ball.GetComponent<Rigidbody>().velocity;
+        hitVelocity = ball.GetComponent<Rigidbody>().linearVelocity;
         yield return new WaitForSeconds(0.4f);
 
         int fielderCount = 1;
@@ -71,7 +71,7 @@ public class FieldManager : MonoBehaviour
         if (ball.GetComponent<BallHit>().groundShot)
         {
             landPos = BallStopPos(ball.GetComponent<Rigidbody>());
-            if (ball.GetComponent<Rigidbody>().velocity.magnitude > 68)
+            if (ball.GetComponent<Rigidbody>().linearVelocity.magnitude > 68)
             {
                 fielderCount = 3;
             }
@@ -105,7 +105,7 @@ public class FieldManager : MonoBehaviour
             {
                 if (ball.GetComponent<BallHit>().groundShot)
                 {
-                    if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().velocity.magnitude > 50)
+                    if (fielder.CompareTag("DeepFielder") && ball.GetComponent<Rigidbody>().linearVelocity.magnitude > 50)
                     {
                         if (!selectedFielders.Contains(fielder))
                         {
@@ -153,10 +153,10 @@ public class FieldManager : MonoBehaviour
         // Direction-based score: Lower angle difference means better positioning
         float directionScore = -angleDifference; // Negative because lower is better
 
-        Debug.Log("ball speed " + ball.GetComponent<Rigidbody>().velocity.magnitude);
+        Debug.Log("ball speed " + ball.GetComponent<Rigidbody>().linearVelocity.magnitude);
         score += directionScore;
         
-        if (ball.GetComponent<Rigidbody>().velocity.magnitude > 70 && ball.GetComponent<BallHit>().groundShot)
+        if (ball.GetComponent<Rigidbody>().linearVelocity.magnitude > 70 && ball.GetComponent<BallHit>().groundShot)
         {
             if (fielder.CompareTag("DeepFielder"))
             {
@@ -180,7 +180,7 @@ public class FieldManager : MonoBehaviour
     private Vector3 BallStopPos(Rigidbody ballRb)
     {
         Vector3 initialPosition = ballRb.transform.position;
-        Vector3 initialVelocity = ballRb.velocity;
+        Vector3 initialVelocity = ballRb.linearVelocity;
         float timeToStop = -initialVelocity.magnitude / Physics.gravity.y;
 
         Vector3 finalPosition = initialPosition + (initialVelocity * timeToStop) + (0.5f * Physics.gravity * timeToStop * timeToStop);
@@ -200,7 +200,7 @@ public class FieldManager : MonoBehaviour
             return landingPosition;
         }
 
-        Vector3 ballVelocity = ballRb.velocity;
+        Vector3 ballVelocity = ballRb.linearVelocity;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
         float heightDifference = ball.position.y - (-4.437081f);

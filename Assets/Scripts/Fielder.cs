@@ -204,7 +204,7 @@ public class Fielder : MonoBehaviour
                 GetComponent<Animator>().SetBool("Stop", true);
                 yield break;
             }
-            if (ballRb.velocity.magnitude < 35)
+            if (ballRb.linearVelocity.magnitude < 35)
             {
                 Debug.Log("slowed beyound thrshold");
                 transform.position = Vector3.MoveTowards(transform.position, new Vector3(ball.position.x, transform.position.y, ball.position.z), runSpeed * Time.deltaTime);
@@ -255,7 +255,7 @@ public class Fielder : MonoBehaviour
     {
         Vector3 target;
 
-        if (ballRb.velocity.magnitude < 20f || Vector3.Distance(transform.position, ball.position) < 0.5f)
+        if (ballRb.linearVelocity.magnitude < 20f || Vector3.Distance(transform.position, ball.position) < 0.5f)
         {
             target = ball.position;
         }
@@ -268,7 +268,7 @@ public class Fielder : MonoBehaviour
             }
             else
             {
-                target = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+                target = CalculateInterceptPosition(ball.position, ballRb.linearVelocity, transform.position, transform.forward);
                 target.y = transform.position.y;
             }
         }
@@ -282,7 +282,7 @@ public class Fielder : MonoBehaviour
             }
             else
             {
-                target = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+                target = CalculateInterceptPosition(ball.position, ballRb.linearVelocity, transform.position, transform.forward);
                 target.y = transform.position.y;
             }
         }
@@ -374,7 +374,7 @@ public class Fielder : MonoBehaviour
         }
         else
         {
-            targetPosition = CalculateInterceptPosition(ball.position, ballRb.velocity, transform.position, transform.forward);
+            targetPosition = CalculateInterceptPosition(ball.position, ballRb.linearVelocity, transform.position, transform.forward);
             //targetPosition = UpdateTargetPosition();
         }
         targetPosition.y = transform.position.y;

@@ -231,7 +231,7 @@ public class Gameplay : MonoBehaviour
 
         // Apply the velocity to the ball's Rigidbody
         Rigidbody rb = ball.GetComponent<Rigidbody>();
-        rb.velocity = initialVelocity; // Directly set the velocity to simulate the launch
+        rb.linearVelocity = initialVelocity; // Directly set the velocity to simulate the launch
 
         // Optional: If you want to add torque for spin, you can add it here
         rb.AddTorque(Vector3.forward * -10);

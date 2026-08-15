@@ -22,7 +22,7 @@ public class Move : MonoBehaviour
     void Update()
     {
         float moveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
 
         if (moveInput > 0)
         {
@@ -50,7 +50,7 @@ public class Move : MonoBehaviour
                 {
                     StopFlying();
                 }
-                rb.velocity = new Vector2(rb.velocity.x, flySpeed);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, flySpeed);
             }
             else
             {

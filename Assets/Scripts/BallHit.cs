@@ -53,7 +53,7 @@ public class BallHit : MonoBehaviour
                 if (secondTouch)
                 {
                     groundShot = true;
-                    rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y * 0.01f, rb.velocity.z);
+                    rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y * 0.01f, rb.linearVelocity.z);
                 }
                 break;
 

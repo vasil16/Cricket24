@@ -96,7 +96,7 @@ public class FielderAI : MonoBehaviour
 
         // Predict future position based on velocity
         Vector3 currentPosition = ballTransform.position;
-        Vector3 velocity = ballRigidbody.velocity;
+        Vector3 velocity = ballRigidbody.linearVelocity;
 
         // Use basic physics to estimate landing spot
         Vector3 predictedPosition = currentPosition + velocity * predictionTime;
