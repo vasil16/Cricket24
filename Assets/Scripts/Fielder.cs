@@ -104,9 +104,9 @@ public class Fielder : MonoBehaviour
             fm.marker.position = targetPosition;
         }
 
-        //yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 25);
         Debug.Log("wait recive");
-        yield return new WaitUntil(() => CanStartPickup());
+        yield return new WaitUntil(() => Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(ball.position.x, ball.position.z)) < 65);
+        //yield return new WaitUntil(() => CanStartPickup());
 
         Debug.Log("recive start");
 
